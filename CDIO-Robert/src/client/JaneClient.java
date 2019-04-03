@@ -1,8 +1,10 @@
 package client;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 import server.RobertServer; 
@@ -16,10 +18,19 @@ public class JaneClient {
 		Socket sock = new Socket(ip, RobertServer.port); 
 		System.out.println("Jane connected to Robert!"); 
  
+		// Initialize input and output.
 		InputStream inputStream = sock.getInputStream(); 
 		DataInputStream dataInputStream = new DataInputStream(inputStream); 
+		
+		OutputStream outputStream = sock.getOutputStream(); 
+		DataOutputStream dataOutputStream =  new DataOutputStream(outputStream); 
+		
 		String str = dataInputStream.readUTF(); 
 		System.out.println(str); 
+		
+		dataOutputStream.writeInt(5);
+		dataOutputStream.flush();
+		
 		sock.close(); 
 	} 
  
