@@ -84,8 +84,6 @@ public class VisionController implements Runnable {
 			
 			Mat picture = converter.convert(grabber.grab());
 			
-			Generate_Objects(picture);
-			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
 		}
