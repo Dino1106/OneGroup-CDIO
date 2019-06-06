@@ -263,7 +263,7 @@ public class VisionController implements Runnable {
 		// extract_circles(1,50,120,80,50,100);
 		auto_circle(3, 120, 15, 2, 8);
 	}
-
+/*
 	private void auto_circle(int param1, int param2, int param3, int param4, int param5) {
 		int max_change_param1 = 6;
 		int max_change_param2 = 5;
@@ -274,7 +274,7 @@ public class VisionController implements Runnable {
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop: do {
-			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + max_change_param1; sec1++) {
+			for (sec1 = param1 ; sec1 <= param1 + max_change_param1; sec1++) {
 				extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 				if (eval(amount_circles))
 					break outerloop;
@@ -304,7 +304,7 @@ public class VisionController implements Runnable {
 		draw_circles(true);
 		create_nodes();
 
-	}
+	}*/
 
 	private boolean eval(int amount) {
 		if (get_vec_len() == amount)
