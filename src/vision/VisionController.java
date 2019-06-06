@@ -29,7 +29,7 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
  *
  */
 
-// TODO: extract circles must have 720p x 1 instead of 720p x 3 --- must be greyscaled
+
 
 public class VisionController implements Runnable {
 	
@@ -87,12 +87,16 @@ public class VisionController implements Runnable {
 			
 			//converter.convert(grabber.grab());
 			int[] calib = {6, 5, 2, 6, 20};
-			IdentifyBalls identifyBalls = new IdentifyBalls(picture_global, 1, 3, 120, 15, 2, 8, calib);
+			extract_layer(picture_global);
+			IdentifyBalls identifyBalls = new IdentifyBalls(picture_plain, 1, 3, 120, 15, 2, 8, calib);
 			draw_circles(false, identifyBalls.get_circle());
 			for (int i = 0; i < 3; i++) {
 				System.out.println("X is: " + identifyBalls.get_circle().get(i).get(0));
 				System.out.println("Y is: " + identifyBalls.get_circle().get(i).get(1));
 			}
+
+			vid_frame.showImage(converter.convert(get_pic()));
+	 		vid_edges.showImage(converter.convert(get_plain()));
 			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
