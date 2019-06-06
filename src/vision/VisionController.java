@@ -261,7 +261,7 @@ public class VisionController implements Runnable {
 		extract_layer(picture);
 		// extract_lines( 1, CV_PI/180, 30, 0, 200, new Size(3,3), 50, 100);
 		// extract_circles(1,50,120,80,50,100);
-		auto_circle(3, 120, 15, 2, 8);
+		//auto_circle(3, 120, 15, 2, 8);
 	}
 /*
 	private void auto_circle(int param1, int param2, int param3, int param4, int param5) {

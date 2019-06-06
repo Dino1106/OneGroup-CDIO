@@ -6,7 +6,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 
-///INITIAL CONDITIONS auto_circle(3, 120, 15, 2, 8);
+///INITIAL CONDITIONS auto_circle(1 ,3, 120, 15, 2, 8);
 /// INITIAL CONDITIONS calib (6 5 2 6 20 )
 
 
@@ -59,8 +59,8 @@ public class IdentifyBalls {
 				center_threshold, min_rad, max_rad);
 	}
 
-	public synchronized int get_circle(int circle_number, int parameter) {
-		return (int) circle.get(circle_number).get(parameter);
+	public synchronized Vec3fVector get_circle() {
+		return circle;
 	}
 
 	private void auto_circle(int param1, int param2, int param3, int param4, int param5) {
