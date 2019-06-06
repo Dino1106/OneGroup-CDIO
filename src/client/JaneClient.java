@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import server.RobertServer; 
+import server.RobotMovement; 
  
 public class JaneClient { 
  
@@ -15,7 +15,7 @@ public class JaneClient {
 		String ip = "192.168.43.187"; 
 		if (args.length > 0) 
 			ip = args[0]; 
-		Socket sock = new Socket(ip, RobertServer.port); 
+		Socket sock = new Socket(ip, RobotMovement.port); 
 		System.out.println("Jane connected to Robert!"); 
  
 		// Initialize input and output.
