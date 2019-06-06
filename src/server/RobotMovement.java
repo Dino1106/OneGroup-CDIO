@@ -44,6 +44,7 @@ public class RobotMovement {
 		
 		Pose pose = poseProvider.getPose();				// Gets the 'pose' of robot (position and heading)
 		Point location = pose.getLocation();
+		pose.setLocation(location);					    // Set from coordinate using pose provider
 		
 		navigator.goTo(new Waypoint(to.x, to.y));
 		
