@@ -5,7 +5,7 @@ import org.bytedeco.opencv.opencv_core.Mat;
 public class Main {
 
 	public static void main(String[] args) {
-		ObjectReader test = new ObjectReader();
+		VisionController test = new VisionController();
 		Thread th = new Thread(test);
 		th.start();
 		

@@ -28,7 +28,7 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
  * @author Jakub Tomczak
  *
  */
-public class ObjectReader implements Runnable {
+public class VisionController implements Runnable {
 	
 	private int imageHeight = 720;
 	private int imageWidth = 1366;
@@ -51,7 +51,7 @@ public class ObjectReader implements Runnable {
 	private boolean vid;
 
 	// Laptop camera, TODO: Delete later.
-	public ObjectReader() {
+	public VisionController() {
 		Camera_id = 0;
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = true;
@@ -59,14 +59,14 @@ public class ObjectReader implements Runnable {
 
 	// USB plugged camera.
 	// Int camera is the ID of the camera, can be made constant.
-	public ObjectReader(int camera) {
+	public VisionController(int camera) {
 		Camera_id = camera;
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = true;
 	}
 
 	// If you want to test with a static image, TODO: Maybe delete later.
-	public ObjectReader(String imgpath) {
+	public VisionController(String imgpath) {
 		Camera_id = 0;
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = false;
@@ -79,7 +79,13 @@ public class ObjectReader implements Runnable {
 			FrameGrabber grabber = FrameGrabber.createDefault(Camera_id);
 			OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 			
-			grabber.setImageHeight();
+			grabber.setImageHeight(imageHeight);
+			grabber.setImageWidth(imageWidth);
+			
+			Mat picture = converter.convert(grabber.grab());
+			
+			Generate_Objects(picture);
+			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
 		}
@@ -108,6 +114,24 @@ public class ObjectReader implements Runnable {
 	 *
 	 */
 
+	private void extract_layer(Mat picture) {
+		BytePointer dat;
+		
+		cvtColor(picture, picture, COLOR_BGR2HSV);
+		dat = picture.data();
+		
+		for (int i = 0; i < (picture.arrayHeight() * picture.arrayWidth() * 3); i += 3) {
+			dat = dat.put(0 + i, (byte) dat.get(i + 2));
+			dat = dat.put(1 + i, (byte) dat.get(i + 2));
+		}
+		
+		cvtColor(picture, picture, COLOR_BGR2GRAY);
+		picture_plain = picture_global.clone();
+		cvtColor(picture, picture, COLOR_GRAY2BGR);
+		
+	}
+	
+	/*
 	private void extract_layer() {
 		Mat picture = get_pic();
 		BytePointer dat;
@@ -125,7 +149,8 @@ public class ObjectReader implements Runnable {
 		picture_plain = picture_global.clone();
 		cvtColor(picture, picture, COLOR_GRAY2BGR);
 	}
-
+	*/
+	
 	private void extract_circles(int resolution_ratio, int min_distance, int Canny_threshold, int Center_threshold,
 			int min_rad, int max_rad) {
 		Vec3fVector circle = new Vec3fVector();
@@ -234,8 +259,8 @@ public class ObjectReader implements Runnable {
 		picture_global = img;
 	}
 
-	private void Generate_Objects() {
-		extract_layer();
+	private void Generate_Objects(Mat picture) {
+		extract_layer(picture);
 		// extract_lines( 1, CV_PI/180, 30, 0, 200, new Size(3,3), 50, 100);
 		// extract_circles(1,50,120,80,50,100);
 		auto_circle(3, 120, 15, 2, 8);
