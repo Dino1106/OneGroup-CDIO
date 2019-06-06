@@ -34,6 +34,7 @@ public class IdentifyBalls {
 		this.min_rad = min_rad;
 		this.max_rad = max_rad;
 
+
 		extract_circles(resolution_ratio, min_distance, canny_threshold, center_threshold, min_rad, max_rad);
 	}
 
@@ -63,33 +64,29 @@ public class IdentifyBalls {
 	}
 
 	private void auto_circle(int param1, int param2, int param3, int param4, int param5) {
-		int max_change_param1 = 6;
-		int max_change_param2 = 5;
-		int max_change_param3 = 2;
-		int max_change_param4 = 6;
-		int max_change_param5 = 20;
+
 		int amount_circles = 7;
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop:
 		do {
-			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + max_change_param1; sec1++) {
+			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
 				extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 				if (eval(amount_circles))
 					break outerloop;
-				for (sec2 = (param2 - max_change_param2); sec2 <= param2 + max_change_param2; sec2++) {
+				for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
 					extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 					if (eval(amount_circles))
 						break outerloop;
-					for (sec3 = (param3 - max_change_param3); sec3 <= param3 + max_change_param3; sec3++) {
+					for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
 						extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 						if (eval(amount_circles))
 							break outerloop;
-						for (sec4 = (param4); sec4 <= param4 + max_change_param4; sec4++) {
+						for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
 							extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 							if (eval(amount_circles))
 								break outerloop;
-							for (sec5 = (param5); sec5 <= param5 + max_change_param5; sec5++) {
+							for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
 								extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 								if (eval(amount_circles))
 									break outerloop;
