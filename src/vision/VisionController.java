@@ -28,9 +28,6 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
  * @author Jakub Tomczak
  *
  */
-
-
-
 public class VisionController implements Runnable {
 	
 	private int imageHeight = 720;
@@ -85,18 +82,9 @@ public class VisionController implements Runnable {
 			grabber.setImageHeight(imageHeight);
 			grabber.setImageWidth(imageWidth);
 			
-			//converter.convert(grabber.grab());
-			int[] calib = {6, 5, 2, 6, 20};
-			extract_layer(picture_global);
-			IdentifyBalls identifyBalls = new IdentifyBalls(picture_plain, 1, 3, 120, 15, 2, 8, calib);
-			draw_circles(false, identifyBalls.get_circle());
-			for (int i = 0; i < 3; i++) {
-				System.out.println("X is: " + identifyBalls.get_circle().get(i).get(0));
-				System.out.println("Y is: " + identifyBalls.get_circle().get(i).get(1));
-			}
-
-			vid_frame.showImage(converter.convert(get_pic()));
-	 		vid_edges.showImage(converter.convert(get_plain()));
+			Mat picture = converter.convert(grabber.grab());
+			
+			Generate_Objects(picture);
 			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
@@ -227,9 +215,9 @@ public class VisionController implements Runnable {
 		Circle_set = vec;
 	}
 
-	private synchronized void draw_circles(Boolean centers, Vec3fVector ballCoords) {
+	private synchronized void draw_circles(Boolean centers) {
 		for (int i = 0; i < 7; i++) {
-			circle(get_pic(), new Point((int) ballCoords.get(i).get(x_circle), (int) ballCoords.get(i).get(y_circle)), (int) ballCoords.get(i).get(rad_circle),
+			circle(get_pic(), new Point(get_circle(i, x_circle), get_circle(i, y_circle)), get_circle(i, rad_circle),
 					Scalar.RED);
 			if (centers) {
 				line(get_pic(), new Point(get_circle(i, x_circle) - 3, get_circle(i, y_circle)),
@@ -275,9 +263,9 @@ public class VisionController implements Runnable {
 		extract_layer(picture);
 		// extract_lines( 1, CV_PI/180, 30, 0, 200, new Size(3,3), 50, 100);
 		// extract_circles(1,50,120,80,50,100);
-		//auto_circle(3, 120, 15, 2, 8);
+		auto_circle(3, 120, 15, 2, 8);
 	}
-/*
+
 	private void auto_circle(int param1, int param2, int param3, int param4, int param5) {
 		int max_change_param1 = 6;
 		int max_change_param2 = 5;
@@ -288,7 +276,7 @@ public class VisionController implements Runnable {
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop: do {
-			for (sec1 = param1 ; sec1 <= param1 + max_change_param1; sec1++) {
+			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + max_change_param1; sec1++) {
 				extract_circles(1, sec1, sec2, sec3, sec4, sec5);
 				if (eval(amount_circles))
 					break outerloop;
@@ -318,7 +306,7 @@ public class VisionController implements Runnable {
 		draw_circles(true);
 		create_nodes();
 
-	}*/
+	}
 
 	private boolean eval(int amount) {
 		if (get_vec_len() == amount)
