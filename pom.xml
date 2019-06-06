@@ -17,7 +17,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
           <target>1.7</target>
         </configuration>
       </plugin>
-      <plugin> <groupId>org.bytedeco</groupId> <artifactId>javacpp</artifactId> <version>1.5</version> </plugin>
+      <plugin> 
+	      <groupId>org.bytedeco</groupId> 
+	      <artifactId>javacpp</artifactId> 
+	      <version>1.5</version> 
+      </plugin>
     </plugins>
   </build>
   <dependencies>
