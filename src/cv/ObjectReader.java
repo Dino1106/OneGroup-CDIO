@@ -115,13 +115,13 @@ public class ObjectReader implements Runnable {
 		toVec(circle);
 	}
 
-	private void extract_lines(double rho,double theta,int threshold, int minLineLength,int maxLineGap,Size filter_dim, int threshold1, int threshold2
-{
+	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
+			Size filter_dim, int threshold1, int threshold2) {
 		Vec4iVector lines = new Vec4iVector();
-		Mat blurred = new Mat(),edges = new Mat() ;
-		blur(get_plain(),blurred  , filter_dim);
-		Canny(blurred,edges, threshold1, threshold2);
-		HoughLinesP(edges, lines,rho, theta, threshold, minLineLength, maxLineGap);
+		Mat blurred = new Mat(), edges = new Mat();
+		blur(get_plain(), blurred, filter_dim);
+		Canny(blurred, edges, threshold1, threshold2);
+		HoughLinesP(edges, lines, rho, theta, threshold, minLineLength, maxLineGap);
 		to_lineVec(lines);
 		draw_lines();
 	}
