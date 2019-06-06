@@ -115,8 +115,8 @@ public class ObjectReader implements Runnable {
 		toVec(circle);
 	}
 
-	private void extract_lines(double rho,double theta,int threshold, int minLineLength,int maxLineGap,Size filter_dim, int threshold1, int threshold2
-{
+	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
+			Size filter_dim, int threshold1, int threshold2) {
 		Vec4iVector lines = new Vec4iVector();
 		Mat blurred = new Mat(), edges = new Mat();
 		blur(get_plain(), blurred, filter_dim);
