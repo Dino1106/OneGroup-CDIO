@@ -1,4 +1,4 @@
-package cv;
+package vision;
 
 import org.bytedeco.opencv.opencv_core.Mat;
 

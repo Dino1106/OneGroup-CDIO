@@ -1,4 +1,4 @@
-package cv;
+package vision;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
@@ -29,6 +29,9 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
  *
  */
 public class ObjectReader implements Runnable {
+	
+	private int imageHeight = 720;
+	private int imageWidth = 1366;
 
 	private static final int x_circle = 0;
 	private static final int y_circle = 1;
@@ -47,23 +50,39 @@ public class ObjectReader implements Runnable {
 	private Mat edges_global;
 	private boolean vid;
 
+	// Laptop camera, TODO: Delete later.
 	public ObjectReader() {
 		Camera_id = 0;
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = true;
 	}
 
+	// USB plugged camera.
+	// Int camera is the ID of the camera, can be made constant.
 	public ObjectReader(int camera) {
 		Camera_id = camera;
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = true;
 	}
 
+	// If you want to test with a static image, TODO: Maybe delete later.
 	public ObjectReader(String imgpath) {
 		Camera_id = 0;
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = false;
 		picture_global = imread(imgpath);
+	}
+
+	@Override
+	public void run() {
+		try {
+			FrameGrabber grabber = FrameGrabber.createDefault(Camera_id);
+			OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+			
+			grabber.setImageHeight();
+		} catch (java.lang.Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void create_nodes() {
@@ -270,30 +289,20 @@ public class ObjectReader implements Runnable {
 		return false;
 	}
 
-	@Override
-	public void run() {
-		try {
-
-			FrameGrabber grabber = FrameGrabber.createDefault(Camera_id);
-			OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
-			if (vid) {
-				grabber.start();
-
-				while (vid) {
-					update_image(converter.convert(grabber.grab()));
-					// extract_circles(1,50,120,80,50,100);
-					extract_layer();
-					vid_frame.showImage(converter.convert(get_pic()));
-					vid_edges.showImage(converter.convert(get_edges()));
-				}
-			} else {
-				Generate_Objects();
-				// extract_circles(1,50,120,80,50,100);
-				vid_frame.showImage(converter.convert(get_pic()));
-				vid_edges.showImage(converter.convert(get_plain()));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	/*
+	 * @Override public void run() { try {
+	 * 
+	 * FrameGrabber grabber = FrameGrabber.createDefault(Camera_id);
+	 * OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat(); if
+	 * (vid) { grabber.start();
+	 * 
+	 * while (vid) { update_image(converter.convert(grabber.grab())); //
+	 * extract_circles(1,50,120,80,50,100); extract_layer();
+	 * vid_frame.showImage(converter.convert(get_pic()));
+	 * vid_edges.showImage(converter.convert(get_edges())); } } else {
+	 * Generate_Objects(); // extract_circles(1,50,120,80,50,100);
+	 * vid_frame.showImage(converter.convert(get_pic()));
+	 * vid_edges.showImage(converter.convert(get_plain())); } } catch (Exception e)
+	 * { e.printStackTrace(); } }
+	 */
 }
