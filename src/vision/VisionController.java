@@ -82,7 +82,14 @@ public class VisionController implements Runnable {
 			grabber.setImageHeight(imageHeight);
 			grabber.setImageWidth(imageWidth);
 			
-			Mat picture = converter.convert(grabber.grab());
+			//converter.convert(grabber.grab());
+			int[] calib = {6, 5, 2, 6, 20};
+			IdentifyBalls identifyBalls = new IdentifyBalls(picture_global.clone(), 1, 3, 120, 15, 2, 8, calib);
+			draw_circles(false, identifyBalls.get_circle());
+			for (int i = 0; i < 3; i++) {
+				System.out.println("X is: " + identifyBalls.get_circle().get(i).get(0));
+				System.out.println("Y is: " + identifyBalls.get_circle().get(i).get(1));
+			}
 			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
@@ -213,9 +220,9 @@ public class VisionController implements Runnable {
 		Circle_set = vec;
 	}
 
-	private synchronized void draw_circles(Boolean centers) {
+	private synchronized void draw_circles(Boolean centers, Vec3fVector ballCoords) {
 		for (int i = 0; i < 7; i++) {
-			circle(get_pic(), new Point(get_circle(i, x_circle), get_circle(i, y_circle)), get_circle(i, rad_circle),
+			circle(get_pic(), new Point((int) ballCoords.get(i).get(x_circle), (int) ballCoords.get(i).get(y_circle)), (int) ballCoords.get(i).get(rad_circle),
 					Scalar.RED);
 			if (centers) {
 				line(get_pic(), new Point(get_circle(i, x_circle) - 3, get_circle(i, y_circle)),
