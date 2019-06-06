@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 public class RawMap {
 	
-	ArrayList<Coordinate> balls;
-	Coordinate crossMid;
-	Coordinate crossEdge;
-
+	public ArrayList<Coordinate> balls;
+	public Coordinate crossMid;
+	public Coordinate crossEdge;
+	public int robotOrientation;
+	public Coordinate upperLeftWallPoint;
+	public Coordinate lowerRightWallPoint;
 }
