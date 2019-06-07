@@ -11,15 +11,20 @@ import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter.ToOrgOpenCvCoreMat;
+import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.utils.Converters;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
+import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.*;
 
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
@@ -43,6 +48,8 @@ public class VisionController implements Runnable {
 	private static final int ystart_line = 1;
 	private static final int xend_line = 2;
 	private static final int yend_line = 3;
+	
+	
 
 	private CanvasFrame vid_frame = new CanvasFrame("frame1");
 	private CanvasFrame vid_edges = new CanvasFrame("edges");
@@ -77,7 +84,8 @@ public class VisionController implements Runnable {
 		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = false;
 		picture_global = imread(imgpath);
-
+		picture_color = picture_global.clone();
+		
 	}
 
 
@@ -95,6 +103,11 @@ public class VisionController implements Runnable {
 
 			// Set Calibration values for Identify Balls
 			int[] calib = {6, 5, 2, 6, 20};
+			
+			test(picture_color);
+			vid_color.showImage(converter.convert(get_color()));
+			
+			
 
 			// Generate layers
 			extract_layer(picture_global);
@@ -108,7 +121,7 @@ public class VisionController implements Runnable {
 			// Update window frame with current picture frame
 			vid_frame.showImage(converter.convert(get_pic()));
 	 		vid_edges.showImage(converter.convert(get_plain()));
-	 		vid_color.showImage(converter.convert(get_color()));
+	 		
 			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
@@ -131,7 +144,7 @@ public class VisionController implements Runnable {
 	private void extract_layer(Mat picture) {
 		BytePointer dat;
 		
-
+		
 		
 		cvtColor(picture, picture, COLOR_BGR2HSV);
 		dat = picture.data();
@@ -141,15 +154,41 @@ public class VisionController implements Runnable {
 			dat = dat.put(1 + i, (byte) dat.get(i + 2));
 		}
 		
+	
 		
-		Core.inRange((org.opencv.core.Mat) picture, new org.opencv.core.Scalar(100, 130, 255), new org.opencv.core.Scalar(0, 40, 230), picture);
 		
 		cvtColor(picture, picture, COLOR_BGR2GRAY);
 		picture_plain = picture_global.clone();
 		cvtColor(picture, picture, COLOR_GRAY2BGR);
 		
+		
 	}
 	
+	
+	public void test(Mat picture) {
+		//cvtColor(picture, picture, COLOR_BGR2HSV);
+
+		int h_min = 10, 	h_max = 11;
+		int s_min = 55, 	s_max = 100;
+		int v_min = 60,		v_max = 100;
+		
+		int b_min = 0, 		b_max = 111;
+		int g_min = 27, 	g_max = 136;
+		int r_min = 151,	r_max = 255;
+		
+		
+		Mat min_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(b_min, g_min, r_min, 0));
+		Mat max_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(b_max, g_max, r_max, 0));
+		
+		opencv_core.inRange(picture, min_Mat, max_Mat, picture_color);
+		
+		
+	}
+	
+	/*
+	private void extract_layer() {
+		Mat picture = get_pic();
+		BytePointer dat;
 
 // TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN IDENTIFY_CROSS.java
 	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
@@ -189,7 +228,7 @@ public class VisionController implements Runnable {
 	}
 
 	public synchronized Mat get_color() {
-		return color_global;
+		return picture_color;
 	}
 
 
