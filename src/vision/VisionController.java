@@ -16,6 +16,8 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
+import org.opencv.core.Core;
+
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 import org.bytedeco.opencv.opencv_core.*;
@@ -44,10 +46,14 @@ public class VisionController implements Runnable {
 
 	private CanvasFrame vid_frame = new CanvasFrame("frame1");
 	private CanvasFrame vid_edges = new CanvasFrame("edges");
+	private CanvasFrame vid_color = new CanvasFrame("color");
+	
 	private Vec4iVector Line_set = new Vec4iVector();
 	private Vec3fVector Circle_set = new Vec3fVector();
+	
 	private int Camera_id;
-	private Mat picture_global = new Mat(), picture_plain = new Mat();
+	private Mat picture_global = new Mat(), picture_plain = new Mat(), picture_color = new Mat();
+	private Mat edges_global, color_global;
 	private boolean vid;
 
 	// Laptop camera constructor
@@ -102,6 +108,7 @@ public class VisionController implements Runnable {
 			// Update window frame with current picture frame
 			vid_frame.showImage(converter.convert(get_pic()));
 	 		vid_edges.showImage(converter.convert(get_plain()));
+	 		vid_color.showImage(converter.convert(get_color()));
 			
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
@@ -124,6 +131,8 @@ public class VisionController implements Runnable {
 	private void extract_layer(Mat picture) {
 		BytePointer dat;
 		
+
+		
 		cvtColor(picture, picture, COLOR_BGR2HSV);
 		dat = picture.data();
 		
@@ -131,6 +140,9 @@ public class VisionController implements Runnable {
 			dat = dat.put(0 + i, (byte) dat.get(i + 2));
 			dat = dat.put(1 + i, (byte) dat.get(i + 2));
 		}
+		
+		
+		Core.inRange((org.opencv.core.Mat) picture, new org.opencv.core.Scalar(100, 130, 255), new org.opencv.core.Scalar(0, 40, 230), picture);
 		
 		cvtColor(picture, picture, COLOR_BGR2GRAY);
 		picture_plain = picture_global.clone();
@@ -176,6 +188,9 @@ public class VisionController implements Runnable {
 		return picture_plain;
 	}
 
+	public synchronized Mat get_color() {
+		return color_global;
+	}
 
 
 
