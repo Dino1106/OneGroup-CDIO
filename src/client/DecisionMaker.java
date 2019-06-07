@@ -1,6 +1,7 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DecisionMaker {
 	
@@ -84,6 +85,27 @@ public class DecisionMaker {
 	
 	public int countBallsOnField() {
 		return mapState.ballList.size();
+	}
+	
+	public List<Ball> lowRiskBalls(){
+		List<Ball> safeBalls = new ArrayList<Ball>();
+		int paddingVert, paddingHori;
+		
+		paddingVert = (int) ((mapState.wallList.get(0).upper.y - mapState.wallList.get(0).lower.y)* 0.10);
+		paddingHori = (int) ((mapState.wallList.get(1).upper.x - mapState.wallList.get(0).lower.x)* 0.10); 
+		
+		for(Ball ball : mapState.ballList) {
+			if(ball.coordinate.x < mapState.wallList.get(0).upper.x + paddingHori && ball.coordinate.y > mapState.wallList.get(0).upper.y - paddingVert) {
+				if(ball.coordinate.y > mapState.wallList.get(0).upper.y + paddingVert) {
+					if(ball.coordinate.x < mapState.wallList.get(1).upper.x - paddingHori) {
+						safeBalls.add(ball);
+					}
+				}
+			}
+		}
+		
+		return safeBalls;
+		
 	}
 
 }
