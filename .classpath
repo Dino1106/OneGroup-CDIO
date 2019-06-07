@@ -17,5 +17,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="lib" path="ext-jar/dbusjava.jar"/>
+	<classpathentry kind="lib" path="ext-jar/ev3classes.jar"/>
+	<classpathentry kind="output" path="target/"/>
 </classpath>

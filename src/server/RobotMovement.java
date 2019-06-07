@@ -12,7 +12,6 @@ import lejos.robotics.navigation.*;
 
 public class RobotMovement { 
 	 
-	public static final int port = 1337;
 	private UnregulatedMotor ball_picker_left, ball_picker_right;
 	private Wheel left_wheel, right_wheel;
     private Chassis chassis;
@@ -20,7 +19,6 @@ public class RobotMovement {
     private PoseProvider poseProvider;
     private Navigator navigator;
 	private double wheelDiameter;
-    
     
     public RobotMovement() {
     	/* Setup ball-picker motors */

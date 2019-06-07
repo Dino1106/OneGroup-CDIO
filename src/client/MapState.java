@@ -10,5 +10,4 @@ public class MapState {
 	public Goal goal1, goal2;
 	public RobotLocation robotLocation;
 	
-
 }
