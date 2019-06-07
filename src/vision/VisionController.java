@@ -191,10 +191,6 @@ public class VisionController implements Runnable {
 		
 	}
 	
-	/*
-	private void extract_layer() {
-		Mat picture = get_pic();
-		BytePointer dat;
 
 // TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN IDENTIFY_CROSS.java
 	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
