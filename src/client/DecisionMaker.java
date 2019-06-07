@@ -72,7 +72,7 @@ public class DecisionMaker {
 			Routes = pathFinder.getCalculatedRoutesGoals(mapState);
 		}
 		int best = 999; // Arbitrarily large value.
-		Route bestRoute;
+		Route bestRoute = null;
 		for (Route route : Routes) {
 			if (route.coordinates.size() < best) {
 				best = route.coordinates.size();

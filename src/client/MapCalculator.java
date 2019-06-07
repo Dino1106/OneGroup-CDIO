@@ -15,17 +15,19 @@ public class MapCalculator{
 	}
 	
 	public MapState getProcessedMap() {
+		return null;
 		
 	}
 	
 	public List<Ball> calculateBalls() {
-		List<Ball> balls;
+		List<Ball> balls = null;
 		
 		for(Vec3fVector ball: raw_map.getBalls()) {
 			Ball b = new Ball();
-			b.coordinate.x = ball.get(ball.position()).get(0);
-			b.coordinate.y = ball.get(ball.position()).get(1);
+			b.coordinate.x = (int) ball.get(ball.position()).get(0);
+			b.coordinate.y = (int) ball.get(ball.position()).get(1);
 			balls.add(b);
 		}
+		return balls;
 	}
 }
