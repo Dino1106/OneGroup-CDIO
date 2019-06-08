@@ -53,37 +53,99 @@ public int[] calculate_edges(Mat to_transform)
 
     p = color_map.data();
 
-    int x_bound[] = {0,0};
-    int y_bound[] = {0,0};
+int  cords_pre[][] = new int[2][4];
 
 
- d2:
+ d21:
     for( int y = highier_left_boundary[1]; y <= lower_left_boundary[1]; y++ )
+    for( int x = highier_left_boundary[0]; x < highier_right_boundary[0]; x++ ){
+
+        System.out.print( p.get((y*color_map.arrayWidth())+x));
+        if(p.get((y*color_map.arrayWidth())+x) == -1){
+
+            cords_pre[0][0] = x;
+            cords_pre[1][0] = y;
+
+            break d21;
+        }}
+d22:
+    for( int y = lower_left_boundary[1]; y >= highier_left_boundary[1]; y-- )
         for( int x = highier_left_boundary[0]; x < highier_right_boundary[0]; x++ ){
 
-            System.out.print( p.get((y*color_map.arrayWidth())+x));
             if(p.get((y*color_map.arrayWidth())+x) == -1){
 
-                temp_y = y;
-                temp_x_start = x;
-                break d2;
+                cords_pre[0][1] = x;
+                cords_pre[1][1] = y;
+
+
+                break d22;
+            }}
+
+d23:
+    for( int x = lower_left_boundary[0]; x <= lower_right_boundary[0]; x++ )
+        for( int y = highier_left_boundary[1]; y <= lower_right_boundary[1]; y++ ){
+
+            if(p.get((y*color_map.arrayWidth())+x) == -1){
+
+                cords_pre[0][2] = x;
+                cords_pre[1][2] = y;
+
+
+                break d23;
             }}
 
 
-    for (int x = temp_x_start  ; x < highier_right_boundary[0];x++)
-    {
-        if((p.get((temp_y*color_map.arrayWidth())+x)) == 0){
-            temp_x_stop = x;
-            break;}
+    d23:
+    for( int x = lower_right_boundary[0]; x >= lower_left_boundary[0]; x-- )
+        for( int y = highier_left_boundary[1]; y <= lower_right_boundary[1]; y++ ){
 
-    }
+            if(p.get((y*color_map.arrayWidth())+x) == -1){
+
+                cords_pre[0][3] = x;
+                cords_pre[1][3] = y;
+
+
+                break d23;
+            }}
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//    for (int x = temp_x_start  ; x < highier_right_boundary[0];x++)
+//    {
+//        if((p.get((temp_y*color_map.arrayWidth())+x)) == 0){
+//           temp_x_stop = x;
+//            break;}
+
+
 
 
 
     cvtColor(color_map,color_map,COLOR_GRAY2BGR);
 
 
-    line(color_map,new Point(temp_x_start,temp_y),new Point(temp_x_stop,temp_y),Scalar.GREEN);
+
+
+    line(color_map,new Point(cords_pre[0][3],cords_pre[1][0]),new Point(cords_pre[0][2],cords_pre[1][0]),Scalar.GREEN);
+    line(color_map,new Point(cords_pre[0][2],cords_pre[1][0]),new Point(cords_pre[0][2],cords_pre[1][1]),Scalar.GREEN);
+    line(color_map,new Point(cords_pre[0][2],cords_pre[1][1]),new Point(cords_pre[0][3],cords_pre[1][1]),Scalar.GREEN);
+    line(color_map,new Point(cords_pre[0][3],cords_pre[1][1]),new Point(cords_pre[0][3],cords_pre[1][0]),Scalar.GREEN);
+
+
+
+
+
+
+
 
     line(color_map,new Point(highier_left_boundary[0],highier_left_boundary[1]),new Point(lower_left_boundary[0],lower_left_boundary[1]),Scalar.RED);
     line(color_map,new Point(lower_left_boundary[0],lower_left_boundary[1]),new Point(lower_right_boundary[0],lower_right_boundary[1]),Scalar.RED);
