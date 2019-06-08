@@ -53,7 +53,7 @@ public class VisionController implements Runnable {
 
 	private CanvasFrame vid_frame = new CanvasFrame("frame1");
 	private CanvasFrame vid_edges = new CanvasFrame("edges");
-	private CanvasFrame vid_color = new CanvasFrame("color");
+//	private CanvasFrame vid_color = new CanvasFrame("color");
 	
 	private Vec4iVector Line_set = new Vec4iVector();
 	private Vec3fVector Circle_set = new Vec3fVector();
@@ -104,18 +104,21 @@ public class VisionController implements Runnable {
 
 			// Set Calibration values for Identify Balls
 			int[] calib = {6, 5, 2, 6, 20};
-			
-			test(picture_color);
-			vid_color.showImage(converter.convert(get_color()));
-			
-			
+
+
 
 			// Generate layers
 			extract_layer(picture_global);
 
+
 			// 1 - Identify balls with given parameters and draw circles
 			IdentifyBalls identifyBalls = new IdentifyBalls(picture_plain, 1, 3, 120, 15, 2, 8, calib);
 			draw_circles(false, identifyBalls.get_circle());
+
+
+			// 2 - Identify cross with constant parameters
+            IdentifyCross identifyCross = new IdentifyCross(picture_color.clone());
+
 
 
 
@@ -174,21 +177,21 @@ public class VisionController implements Runnable {
 		int s_min = 55, 	s_max = 100;
 		int v_min = 60,		v_max = 100;
 		*/
-		
+
 		// Range of red color of cross
 		int b_min = 0, 		b_max = 111;
 		int g_min = 27, 	g_max = 136;
 		int r_min = 151,	r_max = 255;
-		
-		
+
+
 		// Create Mat's based of the colors for the inRange function
 		Mat min_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(b_min, g_min, r_min, 0));
 		Mat max_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(b_max, g_max, r_max, 0));
-		
+
 		// Remove any other color than in the range of min and max
 		opencv_core.inRange(picture, min_Mat, max_Mat, picture_color);
-		
-		
+
+
 	}
 	
 
