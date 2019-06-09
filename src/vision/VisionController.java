@@ -118,6 +118,7 @@ public class VisionController implements Runnable {
 
 			// 2 - Identify cross with constant parameters
             IdentifyCross identifyCross = new IdentifyCross(picture_color.clone());
+            identifyCross.draw_box(picture_global,Scalar.BLUE);
 
 
 
@@ -131,6 +132,7 @@ public class VisionController implements Runnable {
 			e.printStackTrace();
 		}
 	}
+
 
 	// Creates lines between all circles
 	public void create_nodes() {
@@ -169,33 +171,10 @@ public class VisionController implements Runnable {
 	}
 	
 	
-	public void test(Mat picture) {
-		/*
-		cvtColor(picture, picture, COLOR_BGR2HSV);
 
-		int h_min = 10, 	h_max = 11;
-		int s_min = 55, 	s_max = 100;
-		int v_min = 60,		v_max = 100;
-		*/
-
-		// Range of red color of cross
-		int b_min = 0, 		b_max = 111;
-		int g_min = 27, 	g_max = 136;
-		int r_min = 151,	r_max = 255;
-
-
-		// Create Mat's based of the colors for the inRange function
-		Mat min_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(b_min, g_min, r_min, 0));
-		Mat max_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(b_max, g_max, r_max, 0));
-
-		// Remove any other color than in the range of min and max
-		opencv_core.inRange(picture, min_Mat, max_Mat, picture_color);
-
-
-	}
 	
 
-// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN IDENTIFY_CROSS.java
+// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
 	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
 		Size filter_dim, int threshold1, int threshold2) {
 		Vec4iVector lines = new Vec4iVector();
