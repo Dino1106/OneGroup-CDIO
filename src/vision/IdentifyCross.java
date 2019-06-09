@@ -15,7 +15,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class IdentifyCross {
 
-   private CanvasFrame vid_color = new CanvasFrame("color");
+
     private int coords[][] = new int [2][4];
 
 
