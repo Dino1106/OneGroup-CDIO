@@ -19,5 +19,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="ext-jar/dbusjava.jar"/>
 	<classpathentry kind="lib" path="ext-jar/ev3classes.jar"/>
-	<classpathentry kind="output" path="target/"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

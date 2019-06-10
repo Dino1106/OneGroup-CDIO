@@ -59,10 +59,9 @@ public class PathFinder {
 	}
 
 	public Coordinate middleOfGoal(Goal goal) {
-		Coordinate coordinate = new Coordinate();
-		coordinate.x = (goal.coordinate1.x + goal.coordinate2.x)/2;
-		coordinate.y = (goal.coordinate1.y + goal.coordinate2.y)/2;
-		return coordinate;
+		int x = (goal.coordinate1.x + goal.coordinate2.x)/2;
+		int y = (goal.coordinate1.y + goal.coordinate2.y)/2;
+		return new Coordinate(x, y);
 	}
 
 	public void playSound(String sound) {

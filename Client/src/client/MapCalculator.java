@@ -54,10 +54,9 @@ public class MapCalculator{
 	public Cross calculateObstacle() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
 		for(int i = 0; i > raw_map.getObstacle()[0].length; i++) {
-			Coordinate coord = new Coordinate();
-			coord.x = raw_map.getObstacle()[i][0];
-			coord.y = raw_map.getObstacle()[i][1];
-			obstacle_coord.add(coord);
+			int x = raw_map.getObstacle()[i][0];
+			int y = raw_map.getObstacle()[i][1];
+			obstacle_coord.add(new Coordinate(x, y));
 		}
 		
 		Cross obstacle = new Cross(obstacle_coord.get(0),obstacle_coord.get(1),obstacle_coord.get(2),obstacle_coord.get(3));
