@@ -1,8 +1,9 @@
 package vision;
 
 import java.util.ArrayList;
-import Interfaces.IRawMap;
-import Interfaces.IVisionConverter;
+
+import org.bytedeco.javacpp.IntPointer;
+
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -15,11 +16,13 @@ import model.Wall;
 public class VisionTranslator {
 	
 	private VisionController visionController;
+	private VisionSnapShot visionSnapShot;
 	
 	public VisionTranslator() {
-		
+		visionController = new VisionController("a.jpg");
+		Thread th = new Thread(visionController);
+		th.start();
 	}
-	
 	
 	public MapState getProcessedMap() {
 		
@@ -27,20 +30,22 @@ public class VisionTranslator {
 		robot_start.coordinate.x = 0;
 		robot_start.coordinate.y = 0;
 		
-		MapState processedMap = new MapState(calculateBalls(),calculateObstacle(),calculateWalls(),calculateGoals().get(0),calculateGoals().get(1),
+		return new MapState(
+				calculateBalls(),
+				calculateCross(),
+				calculateWalls(),
+				calculateGoals().get(0),
+				calculateGoals().get(1),
 				robot_start);
-		
-		return processedMap;
-		
 	}
 	
 	private ArrayList<Ball> calculateBalls() {
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 		
-		for(int i = 0; i > raw_map.getBalls()[0].length; i++) {
+		for(int i = 0; i > visionSnapShot.getBalls().get(0).sizeof(); i++) {
 			Ball b = new Ball();
-			b.coordinate.x = raw_map.getBalls()[i][0];
-			b.coordinate.y = raw_map.getBalls()[i][1];
+			b.coordinate.x = (int) visionSnapShot.getBalls().get(i).get(0);
+			b.coordinate.y = (int) visionSnapShot.getBalls().get(i).get(1);
 			balls.add(b);
 		}
 		return balls;
@@ -49,22 +54,23 @@ public class VisionTranslator {
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		
-		for(int i = 0; i > raw_map.getWalls()[0].length; i++) {
+		for(int i = 0; i > visionSnapShot.getWalls().get(0).sizeof(); i++) {
 			Wall w = new Wall();
-			w.upper.x = raw_map.getWalls()[i][0];
-			w.upper.y = raw_map.getWalls()[i][1];
-			w.lower.x = raw_map.getWalls()[i][0];
-			w.lower.y = raw_map.getWalls()[i][1];
+			w.upper.x = new IntPointer(visionSnapShot.getWalls().get(i)).get(0);
+			w.upper.y = new IntPointer(visionSnapShot.getWalls().get(i)).get(1);
+			w.lower.x = new IntPointer(visionSnapShot.getWalls().get(i)).get(2);
+			w.lower.y = new IntPointer(visionSnapShot.getWalls().get(i)).get(3);
+			
 			walls.add(w);
 		}
 		return walls;
 	}
 	
-	private Cross calculateObstacle() {
+	private Cross calculateCross() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
-		for(int i = 0; i > raw_map.getObstacle()[0].length; i++) {
-			int x = raw_map.getObstacle()[i][0];
-			int y = raw_map.getObstacle()[i][1];
+		for(int i = 0; i > visionSnapShot.getCross().get(i).sizeof(); i++) {
+			int x = new IntPointer(visionSnapShot.getCross().get(i)).get(0);
+			int y = new IntPointer(visionSnapShot.getCross().get(i)).get(1);
 			obstacle_coord.add(new Coordinate(x, y));
 		}
 		

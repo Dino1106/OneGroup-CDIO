@@ -2,7 +2,6 @@ package vision;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
-import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
 import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
@@ -11,30 +10,16 @@ import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameConverter.ToOrgOpenCvCoreMat;
 import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.utils.Converters;
-
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
-
-import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.*;
 
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
-
-/**
- * @author OneGroup
- *
- */
-
-
 
 public class VisionController implements Runnable {
 	
@@ -49,8 +34,6 @@ public class VisionController implements Runnable {
 	private static final int xend_line = 2;
 	private static final int yend_line = 3;
 	
-	
-
 	private CanvasFrame vid_frame = new CanvasFrame("frame1");
 	private CanvasFrame vid_edges = new CanvasFrame("edges");
 //	private CanvasFrame vid_color = new CanvasFrame("color");
@@ -105,30 +88,22 @@ public class VisionController implements Runnable {
 			// Set Calibration values for Identify Balls
 			int[] calib = {6, 5, 2, 6, 20};
 
-
-
 			// Generate layers
 			extract_layer(picture_global);
-
 
 			// 1 - Identify balls with given parameters and draw circles
 			IdentifyBalls identifyBalls = new IdentifyBalls(picture_plain, 1, 3, 120, 15, 2, 8, calib);
 			draw_circles(false, identifyBalls.get_circle());
 
-
 			// 2 - Identify cross with constant parameters
             IdentifyCross identifyCross = new IdentifyCross(picture_color.clone());
             identifyCross.draw_box(picture_global,Scalar.BLUE);
 
-
-
-
 			// Update window frame with current picture frame
 			vid_frame.showImage(converter.convert(get_pic()));
 	 		vid_edges.showImage(converter.convert(get_plain()));
-	 		
 			
-		} catch (java.lang.Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
