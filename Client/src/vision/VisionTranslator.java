@@ -57,12 +57,12 @@ public class VisionTranslator {
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		
-		for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
+		for(int i = 0; i < visionSnapShot.getWalls().length; i++) {
 			Wall w = new Wall();
-			w.upper.x = new IntPointer(visionSnapShot.getWalls().get(i)).get(0);
-			w.upper.y = new IntPointer(visionSnapShot.getWalls().get(i)).get(1);
-			w.lower.x = new IntPointer(visionSnapShot.getWalls().get(i)).get(2);
-			w.lower.y = new IntPointer(visionSnapShot.getWalls().get(i)).get(3);
+			w.upper.x = visionSnapShot.getWalls()[i][0];
+			w.upper.y = visionSnapShot.getWalls()[i][1];
+			w.upper.x = visionSnapShot.getWalls()[i][2];
+			w.upper.y = visionSnapShot.getWalls()[i][3];
 			
 			walls.add(w);
 		}
