@@ -10,18 +10,12 @@ public class VisionSnapShot {
 	private Vec4iVector cross;
 	private Vec4iVector robot;
 	
-	
 	public VisionSnapShot(Vec3fVector balls, Vec4iVector walls, Vec4iVector cross, Vec4iVector robot) {
 		super();
 		this.balls = balls;
 		this.walls = walls;
 		this.cross = cross;
 		this.robot = robot;
-	}
-		
-	@Override
-	public String toString() {
-		return "VisionSnapShot [balls=" + balls + ", walls=" + walls + ", cross=" + cross + ", robot=" + robot + "]";
 	}
 
 	public Vec3fVector getBalls() {
@@ -49,5 +43,9 @@ public class VisionSnapShot {
 		this.robot = robot;
 	}
 	
+	@Override
+	public String toString() {
+		return "VisionSnapShot [balls=" + balls + ", walls=" + walls + ", cross=" + cross + ", robot=" + robot + "]";
+	}
 	
 }

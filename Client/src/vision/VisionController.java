@@ -22,51 +22,51 @@ import org.bytedeco.opencv.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController implements Runnable {
-	
+
 	private int imageHeight = 720;
 	private int imageWidth = 1366;
 
-	private static final int x_circle = 0;
-	private static final int y_circle = 1;
-	private static final int rad_circle = 2;
-	private static final int xstart_line = 0;
-	private static final int ystart_line = 1;
-	private static final int xend_line = 2;
-	private static final int yend_line = 3;
+	private static final int xCircle = 0;
+	private static final int yCircle = 1;
+	private static final int radCircle = 2;
+	private static final int xStartLine = 0;
+	private static final int yStartLine = 1;
+	private static final int xEndLine = 2;
+	private static final int yEndLine = 3;
 	
-	private CanvasFrame vid_frame = new CanvasFrame("frame1");
+	private CanvasFrame vidFrame = new CanvasFrame("frame1");
 	
-	private Vec4iVector Line_set = new Vec4iVector();
-	private Vec3fVector Circle_set = new Vec3fVector();
+	private Vec4iVector lineSet = new Vec4iVector();
+	private Vec3fVector circleSet = new Vec3fVector();
 	
-	private int Camera_id;
-	private Mat picture_global = new Mat(), picture_plain = new Mat(), picture_color = new Mat();
+	private int cameraId;
+	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat();
 	private boolean vid;
 
 	// Laptop camera constructor
 	public VisionController() {
-		Camera_id = 0;
-		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		cameraId = 0;
+		vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = true;
 	}
 
 	// USB plugged camera.
 	// ID of the camera indicates which camera has to be used
 	public VisionController(int camera) {
-		Camera_id = camera;
-		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		cameraId = camera;
+		vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = true;
 	}
 
 	// Constructor with a static image
 	public VisionController(String imgpath) {
-		Camera_id = 0;
-		vid_frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		cameraId = 0;
+		vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		vid = false;
-		picture_global = imread(imgpath);
-		
+		pictureGlobal = imread(imgpath);
+
 		// Copy image for color recognition 
-		picture_color = picture_global.clone();
+		pictureColor = pictureGlobal.clone();
 	}
 
 
@@ -75,35 +75,35 @@ public class VisionController implements Runnable {
 	public void run() {
 		try {
 			// Controller Initializers
-			FrameGrabber grabber = FrameGrabber.createDefault(Camera_id);
+			FrameGrabber grabber = FrameGrabber.createDefault(cameraId);
 			OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 			grabber.setImageHeight(imageHeight);
 			grabber.setImageWidth(imageWidth);
 
-			if (vid) picture_global = converter.convert(grabber.grab());
+			if (vid) pictureGlobal = converter.convert(grabber.grab());
 
 			// Set Calibration values for Identify Balls
 			int[] calib = {6, 5, 2, 6, 20};
 
 			// Generate layers
-			extract_layer(picture_global);
+			extractLayer(pictureGlobal);
 
 			// 1 - Identify balls with given parameters and draw circles
-			IdentifyBalls identifyBalls = new IdentifyBalls(picture_plain, 1, 3, 120, 15, 2, 8, calib);
-			draw_circles(false, identifyBalls.get_circle());
+			IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
+			drawCircles(false, identifyBalls.getCircle());
 
 			// 2 - Identify cross with constant parameters
-            IdentifyCross identifyCross = new IdentifyCross(picture_color.clone());
-            identifyCross.draw_box(picture_color,Scalar.BLUE);
+            IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
+            identifyCross.draw_box(pictureColor,Scalar.BLUE);
 
 
             // 3 - Identify Walls by cross
 			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
-			identifyWalls.draw_Walls(picture_color,Scalar.RED);
-			line(picture_color, new Point(0,0), new Point(identifyWalls.center_cross[0],identifyWalls.center_cross[1]),Scalar.RED);
+			identifyWalls.draw_Walls(pictureColor,Scalar.RED);
+			line(pictureColor, new Point(0,0), new Point(identifyWalls.center_cross[0],identifyWalls.center_cross[1]),Scalar.RED);
 
 			// Update window frame with current picture frame
-			vid_frame.showImage(converter.convert(picture_color));
+			vidFrame.showImage(converter.convert(pictureColor));
 	 		
 			
 		} catch (Exception e) {
@@ -113,123 +113,107 @@ public class VisionController implements Runnable {
 
 
 	// Creates lines between all circles
-	public void create_nodes() {
+	public void createNodes() {
 		int i;
 		int u;
-		for (u = 0; u < get_Circles_amount(); u++)
-			for (i = 0; i < get_Circles_amount(); i++)
+		for (u = 0; u < getCirclesAmount(); u++)
+			for (i = 0; i < getCirclesAmount(); i++)
 				if (i != u)
-					line(get_pic(), new Point(get_circle_xyr(u, x_circle), get_circle_xyr(u, y_circle)),
-							new Point(get_circle_xyr(i, x_circle), get_circle_xyr(i, y_circle)), Scalar.MAGENTA);
+					line(getPic(), new Point(getCircleXyr(u, xCircle), getCircleXyr(u, yCircle)),
+							new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle)), Scalar.MAGENTA);
 	}
 
 
 	// Takes Value layer and generates single-layered Mat
-	private void extract_layer(Mat picture) {
+	private void extractLayer(Mat picture) {
 		BytePointer dat;
-		
-		
-		
+
+
+
 		cvtColor(picture, picture, COLOR_BGR2HSV);
 		dat = picture.data();
-		
+
 		for (int i = 0; i < (picture.arrayHeight() * picture.arrayWidth() * 3); i += 3) {
 			dat = dat.put(0 + i, (byte) dat.get(i + 2));
 			dat = dat.put(1 + i, (byte) dat.get(i + 2));
 		}
-		
-	
-		
-		
+
 		cvtColor(picture, picture, COLOR_BGR2GRAY);
-		picture_plain = picture_global.clone();
+		picturePlain = pictureGlobal.clone();
 		cvtColor(picture, picture, COLOR_GRAY2BGR);
-		
-		
 	}
-	
-	
 
-	
-
-// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
+	// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
 	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
-		Size filter_dim, int threshold1, int threshold2) {
+			Size filterDim, int threshold1, int threshold2) {
 		Vec4iVector lines = new Vec4iVector();
 		Mat blurred = new Mat(), edges = new Mat();
-		blur(get_plain(), blurred, filter_dim);
+		blur(getPlain(), blurred, filterDim);
 		Canny(blurred, edges, threshold1, threshold2);
 		HoughLinesP(edges, lines, rho, theta, threshold, minLineLength, maxLineGap);
-		Line_set = lines;
-		draw_lines();
+		lineSet = lines;
+		drawLines();
 	}
 
-
-	public synchronized int get_circle_xyr(int circle_number, int parameter) {
-		return (int) Circle_set.get(circle_number).get(parameter);
+	public synchronized int getCircleXyr(int circle_number, int parameter) {
+		return (int) circleSet.get(circle_number).get(parameter);
 	}
 
-	public synchronized int get_line_xyxy(int line_number, int parameter) {
-		return new IntPointer(Line_set.get(line_number)).get(parameter);
+	public synchronized int getLineXyxy(int line_number, int parameter) {
+		return new IntPointer(lineSet.get(line_number)).get(parameter);
 	}
 
-	public synchronized int get_Circles_amount() {
-		return (int) Circle_set.size();
+	public synchronized int getCirclesAmount() {
+		return (int) circleSet.size();
 	}
 
-	public synchronized int get_Lines_amount() {
-		return (int) Line_set.size();
+	public synchronized int getLinesAmount() {
+		return (int) lineSet.size();
 	}
 
-	public synchronized Mat get_pic() {
-		return picture_global;
+	public synchronized Mat getPic() {
+		return pictureGlobal;
 	}
 
-	public synchronized Mat get_plain() {
-		return picture_plain;
+	public synchronized Mat getPlain() {
+		return picturePlain;
 	}
 
-	public synchronized Mat get_color() {
-		return picture_color;
+	public synchronized Mat getColor() {
+		return pictureColor;
 	}
-
-
 
 	//private synchronized void toVec(Vec3fVector vec) {
 	//	Circle_set = vec;
 	//}
 
-
-
-	private synchronized void draw_circles(Boolean centers, Vec3fVector ballCoords) {
+	private synchronized void drawCircles(Boolean centers, Vec3fVector ballCoords) {
 		for (int i = 0; i < 7; i++) {
-			circle(get_pic(), new Point((int) ballCoords.get(i).get(x_circle), (int) ballCoords.get(i).get(y_circle)), (int) ballCoords.get(i).get(rad_circle),
+			circle(getPic(), 
+					new Point((int) ballCoords.get(i).get(xCircle), 
+							(int) ballCoords.get(i).get(yCircle)), 
+					(int) ballCoords.get(i).get(radCircle),
 					Scalar.RED);
 			if (centers) {
-				line(get_pic(), new Point(get_circle_xyr(i, x_circle) - 3, get_circle_xyr(i, y_circle)),
-						new Point(get_circle_xyr(i, x_circle) + 3, get_circle_xyr(i, y_circle)), Scalar.BLUE);
-				line(get_pic(), new Point(get_circle_xyr(i, x_circle), get_circle_xyr(i, y_circle) - 3),
-						new Point(get_circle_xyr(i, x_circle), get_circle_xyr(i, y_circle) + 3), Scalar.BLUE);
+				line(getPic(), new Point(getCircleXyr(i, xCircle) - 3, getCircleXyr(i, yCircle)),
+						new Point(getCircleXyr(i, xCircle) + 3, getCircleXyr(i, yCircle)), Scalar.BLUE);
+				line(getPic(), new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) - 3),
+						new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) + 3), Scalar.BLUE);
 			}
 		}
 	}
 
-	private void draw_lines() {
-		for (int i = 0; i < get_Lines_amount(); i++) {
-			line(get_pic(), new Point(get_line_xyxy(i, xstart_line), get_line_xyxy(i, ystart_line)),
-					new Point(get_line_xyxy(i, xend_line), get_line_xyxy(i, yend_line)), Scalar.RED);
+	private void drawLines() {
+		for (int i = 0; i < getLinesAmount(); i++) {
+			line(getPic(), new Point(getLineXyxy(i, xStartLine), getLineXyxy(i, yStartLine)),
+					new Point(getLineXyxy(i, xEndLine), getLineXyxy(i, yEndLine)), Scalar.RED);
 		}
 
 		// System.out.println(new IntPointer(Line_set.get(0)).get(0));
 
 	}
 
-
-
-
-
-
-/*
+	/*
 // TODO: Do not delete comments below
 	/*
 	 * @Override public void run() { try {

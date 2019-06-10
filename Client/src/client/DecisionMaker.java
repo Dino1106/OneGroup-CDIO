@@ -12,7 +12,7 @@ public class DecisionMaker {
 	
 	static final int maxBalls = 6; // Maximum number of balls in our robot.
 	
-	private VisionTranslator mapCalculator;
+	private VisionTranslator visionTranslator;
 	private PathFinder pathFinder;
 	private MapState mapState;
 	private ArrayList<Route> routes;
@@ -24,7 +24,7 @@ public class DecisionMaker {
 	public void MainLoop() {
 		boolean keepRunning = true;
 		while (keepRunning) {
-			mapState = mapCalculator.getProcessedMap();
+			mapState = visionTranslator.getProcessedMap();
 			onFieldBallCount = countBallsOnField();
 			
 			if (pickedUpBallCount >= maxBalls) {
@@ -63,7 +63,7 @@ public class DecisionMaker {
 	private void deliverBalls() {
 		Route route = choosePath(false);
 		pathFinder.driveRoute(route, mapState);
-		mapState = mapCalculator.getProcessedMap();
+		mapState = visionTranslator.getProcessedMap();
 		pathFinder.deliverBalls(mapState);
 		pickedUpBallCount = 0;
 	}
@@ -100,9 +100,9 @@ public class DecisionMaker {
 		paddingHori = (int) ((mapState.wallList.get(1).upper.x - mapState.wallList.get(0).lower.x)* 0.10); 
 		
 		for(Ball ball : mapState.ballList) {
-			if(ball.coordinate.x < mapState.wallList.get(0).upper.x + paddingHori && ball.coordinate.y > mapState.wallList.get(0).upper.y - paddingVert) {
-				if(ball.coordinate.y > mapState.wallList.get(0).upper.y + paddingVert) {
-					if(ball.coordinate.x < mapState.wallList.get(1).upper.x - paddingHori) {
+			if(ball.x < mapState.wallList.get(0).upper.x + paddingHori && ball.y > mapState.wallList.get(0).upper.y - paddingVert) {
+				if(ball.y > mapState.wallList.get(0).upper.y + paddingVert) {
+					if(ball.x < mapState.wallList.get(1).upper.x - paddingHori) {
 						safeBalls.add(ball);
 					}
 				}

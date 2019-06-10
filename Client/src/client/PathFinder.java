@@ -17,7 +17,7 @@ public class PathFinder {
 		for (Ball ball : mapState.ballList) {
 			Route route = new Route();
 			route.robotCoordinate = mapState.robotLocation.coordinate;
-			route.coordinates.add(ball.coordinate);
+			route.coordinates.add(new Coordinate(ball.x, ball.y));
 			// TODO: This needs a lot of complexity to find out proper ways to get around obstacles.
 			routes.add(route);
 		}
