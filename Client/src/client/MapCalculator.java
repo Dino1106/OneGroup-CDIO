@@ -13,12 +13,13 @@ public class MapCalculator{
 	
 	public MapState getProcessedMap() {
 		
-		MapState processedMap = new MapState();
-		processedMap.ballList = calculateBalls();
-		processedMap.wallList = calculateWalls();
-		processedMap.cross = calculateObstacle();
-		processedMap.goal1 = calculateGoals().get(0);
-		processedMap.goal2 = calculateGoals().get(1);
+		RobotLocation robot_start = new RobotLocation();
+		robot_start.coordinate.x = 0;
+		robot_start.coordinate.y = 0;
+		
+		MapState processedMap = new MapState(calculateBalls(),calculateObstacle(),calculateWalls(),calculateGoals().get(0),calculateGoals().get(1),
+				robot_start);
+
 		
 		return processedMap;
 		
@@ -41,10 +42,10 @@ public class MapCalculator{
 		
 		for(int i = 0; i > raw_map.getWalls()[0].length; i++) {
 			Wall w = new Wall();
-			w.coordinate1.x = raw_map.getWalls()[i][0];
-			w.coordinate1.y = raw_map.getWalls()[i][1];
-			w.coordinate2.x = raw_map.getWalls()[i][0];
-			w.coordinate2.y = raw_map.getWalls()[i][1];
+			w.upper.x = raw_map.getWalls()[i][0];
+			w.upper.y = raw_map.getWalls()[i][1];
+			w.lower.x = raw_map.getWalls()[i][0];
+			w.lower.y = raw_map.getWalls()[i][1];
 			walls.add(w);
 		}
 		return walls;
@@ -72,8 +73,8 @@ public class MapCalculator{
 		for(Wall wall : sides) {
 			Goal goal = new Goal();
 			
-			goal.coordinate1.x = ((wall.coordinate1.x - wall.coordinate2.x)/2) + wall.coordinate1.x;
-			goal.coordinate1.y = ((wall.coordinate1.y - wall.coordinate2.y)/2) + wall.coordinate1.y;
+			goal.coordinate1.x = ((wall.upper.x - wall.lower.x)/2) + wall.lower.x;
+			goal.coordinate1.y = ((wall.upper.y - wall.lower.y)/2) + wall.lower.y;
 			
 			goals.add(goal);
 		}
