@@ -17,6 +17,7 @@ public class IdentifyCross {
 
 
     private int coords[][] = new int [2][4];
+    private Mat HSV = new Mat();
 
 
     int highier_left_boundary[] = {280,150};
@@ -153,6 +154,10 @@ public  void draw_render_space(Mat color_map, Scalar BoxColor)
 
 }
 
+ public int[][] get_array(){
+        return coords;
+ }
+
 
 
     public Mat extract_color(Mat picture) {
@@ -163,6 +168,7 @@ public  void draw_render_space(Mat color_map, Scalar BoxColor)
         int b_min = 0, 		b_max = 111;
         int g_min = 27, 	g_max = 136;
         int r_min = 151,	r_max = 255;
+
 
 
         // Create Mat's based of the colors for the inRange function

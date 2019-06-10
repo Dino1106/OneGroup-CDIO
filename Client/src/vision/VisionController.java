@@ -35,15 +35,12 @@ public class VisionController implements Runnable {
 	private static final int yend_line = 3;
 	
 	private CanvasFrame vid_frame = new CanvasFrame("frame1");
-	private CanvasFrame vid_edges = new CanvasFrame("edges");
-//	private CanvasFrame vid_color = new CanvasFrame("color");
 	
 	private Vec4iVector Line_set = new Vec4iVector();
 	private Vec3fVector Circle_set = new Vec3fVector();
 	
 	private int Camera_id;
 	private Mat picture_global = new Mat(), picture_plain = new Mat(), picture_color = new Mat();
-	private Mat edges_global, color_global;
 	private boolean vid;
 
 	// Laptop camera constructor
@@ -97,11 +94,21 @@ public class VisionController implements Runnable {
 
 			// 2 - Identify cross with constant parameters
             IdentifyCross identifyCross = new IdentifyCross(picture_color.clone());
-            identifyCross.draw_box(picture_global,Scalar.BLUE);
+            identifyCross.draw_box(picture_color,Scalar.BLUE);
+
+
+            // 3 - Identify Walls by cross
+			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
+			identifyWalls.draw_Walls(picture_color,Scalar.RED);
+			line(picture_color, new Point(0,0), new Point(identifyWalls.centrum[0],identifyWalls.centrum[1]),Scalar.RED);
+
+
+
+
 
 			// Update window frame with current picture frame
-			vid_frame.showImage(converter.convert(get_pic()));
-	 		vid_edges.showImage(converter.convert(get_plain()));
+			vid_frame.showImage(converter.convert(picture_color));
+	 		
 			
 		} catch (Exception e) {
 			e.printStackTrace();
