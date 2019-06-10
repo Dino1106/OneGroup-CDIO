@@ -1,14 +1,11 @@
 package Interfaces;
 
-import java.util.List;
-
-import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
-import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
+import java.util.ArrayList;
 
 public interface IRawMap {
 	
-	public List<Vec3fVector> getBalls();
-	public List<Vec4iVector> getWalls();
+	public int[][] getBalls();
+	public int[][] getWalls();
 	public int getRobotOrientation();
-	public Vec3fVector getObstacle();
+	public int[][] getObstacle();
 }
