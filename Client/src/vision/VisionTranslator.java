@@ -19,6 +19,7 @@ public class VisionTranslator {
 	private VisionSnapShot visionSnapShot;
 	
 	public VisionTranslator() {
+		//TODO: Change this in future.
 		visionController = new VisionController("a.jpg");
 		Thread th = new Thread(visionController);
 		th.start();
