@@ -2,6 +2,13 @@ package client;
 
 import java.util.ArrayList;
 import Interfaces.IRawMap;
+import model.Ball;
+import model.Coordinate;
+import model.Cross;
+import model.Goal;
+import model.MapState;
+import model.RobotLocation;
+import model.Wall;
 
 public class MapCalculator{
 	

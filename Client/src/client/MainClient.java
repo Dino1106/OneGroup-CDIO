@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import lejos.robotics.geometry.Point;
+import model.Coordinate;
  
 public class MainClient { 
 

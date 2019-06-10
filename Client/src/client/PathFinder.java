@@ -2,6 +2,12 @@ package client;
 
 import java.util.ArrayList;
 
+import model.Ball;
+import model.Coordinate;
+import model.Goal;
+import model.MapState;
+import model.Route;
+
 public class PathFinder {
 	
 	

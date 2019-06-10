@@ -3,6 +3,10 @@ package client;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Ball;
+import model.MapState;
+import model.Route;
+
 public class DecisionMaker {
 	
 	static final int maxBalls = 6; // Maximum number of balls in our robot.
