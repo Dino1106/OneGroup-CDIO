@@ -1,22 +1,25 @@
-package client;
+package vision;
 
 import java.util.ArrayList;
 import Interfaces.IRawMap;
+import Interfaces.IVisionConverter;
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
 import model.Goal;
 import model.MapState;
 import model.RobotLocation;
+import model.VisionSnapShot;
 import model.Wall;
 
-public class MapCalculator{
+public class VisionTranslator {
 	
-	private IRawMap raw_map;
+	private VisionController visionController;
 	
-	public MapCalculator(IRawMap raw_map) {
-		this.raw_map = raw_map;
+	public VisionTranslator() {
+		
 	}
+	
 	
 	public MapState getProcessedMap() {
 		
@@ -26,13 +29,12 @@ public class MapCalculator{
 		
 		MapState processedMap = new MapState(calculateBalls(),calculateObstacle(),calculateWalls(),calculateGoals().get(0),calculateGoals().get(1),
 				robot_start);
-
 		
 		return processedMap;
 		
 	}
 	
-	public ArrayList<Ball> calculateBalls() {
+	private ArrayList<Ball> calculateBalls() {
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 		
 		for(int i = 0; i > raw_map.getBalls()[0].length; i++) {
@@ -44,7 +46,7 @@ public class MapCalculator{
 		return balls;
 	}
 	
-	public ArrayList<Wall> calculateWalls() {
+	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		
 		for(int i = 0; i > raw_map.getWalls()[0].length; i++) {
@@ -58,7 +60,7 @@ public class MapCalculator{
 		return walls;
 	}
 	
-	public Cross calculateObstacle() {
+	private Cross calculateObstacle() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
 		for(int i = 0; i > raw_map.getObstacle()[0].length; i++) {
 			int x = raw_map.getObstacle()[i][0];
@@ -72,7 +74,7 @@ public class MapCalculator{
 		
 	}
 	
-	public ArrayList<Goal> calculateGoals(){
+	private ArrayList<Goal> calculateGoals(){
 		ArrayList<Wall> sides = calculateWalls();
 		ArrayList<Goal> goals = new ArrayList<Goal>();
 		

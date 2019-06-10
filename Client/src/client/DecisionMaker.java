@@ -6,12 +6,13 @@ import java.util.List;
 import model.Ball;
 import model.MapState;
 import model.Route;
+import vision.VisionTranslator;
 
 public class DecisionMaker {
 	
 	static final int maxBalls = 6; // Maximum number of balls in our robot.
 	
-	private MapCalculator mapCalculator;
+	private VisionTranslator mapCalculator;
 	private PathFinder pathFinder;
 	private MapState mapState;
 	private ArrayList<Route> routes;
