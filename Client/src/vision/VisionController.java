@@ -100,7 +100,7 @@ public class VisionController implements Runnable {
             // 3 - Identify Walls by cross
 			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
 			identifyWalls.draw_Walls(picture_color,Scalar.RED);
-			line(picture_color, new Point(0,0), new Point(identifyWalls.centrum[0],identifyWalls.centrum[1]),Scalar.RED);
+			line(picture_color, new Point(0,0), new Point(identifyWalls.center_cross[0],identifyWalls.center_cross[1]),Scalar.RED);
 
 			// Update window frame with current picture frame
 			vid_frame.showImage(converter.convert(picture_color));

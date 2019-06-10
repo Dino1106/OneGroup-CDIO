@@ -8,7 +8,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
 public class IdentifyWalls {
   private  int[][] Box_Coordinates = new int[2][4], coords = new int [2][4];
-   public   int centrum[] = new int[2];
+   public   int center_cross[] = new int[2];
 
 
     public IdentifyWalls(int[][] CrossBoxCoordinates) {
@@ -22,31 +22,33 @@ public class IdentifyWalls {
 
     private void Calculate_Walls()
     {
-         int magnitude[] = {9,6};
+    	// Proportion from edges of the cross to the edges of the walls 
+    	int horizontal_proportion = 9, vertical_proportion = 6;
+        
+    	// Determine the vertical/ horizontal distance from center of cross to its edges
+        int dist_cross_x, dist_cross_y;
+        dist_cross_x = (Box_Coordinates[0][1] - Box_Coordinates[0][0])/2;
+        dist_cross_y = (Box_Coordinates[1][2] - Box_Coordinates[1][1])/2;
 
+        // Determine the distance to edges
+        int dist_edge_x, dist_edge_y;
+        dist_edge_x = dist_cross_x * horizontal_proportion;
+        dist_edge_y = dist_cross_y * vertical_proportion;
 
-
-        int diff_x,diff_y;
-        centrum[1] = (Box_Coordinates[1][0] + Box_Coordinates[1][2]) / 2;
-        centrum[0] = (Box_Coordinates[0][0] + Box_Coordinates[0][1]) / 2;
-
-        diff_x = (Box_Coordinates[0][1] - Box_Coordinates[0][0])/2;
-        diff_y = (Box_Coordinates[1][2] - Box_Coordinates[1][1])/2;
-
-        diff_x = diff_x * magnitude[0];
-        diff_y = diff_y * magnitude[1];
-
-        coords[0][0] = centrum[0] - diff_x;
-        coords[1][0] = centrum[1] - diff_y;
-        coords[0][1] = centrum[0] + diff_x;
-        coords[1][1] = centrum[1] - diff_y;
-        coords[0][2] = centrum[0] + diff_x;
-        coords[1][2] = centrum[1] + diff_y;
-        coords[0][3] = centrum[0] - diff_x;
-        coords[1][3] = centrum[1] + diff_y;
-
-
-
+        
+        // Center of cross x and y
+        center_cross[0] = (Box_Coordinates[0][0] + Box_Coordinates[0][1]) / 2;
+        center_cross[1] = (Box_Coordinates[1][0] + Box_Coordinates[1][2]) / 2;
+        
+        // Calculate the position of the edge's corners 
+        coords[0][0] = center_cross[0] - dist_edge_x;
+        coords[1][0] = center_cross[1] - dist_edge_y;
+        coords[0][1] = center_cross[0] + dist_edge_x;
+        coords[1][1] = center_cross[1] - dist_edge_y;
+        coords[0][2] = center_cross[0] + dist_edge_x;
+        coords[1][2] = center_cross[1] + dist_edge_y;
+        coords[0][3] = center_cross[0] - dist_edge_x;
+        coords[1][3] = center_cross[1] + dist_edge_y;
 
 
     }
