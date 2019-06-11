@@ -102,7 +102,7 @@ public class IdentifyCross {
 		return coords;
 	}
 
-	public void draw_box(Mat color_map, Scalar BoxColor)
+	public void draw(Mat color_map, Scalar BoxColor)
 	{
 		line(color_map,new Point(coords[0][0],coords[1][0]),new Point(coords[0][1],coords[1][1]),BoxColor);
 		line(color_map,new Point(coords[0][1],coords[1][1]),new Point(coords[0][2],coords[1][2]),BoxColor);

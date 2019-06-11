@@ -26,9 +26,7 @@ public class VisionController implements Runnable {
 	private int imageHeight = 720;
 	private int imageWidth = 1366;
 
-	private static final int xCircle = 0;
-	private static final int yCircle = 1;
-	private static final int radCircle = 2;
+
 	private static final int xStartLine = 0;
 	private static final int yStartLine = 1;
 	private static final int xEndLine = 2;
@@ -90,11 +88,11 @@ public class VisionController implements Runnable {
 
 			// 1 - Identify balls with given parameters and draw circles
 			IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
-			drawCircles(false, identifyBalls.getCircle());
+			identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 
 			// 2 - Identify cross with constant parameters
             IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-            identifyCross.draw_box(pictureColor,Scalar.BLUE);
+            identifyCross.draw(pictureColor,Scalar.BLUE);
 
 
             // 3 - Identify Walls by cross
@@ -113,15 +111,7 @@ public class VisionController implements Runnable {
 
 
 	// Creates lines between all circles
-	public void createNodes() {
-		int i;
-		int u;
-		for (u = 0; u < getCirclesAmount(); u++)
-			for (i = 0; i < getCirclesAmount(); i++)
-				if (i != u)
-					line(getPic(), new Point(getCircleXyr(u, xCircle), getCircleXyr(u, yCircle)),
-							new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle)), Scalar.MAGENTA);
-	}
+
 
 
 	// Takes Value layer and generates single-layered Mat
@@ -155,17 +145,12 @@ public class VisionController implements Runnable {
 		drawLines();
 	}
 
-	public synchronized int getCircleXyr(int circle_number, int parameter) {
-		return (int) circleSet.get(circle_number).get(parameter);
-	}
+
 
 	public synchronized int getLineXyxy(int line_number, int parameter) {
 		return new IntPointer(lineSet.get(line_number)).get(parameter);
 	}
 
-	public synchronized int getCirclesAmount() {
-		return (int) circleSet.size();
-	}
 
 	public synchronized int getLinesAmount() {
 		return (int) lineSet.size();
@@ -187,21 +172,7 @@ public class VisionController implements Runnable {
 	//	Circle_set = vec;
 	//}
 
-	private synchronized void drawCircles(Boolean centers, Vec3fVector ballCoords) {
-		for (int i = 0; i < 7; i++) {
-			circle(getPic(), 
-					new Point((int) ballCoords.get(i).get(xCircle), 
-							(int) ballCoords.get(i).get(yCircle)), 
-					(int) ballCoords.get(i).get(radCircle),
-					Scalar.RED);
-			if (centers) {
-				line(getPic(), new Point(getCircleXyr(i, xCircle) - 3, getCircleXyr(i, yCircle)),
-						new Point(getCircleXyr(i, xCircle) + 3, getCircleXyr(i, yCircle)), Scalar.BLUE);
-				line(getPic(), new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) - 3),
-						new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) + 3), Scalar.BLUE);
-			}
-		}
-	}
+
 
 	private void drawLines() {
 		for (int i = 0; i < getLinesAmount(); i++) {

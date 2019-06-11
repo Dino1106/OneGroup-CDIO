@@ -1,21 +1,26 @@
 package vision;
 
-import static org.bytedeco.opencv.global.opencv_imgproc.CV_HOUGH_GRADIENT;
-import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
-
 import java.util.ArrayList;
 
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 
 import model.Ball;
+
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
 ///INITIAL CONDITIONS auto_circle(1 ,3, 120, 15, 2, 8);
 /// INITIAL CONDITIONS calib (6 5 2 6 20 )
 
 public class IdentifyBalls {
 	private int resolutionRatio, minDistance, cannyThreshold, centerThreshold;
+	private static final int xCircle = 0;
+	private static final int yCircle = 1;
+	private static final int radCircle = 2;
 	private int minRad, maxRad;
 	private int calib[];
 	private Mat picture;
@@ -103,5 +108,46 @@ public class IdentifyBalls {
 			return true;
 		return false;
 	}
-	
+
+	public void draw(Mat DrawIn, Scalar color, boolean centers  )
+	{
+		for (int i = 0; i < 7; i++) {
+			circle(DrawIn,
+					new Point((int) circle.get(i).get(xCircle),
+							(int) circle.get(i).get(yCircle)),
+					(int) circle.get(i).get(radCircle),
+					Scalar.RED);
+			if (centers) {
+				line(DrawIn, new Point(getCircleXyr(i, xCircle) - 3, getCircleXyr(i, yCircle)),
+						new Point(getCircleXyr(i, xCircle) + 3, getCircleXyr(i, yCircle)), color);
+				line(DrawIn, new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) - 3),
+						new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) + 3), color);
+			}
+		}
+
+	}
+		public synchronized int getCircleXyr(int circle_number, int parameter) {
+		return (int) circle.get(circle_number).get(parameter);
+	}
+	public void createNodes(Mat drawIn, Scalar color) {
+		int i;
+		int u;
+		for (u = 0; u < getCirclesAmount(); u++)
+			for (i = 0; i < getCirclesAmount(); i++)
+				if (i != u)
+					line(drawIn, new Point(getCircleXyr(u, xCircle), getCircleXyr(u, yCircle)),
+							new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle)), color);
+	}
+
+
+	public synchronized int getCirclesAmount() {
+		return (int) circle.size();
+	}
+
+
+
+
 }
+
+	
+
