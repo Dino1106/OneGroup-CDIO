@@ -10,6 +10,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.Path;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 
