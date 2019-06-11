@@ -10,7 +10,15 @@ import model.Route;
 
 public class PathFinder {
 	
+	Coordinate northWest;
+	Coordinate northEast;
+	Coordinate southWest;
+	Coordinate southEast;
 	
+	// Create this PathFinder which will then find 4 distinct "quadrant coordinates".
+	public PathFinder(MapState mapState) {
+		calculateQuadrants(mapState);
+	}
 	
 	public ArrayList<Route> getCalculatedRoutesBalls(MapState mapState) {
 		ArrayList<Route> routes = new ArrayList<Route>();
@@ -64,11 +72,17 @@ public class PathFinder {
 		return (int) Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
 	}
 
-	public Coordinate middleOfGoal(Goal goal) {
+	private Coordinate middleOfGoal(Goal goal) {
 		int x = (goal.coordinate1.x + goal.coordinate2.x)/2;
 		int y = (goal.coordinate1.y + goal.coordinate2.y)/2;
 		return new Coordinate(x, y);
 	}
+	
+	private void calculateQuadrants(MapState mapState) {
+		int middleOfMap;
+		middleOfMap = mapState.cross.coordinate1;
+	}
+
 
 	public void playSound(String sound) {
 		switch (sound) {
@@ -84,9 +98,11 @@ public class PathFinder {
 		}
 	}
 
+	// We want the robot to drive a whole route.
 	public void driveRoute(Route route, MapState mapState) {
-		// TODO For now, just feed the route robot position and exit position to the robot.
-		
+		for (Coordinate coordinate : route.coordinates) {
+			MainClient.sendCoordinate(coordinate);
+		}
 	}
 
 }
