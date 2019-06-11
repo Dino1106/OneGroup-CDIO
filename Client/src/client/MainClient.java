@@ -82,6 +82,7 @@ public class MainClient {
 			dOut.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
