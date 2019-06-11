@@ -1,27 +1,22 @@
 
-
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import lejos.robotics.geometry.Point;
 
 public class MainServer extends Thread {
 	
 	public static final int PORT = 1337;
-	
-	private Socket client;
+	private static Socket client;
 	private RobotMovement robotControls;
 	private static boolean looping = true;
 	private static ServerSocket server;
-	private static ObjectOutputStream oOut;
+	private static DataOutputStream dOut;
 
 	public MainServer(Socket client) {
-		this.client = client;
+		MainServer.client = client;
 		this.robotControls = new RobotMovement();
 	}
 	
@@ -30,53 +25,91 @@ public class MainServer extends Thread {
 		
 		while(looping) {
 			System.out.println("Awaiting client...");
-			try {
-				OutputStream sout = server.accept().getOutputStream();
-				oOut = new ObjectOutputStream(sout);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			new MainServer(server.accept()).start();
+			client = server.accept();
+			dOut = new DataOutputStream(client.getOutputStream());
+			new MainServer(client).start();
 		}
     }
 	
-	public void carAction(Coordinate coordinate) {
-		Point newRobotPose = robotControls.drive(coordinate);
-		
-		// Send response back to client:
+	public void carDrive(Coordinate coordinate) {
 		try {
-			oOut.writeObject(newRobotPose);
+			// Write response to client
+			boolean response = robotControls.drive(coordinate);
+			dOut.writeBoolean(response);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+	
+	public void setMotorSpeed(int speed) {
+		robotControls.setMotorSpeed(speed);
+	}
+	
+	public void carPickUpBalls(boolean pickUp) {
+		try {
+			boolean response = robotControls.pickUpBalls(pickUp);
+			dOut.writeBoolean(response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void rotate(int degrees) {
+		robotControls.rotateToOrientation(degrees);
+	}
+	
+	public void setPickUpSpeed(int speed) {
+		robotControls.setPickUpSpeed(speed);
+	}
+	
+	public void playSound(int soundToPlay) {
+		robotControls.playSound(soundToPlay);
 	}
 	
 	public void run() {
 		System.out.println("CLIENT CONNECTED");
 		try {
 			InputStream in = client.getInputStream();
-			ObjectInputStream oIn = new ObjectInputStream(in);
+			DataInputStream dIn = new DataInputStream(in);
 			
 			while(client != null) {
-				Coordinate coordinate;
-				try {
-					coordinate = (Coordinate) oIn.readObject();
-					System.out.println("Coordinate: " + coordinate);
-					
-					if(coordinate == null) {
-						client.close();
-						client = null;
-					} else {
-						carAction(coordinate);
-					}
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+				String input = dIn.readUTF();
+				String[] splitInputs = input.split(" ");
+				int typeOfCommand = Integer.parseInt(splitInputs[0]);
+				
+				switch (typeOfCommand) {
+				case 1:
+					int speed = Integer.parseInt(splitInputs[1]);
+					setMotorSpeed(speed);
+					break;
+				case 2:
+					Coordinate coordinate = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
+					carDrive(coordinate);
+					break;
+				case 3:
+					boolean pickUp = Boolean.parseBoolean(splitInputs[1]);
+					carPickUpBalls(pickUp);
+					break;
+				case 4:
+					int degrees = Integer.parseInt(splitInputs[1]);
+					rotate(degrees);
+					break;
+				case 5:
+					int pickUpSpeed = Integer.parseInt(splitInputs[1]);
+					setPickUpSpeed(pickUpSpeed);
+					break;
+				case 6:
+					int soundToPlay = Integer.parseInt(splitInputs[1]);
+					playSound(soundToPlay);
+					break;
+				default:
+					break;
 				}
 			}
 			
 		} catch (IOException e) {
-			System.out.println(e);
-			e.printStackTrace();
+			return;
 		}
 	}
 }
