@@ -18,7 +18,7 @@ public class IdentifyWalls {
     private void calculateWalls()
     {
     	// Proportion from edges of the cross to the edges of the walls 
-    	int horizontalProportion = 9, verticalProportion = 6;
+    	int horizontalProportion = 8, verticalProportion = 6;
         
     	// Determine the vertical/ horizontal distance from center of cross to its edges
         int distCrossX, distCrossY;

@@ -21,6 +21,8 @@ import org.bytedeco.opencv.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController implements Runnable {
+	
+	private boolean testingMode = false;
 
 	private int imageHeight = 720;
 	private int imageWidth = 1366;
@@ -30,12 +32,12 @@ public class VisionController implements Runnable {
 	private static final int yStartLine = 1;
 	private static final int xEndLine = 2;
 	private static final int yEndLine = 3;
-	
+
 	private CanvasFrame vidFrame = new CanvasFrame("frame1");
-	
+
 	private Vec4iVector lineSet = new Vec4iVector();
 	private Vec3fVector circleSet = new Vec3fVector();
-	
+
 	private int cameraId;
 	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat();
 	private boolean vid = false;
@@ -76,23 +78,30 @@ public class VisionController implements Runnable {
 			OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 			grabber.setImageHeight(imageHeight);
 			grabber.setImageWidth(imageWidth);
+			//grabber.setFrameRate(5.0);
 
-			if (vid) pictureGlobal = converter.convert(grabber.grab());
-
-
-			// Set Calibration values for Identify Balls
-			int[] calib = {6, 5, 2, 6, 20};
-
-			if (vid) {
-				grabber.start();
-
+			if (vid) { 
+				grabber.start(); 
 			}
 
-		do {
-			pictureGlobal = converter.convert(grabber.grab());
-			// Generate layers
-			pictureColor = pictureGlobal.clone();
-			extractLayer(pictureGlobal);
+
+			do {
+				// Save the frame as a Mat
+				pictureGlobal = converter.convert(grabber.grab());
+				
+				// Clone the "global" picture
+				pictureColor = pictureGlobal.clone();
+				picturePlain = pictureGlobal.clone();
+
+				extractLayer(pictureGlobal);
+
+				// 1 - Identify balls with given parameters and draw circles
+				// IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
+				// drawCircles(false, identifyBalls.getCircle());
+
+				// 2 - Identify cross with constant parameters
+				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
+				identifyCross.draw_box(pictureColor, Scalar.BLUE);
 
 			// 1 - Identify balls with given parameters and draw circles
 			IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
@@ -102,6 +111,8 @@ public class VisionController implements Runnable {
             IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
             identifyCross.draw(pictureColor,Scalar.BLUE);
 
+				// Update window frame with current picture frame
+				vidFrame.showImage(converter.convert(pictureColor));
 
 			// 3 - Identify Walls by cross
 			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());

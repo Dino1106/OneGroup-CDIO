@@ -11,30 +11,59 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class IdentifyCross {
 
+	private Mat transformedPicture;
 	private int coords[][] = new int [2][4];
-	private Mat hsv = new Mat();
+	
+	// Dimensions of given frame
+	private int frameHeight, frameWidth;
+	
+	// Center of frame
+	private int[] center = new int[2];
+	
+	int upperLeftBoundary[]  = new int[2];
+	int upperRightBoundary[] = new int[2];
+	int lowerLeftBoundary[]  = new int[2];
+	int lowerRightBoundary[] = new int[2];
 
-	int higherLeftBoundary[] = {280,150};
-	int lowerLeftBoundary[] =   {280,300};
-	int lowerRightBoundary[] =  {430,300};
-	int highierRightBoundary[] =  {430,150};
-
-	public IdentifyCross(Mat to_transform)	{
-		coords = calculateEdges(to_transform);
+	public IdentifyCross(Mat picture)	{
+		transformedPicture = picture; 
+		frameHeight = transformedPicture.cols();
+		frameWidth  = transformedPicture.rows();
+		
+		center[0] = (int) frameHeight/2;
+		center[1] = (int) frameWidth/2;
+		
+		// Coordinates of adjustment-box
+		upperLeftBoundary[0] = center[0]+100;
+		upperLeftBoundary[1] = center[1]-100;
+		
+		upperRightBoundary[0] = center[0]+100;
+		upperRightBoundary[1] = center[0]+100;
+		
+		lowerLeftBoundary[0] = center[0]-100;
+		lowerLeftBoundary[1] = center[0]-100;
+		
+		lowerRightBoundary[0] = center[0]-100;
+		lowerRightBoundary[1] = center[0]+100;
+		
+		
+		coords = calculateEdges(transformedPicture);
 	}
 
 	public int[][] calculateEdges(Mat to_transform) {
-		int out[][] = new int[2][4];
+		
+		
+
 		BytePointer p;
 
 		Mat color_map = extractColor(to_transform);
 		p = color_map.data();
 
 		d21:
-			for( int y = higherLeftBoundary[1]; y <= lowerLeftBoundary[1]; y++ )
-				for( int x = higherLeftBoundary[0]; x < highierRightBoundary[0]; x++ ){
+			for( int y = upperLeftBoundary[1]; y <= lowerLeftBoundary[1]; y++ )
+				for( int x = upperLeftBoundary[0]; x < upperRightBoundary[0]; x++ ){
 
-					System.out.print( p.get((y*color_map.arrayWidth())+x));
+					//System.out.print( p.get((y*color_map.arrayWidth())+x));
 					if(p.get((y*color_map.arrayWidth())+x) == -1){
 
 						coords[1][0] = y;
@@ -43,8 +72,8 @@ public class IdentifyCross {
 						break d21;
 					}}
 		d22:
-			for( int y = lowerLeftBoundary[1]; y >= higherLeftBoundary[1]; y-- )
-				for( int x = higherLeftBoundary[0]; x < highierRightBoundary[0]; x++ ){
+			for( int y = lowerLeftBoundary[1]; y >= upperLeftBoundary[1]; y-- )
+				for( int x = upperLeftBoundary[0]; x < upperRightBoundary[0]; x++ ){
 
 					if(p.get((y*color_map.arrayWidth())+x) == -1){
 
@@ -56,7 +85,7 @@ public class IdentifyCross {
 
 					d23:
 						for( int x = lowerLeftBoundary[0]; x <= lowerRightBoundary[0]; x++ )
-							for( int y = higherLeftBoundary[1]; y <= lowerRightBoundary[1]; y++ ){
+							for( int y = upperLeftBoundary[1]; y <= lowerRightBoundary[1]; y++ ){
 
 								if(p.get((y*color_map.arrayWidth())+x) == -1){
 
@@ -68,7 +97,7 @@ public class IdentifyCross {
 
 					d24:
 						for( int x = lowerRightBoundary[0]; x >= lowerLeftBoundary[0]; x-- )
-							for( int y = higherLeftBoundary[1]; y <= lowerRightBoundary[1]; y++ ){
+							for( int y = upperLeftBoundary[1]; y <= lowerRightBoundary[1]; y++ ){
 
 								if(p.get((y*color_map.arrayWidth())+x) == -1){
 
@@ -108,14 +137,16 @@ public class IdentifyCross {
 		line(color_map,new Point(coords[0][1],coords[1][1]),new Point(coords[0][2],coords[1][2]),BoxColor);
 		line(color_map,new Point(coords[0][2],coords[1][2]),new Point(coords[0][3],coords[1][3]),BoxColor);
 		line(color_map,new Point(coords[0][3],coords[1][3]),new Point(coords[0][0],coords[1][0]),BoxColor);
+		
+		line(color_map,new Point(center[0],center[1]),new Point(center[0]+100,center[1]+100),BoxColor);
 	}
 
 	public  void draw_render_space(Mat color_map, Scalar BoxColor)
 	{
-		line(color_map,new Point(higherLeftBoundary[0],higherLeftBoundary[1]),new Point(lowerLeftBoundary[0],lowerLeftBoundary[1]),Scalar.RED);
-		line(color_map,new Point(lowerLeftBoundary[0],lowerLeftBoundary[1]),new Point(lowerRightBoundary[0],lowerRightBoundary[1]),Scalar.RED);
-		line(color_map,new Point(lowerRightBoundary[0],lowerRightBoundary[1]),new Point(highierRightBoundary[0],highierRightBoundary[1]),Scalar.RED);
-		line(color_map,new Point(highierRightBoundary[0],highierRightBoundary[1]),new Point(higherLeftBoundary[0],higherLeftBoundary[1]),Scalar.RED);
+		line(color_map,new Point(upperLeftBoundary[0], upperLeftBoundary[1]),new Point(lowerLeftBoundary[0],lowerLeftBoundary[1]),Scalar.RED);
+		line(color_map,new Point(lowerLeftBoundary[0], lowerLeftBoundary[1]),new Point(lowerRightBoundary[0],lowerRightBoundary[1]),Scalar.RED);
+		line(color_map,new Point(lowerRightBoundary[0], lowerRightBoundary[1]),new Point(upperRightBoundary[0], upperRightBoundary[1]),Scalar.RED);
+		line(color_map,new Point(upperRightBoundary[0], upperRightBoundary[1]),new Point(upperLeftBoundary[0], upperLeftBoundary[1]),Scalar.RED);
 	}
 
 	public Mat extractColor(Mat picture) {

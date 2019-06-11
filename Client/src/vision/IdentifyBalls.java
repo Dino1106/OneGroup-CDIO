@@ -49,6 +49,7 @@ public class IdentifyBalls {
 		this.minRad = minRad;
 		this.maxRad = maxRad;
 		this.calib = calib;
+		circle = new Vec3fVector();
 
 
 		autoCircle(minDistance, cannyThreshold, centerThreshold, minRad, maxRad);
