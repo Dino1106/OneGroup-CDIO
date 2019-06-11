@@ -270,8 +270,8 @@ public class PathFinder {
 		}
 	}
 	
-	public void swallow() {
-		MainClient.pickUpBalls(true);
+	public void pickUpMode(boolean swallow) {
+		MainClient.pickUpBalls(swallow);
 	}
 
 	// We want the robot to drive a whole route.
