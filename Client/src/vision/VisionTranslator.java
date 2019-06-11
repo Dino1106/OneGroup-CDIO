@@ -18,7 +18,7 @@ public class VisionTranslator {
 	private VisionController visionController;
 	private VisionSnapShot visionSnapShot;
 	
-	public VisionTranslator() {
+	public VisionTranslator(boolean testMode) {
 		//TODO: Change this in future.
 		/*
 		visionController = new VisionController("a.jpg");

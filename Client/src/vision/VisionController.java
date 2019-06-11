@@ -15,6 +15,9 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
+
+import model.MapState;
+
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_core.*;
 
@@ -42,32 +45,34 @@ public class VisionController implements Runnable {
 	private int cameraId;
 	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat(), picutreRobot = new Mat();
 	private boolean vid = false;
+	private boolean testMode = false;
 
 	// Laptop camera constructor
-	public VisionController() {
-		cameraId = 0;
-		vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		vid = true;
+	public VisionController(boolean testMode) {
+		this.cameraId = 0;
+		this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		this.vid = true;
+		this.testMode = testMode;
 	}
 
 	// USB plugged camera.
 	// ID of the camera indicates which camera has to be used
-	public VisionController(int camera) {
-		cameraId = camera;
-		vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		vid = true;
+	public VisionController(boolean testMode, int camera) {
+		this.cameraId = camera;
+		this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		this.vid = true;
+		this.testMode = testMode;
 	}
 
 	// Constructor with a static image
-	public VisionController(String imgpath) {
-		cameraId = 0;
-		vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		vid = false;
-		pictureGlobal = imread(imgpath);
+	public VisionController(boolean testMode, String imgpath) {
+		this.cameraId = 0;
+		this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		this.vid = false;
+		this.pictureGlobal = imread(imgpath);
 
 		// Copy image for color recognition 
-		pictureColor = pictureGlobal.clone();
-
+		this.pictureColor = pictureGlobal.clone();
 	}
 
 
@@ -101,10 +106,6 @@ public class VisionController implements Runnable {
 
 				// Set Calibration values for Identify Balls 
 				int[] calib = {6, 5, 2, 6, 20}; 
-
-				// 1 - Identify balls with given parameters and draw circles
-				//IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
-				//drawCircles(false, identifyBalls.getCircle());
 				
 				// 1 - Identify balls with given parameters and draw circles
 				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
@@ -133,6 +134,13 @@ public class VisionController implements Runnable {
 				e.printStackTrace();
 			}
 	}
+	
+	public MapState getMapState() {
+		
+		MapState map = new MapState();
+		return null;
+		
+	}
 
 
 	// Creates lines between all circles
@@ -142,8 +150,6 @@ public class VisionController implements Runnable {
 	// Takes Value layer and generates single-layered Mat
 	private void extractLayer(Mat picture) {
 		BytePointer dat;
-
-
 
 		cvtColor(picture, picture, COLOR_BGR2HSV);
 		dat = picture.data();

@@ -15,7 +15,6 @@ public class IdentifyCross {
 	
 	private int coords[][] = new int [4][2];
 
-
 	public IdentifyCross(Mat picture)	{
 		coords = identify.getEdgesSqaure(picture);
 	}

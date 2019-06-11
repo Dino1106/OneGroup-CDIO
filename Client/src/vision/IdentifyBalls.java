@@ -2,6 +2,9 @@ package vision;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_HOUGH_GRADIENT;
 import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
+import static org.bytedeco.opencv.global.opencv_imgproc.circle;
+import static org.bytedeco.opencv.global.opencv_imgproc.line;
+
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
@@ -26,7 +29,8 @@ public class IdentifyBalls {
 	private Mat picture;
 	private Vec3fVector circle = new Vec3fVector();
 
-	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad ) {
+	public IdentifyBalls(boolean testMode, Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad ) {
+		this.testMode = testMode;
 		this.resolutionRatio = resolutionRatio;
 		this.minDistance = minDistance;
 		this.cannyThreshold = cannyThreshold;
@@ -41,7 +45,8 @@ public class IdentifyBalls {
 	}
 
 
-	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad, int calib[]) {
+	public IdentifyBalls(boolean testMode, Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad, int calib[]) {
+		this.testMode = testMode;
 		this.picture = picture;
 		this.resolutionRatio = resolutionRatio;
 		this.minDistance = minDistance;
@@ -97,7 +102,6 @@ public class IdentifyBalls {
 
 				}
 			} while (!eval(amount_circles--));
-
 	}
 
 	private boolean eval(int amount) {
