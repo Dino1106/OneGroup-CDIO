@@ -23,15 +23,7 @@ public class MainClient {
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
 		
-		pickUpBalls(true);
-		sendPickUpSpeed(60);
-		sendMotorSpeed(30);
-		sendCoordinate(new Coordinate(50, 0));
-		sendPickUpSpeed(85);
 		rotate(360);
-		pickUpBalls(false);
-		sendSound(2);
-		disconnect();
 	}
 	
 	public static void sendMotorSpeed(int speed) {
