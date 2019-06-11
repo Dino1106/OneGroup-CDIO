@@ -10,7 +10,6 @@ public class IdentifyWalls {
   private  int[][] BoxCoordinates = new int[2][4], coords = new int [2][4];
    public  int centerCross[] = new int[2];
 
-
     public IdentifyWalls(int[][] CrossBoxCoordinates) {
         this.BoxCoordinates = CrossBoxCoordinates;
         calculateWalls();

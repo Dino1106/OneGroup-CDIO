@@ -10,7 +10,6 @@ import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
@@ -39,7 +38,7 @@ public class VisionController implements Runnable {
 	
 	private int cameraId;
 	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat();
-	private boolean vid;
+	private boolean vid = false;
 
 	// Laptop camera constructor
 	public VisionController() {
@@ -80,10 +79,19 @@ public class VisionController implements Runnable {
 
 			if (vid) pictureGlobal = converter.convert(grabber.grab());
 
+
 			// Set Calibration values for Identify Balls
 			int[] calib = {6, 5, 2, 6, 20};
 
+			if (vid) {
+				grabber.start();
+
+			}
+
+		do {
+			pictureGlobal = converter.convert(grabber.grab());
 			// Generate layers
+			pictureColor = pictureGlobal.clone();
 			extractLayer(pictureGlobal);
 
 			// 1 - Identify balls with given parameters and draw circles
@@ -95,16 +103,16 @@ public class VisionController implements Runnable {
             identifyCross.draw(pictureColor,Scalar.BLUE);
 
 
-            // 3 - Identify Walls by cross
+			// 3 - Identify Walls by cross
 			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
 			identifyWalls.draw(pictureColor,Scalar.RED);
 
 
 			// Update window frame with current picture frame
 			vidFrame.showImage(converter.convert(pictureColor));
-	 		
-			
-		} catch (Exception e) {
+
+
+		}while(vid);} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
