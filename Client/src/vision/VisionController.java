@@ -21,7 +21,7 @@ import org.bytedeco.opencv.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController implements Runnable {
-	
+
 	private boolean testingMode = false;
 
 	private int imageHeight = 720;
@@ -34,12 +34,13 @@ public class VisionController implements Runnable {
 	private static final int yEndLine = 3;
 
 	private CanvasFrame vidFrame = new CanvasFrame("frame1");
+	private CanvasFrame vidFrameBlue = new CanvasFrame("blue");
 
 	private Vec4iVector lineSet = new Vec4iVector();
 	private Vec3fVector circleSet = new Vec3fVector();
 
 	private int cameraId;
-	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat();
+	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat(), picutreRobot = new Mat();
 	private boolean vid = false;
 
 	// Laptop camera constructor
@@ -66,6 +67,7 @@ public class VisionController implements Runnable {
 
 		// Copy image for color recognition 
 		pictureColor = pictureGlobal.clone();
+
 	}
 
 
@@ -88,44 +90,46 @@ public class VisionController implements Runnable {
 			do {
 				// Save the frame as a Mat
 				pictureGlobal = converter.convert(grabber.grab());
-				
+
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
 				picturePlain = pictureGlobal.clone();
+				picutreRobot = pictureGlobal.clone();
 
 				extractLayer(pictureGlobal);
 
+				// Set Calibration values for Identify Balls 
+				int[] calib = {6, 5, 2, 6, 20}; 
+
 				// 1 - Identify balls with given parameters and draw circles
-				// IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
-				// drawCircles(false, identifyBalls.getCircle());
+				//IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
+				//drawCircles(false, identifyBalls.getCircle());
+				
+				// 1 - Identify balls with given parameters and draw circles
+				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
+				identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-				identifyCross.draw_box(pictureColor, Scalar.BLUE);
+				identifyCross.draw(pictureColor, Scalar.BLUE);
 
-			// 1 - Identify balls with given parameters and draw circles
-			IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
-			identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+				// 3 - Identify Walls by cross
+				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
+				identifyWalls.draw(pictureColor,Scalar.RED);
+				line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 
-			// 2 - Identify cross with constant parameters
-            IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-            identifyCross.draw(pictureColor,Scalar.BLUE);
-
+				// 4 - Identify robot				
+				IdentifyRobot identifyRobot = new IdentifyRobot(picutreRobot.clone());
+				identifyRobot.draw_box(picutreRobot, Scalar.BLUE);
+				
 				// Update window frame with current picture frame
 				vidFrame.showImage(converter.convert(pictureColor));
+				vidFrameBlue.showImage(converter.convert(picutreRobot));
+				
 
-			// 3 - Identify Walls by cross
-			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
-			identifyWalls.draw(pictureColor,Scalar.RED);
-
-
-			// Update window frame with current picture frame
-			vidFrame.showImage(converter.convert(pictureColor));
-
-
-		}while(vid);} catch (Exception e) {
-			e.printStackTrace();
-		}
+			}while(vid);} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 
 
@@ -153,7 +157,7 @@ public class VisionController implements Runnable {
 	}
 
 	// TODO: EVERYTHING BELOW IS IRRELEVANT TO THIS CLASS
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
 	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
 			Size filterDim, int threshold1, int threshold2) {
