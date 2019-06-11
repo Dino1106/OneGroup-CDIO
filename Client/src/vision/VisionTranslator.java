@@ -2,8 +2,6 @@ package vision;
 
 import java.util.ArrayList;
 
-import org.bytedeco.javacpp.IntPointer;
-
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -20,7 +18,7 @@ public class VisionTranslator {
 	private double visionScale;
 	
 	public VisionTranslator(boolean testMode, double visionScale) {
-		visionController = new VisionController(testMode, "a.jpg");
+		visionController = new VisionController(testMode, "e.jpg");
 		this.visionScale = visionScale;
 		
 		Thread th = new Thread(visionController);
@@ -30,8 +28,8 @@ public class VisionTranslator {
 			
 			th.join();
 			visionSnapShot = visionController.getSnapShot();
-			MapState map = this.getProcessedMap();
-			System.out.println(map.toString());
+			MapState map = getProcessedMap();
+			System.out.println("\n\n\n\n HELO ----" + map.toString() + "\n\n\n\n");
 			
 		} catch (InterruptedException e) {
 			System.out.println(e.getMessage());

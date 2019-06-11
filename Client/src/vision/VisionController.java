@@ -44,8 +44,11 @@ public class VisionController implements Runnable {
 	private static final int xEndLine = 2;
 	private static final int yEndLine = 3;
 
-	private Vec3fVector balls;
+	private Vec3fVector balls = new Vec3fVector();
+	private Vec3fVector circleSet = new Vec3fVector();
 	private Vec4iVector walls;
+	private Vec4iVector robot = new Vec4iVector();
+	private Vec4iVector lineSet = new Vec4iVector();
 	private int[][] cross;
 	private Vec4iVector robot;
 
@@ -56,34 +59,51 @@ public class VisionController implements Runnable {
 	private Vec4iVector lineSet = new Vec4iVector();
 	private Vec3fVector circleSet = new Vec3fVector();
 
+	private Mat pictureGlobal = new Mat();
+	private Mat picturePlain = new Mat(); 
+	private Mat pictureColor = new Mat();
+	
 	private int cameraId;
-	private Mat pictureGlobal = new Mat(), picturePlain = new Mat(), pictureColor = new Mat(), picutreRobot = new Mat();
 	private boolean vid = false;
 	private boolean testMode = false;
 
-	// Laptop camera constructor
+
 	public VisionController(boolean testMode) {
 		this.cameraId = 0;
-		this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		this.vid = true;
 		this.testMode = testMode;
+
+		if(testMode) {
+			this.vidFrame = new CanvasFrame("frame1");
+			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		}
+
 	}
 
 	// USB plugged camera.
 	// ID of the camera indicates which camera has to be used
 	public VisionController(boolean testMode, int camera) {
 		this.cameraId = camera;
-		this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		this.vid = true;
 		this.testMode = testMode;
+
+		if(testMode) {
+			this.vidFrame = new CanvasFrame("frame1");
+			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		}
+
 	}
 
 	// Constructor with a static image
 	public VisionController(boolean testMode, String imgpath) {
 		this.cameraId = 0;
-		this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		this.vid = false;
 		this.pictureGlobal = imread(imgpath);
+
+		if(testMode) {
+			this.vidFrame = new CanvasFrame("frame1");
+			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+		}
 
 		// Copy image for color recognition 
 		this.pictureColor = pictureGlobal.clone();
