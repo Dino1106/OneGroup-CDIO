@@ -29,8 +29,7 @@ public class IdentifyBalls {
 	private Mat picture;
 	private Vec3fVector circle = new Vec3fVector();
 
-	public IdentifyBalls(boolean testMode, Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad ) {
-		this.testMode = testMode;
+	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad ) {
 		this.resolutionRatio = resolutionRatio;
 		this.minDistance = minDistance;
 		this.cannyThreshold = cannyThreshold;
@@ -45,8 +44,7 @@ public class IdentifyBalls {
 	}
 
 
-	public IdentifyBalls(boolean testMode, Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad, int calib[]) {
-		this.testMode = testMode;
+	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad, int calib[]) {
 		this.picture = picture;
 		this.resolutionRatio = resolutionRatio;
 		this.minDistance = minDistance;
@@ -64,7 +62,7 @@ public class IdentifyBalls {
 		HoughCircles(picture, circle, CV_HOUGH_GRADIENT, resolutionRatio, minDistance, cannyThreshold, centerThreshold, minRad, maxRad);
 	}
 
-	public synchronized Vec3fVector getCircle() {
+	public synchronized Vec3fVector getCircles() {
 		return circle;
 	}
 

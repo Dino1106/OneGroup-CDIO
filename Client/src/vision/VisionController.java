@@ -5,6 +5,8 @@ import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
 import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
+import java.util.ArrayList;
+
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.CanvasFrame;
@@ -16,7 +18,13 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
 
+import model.Ball;
+import model.Cross;
+import model.Goal;
 import model.MapState;
+import model.RobotLocation;
+import model.VisionSnapShot;
+import model.Wall;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_core.*;
@@ -35,6 +43,12 @@ public class VisionController implements Runnable {
 	private static final int yStartLine = 1;
 	private static final int xEndLine = 2;
 	private static final int yEndLine = 3;
+
+	private Vec3fVector balls;
+	private Vec4iVector walls;
+	private int[][] cross;
+	private Vec4iVector robot;
+
 
 	private CanvasFrame vidFrame = new CanvasFrame("frame1");
 	private CanvasFrame vidFrameBlue = new CanvasFrame("blue");
@@ -134,14 +148,10 @@ public class VisionController implements Runnable {
 				e.printStackTrace();
 			}
 	}
-	
-	public MapState getMapState() {
-		
-		MapState map = new MapState();
-		return null;
-		
-	}
 
+	public VisionSnapShot getSnapShot() {
+		return new VisionSnapShot(this.balls, this.walls, this.cross, this.robot);
+	}
 
 	// Creates lines between all circles
 
@@ -167,8 +177,14 @@ public class VisionController implements Runnable {
 	// TODO: EVERYTHING BELOW IS IRRELEVANT TO THIS CLASS
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
-	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
-			Size filterDim, int threshold1, int threshold2) {
+	private void extractLines(double rho, 
+			double theta,
+			int threshold,
+			int minLineLength,
+			int maxLineGap,
+			Size filterDim,
+			int threshold1,
+			int threshold2) {
 		Vec4iVector lines = new Vec4iVector();
 		Mat blurred = new Mat(), edges = new Mat();
 		blur(getPlain(), blurred, filterDim);
