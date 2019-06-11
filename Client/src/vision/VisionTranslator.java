@@ -19,6 +19,9 @@ public class VisionTranslator {
 	private VisionSnapShot visionSnapShot;
 	
 	public VisionTranslator(boolean testMode) {
+		visionController = new VisionController();
+		visionSnapShot = visionController.getSnapShot;
+		
 		//TODO: Change this in future.
 		/*
 		visionController = new VisionController("a.jpg");
