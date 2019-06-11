@@ -10,13 +10,12 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.Path;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 
 	 
-	private UnregulatedMotor ball_picker_left, ball_picker_right;
-	private RegulatedMotor left_wheel, right_wheel;
+	private UnregulatedMotor ballPickerLeft, ballPickerRight;
+	private RegulatedMotor leftWheel, rightWheel;
     private DifferentialPilot pilot;
     private PoseProvider poseProvider;
     private Navigator navigator;
@@ -24,17 +23,17 @@ public class RobotMovement {
     
     public RobotMovement() {
     	/* Setup ball-picker motors */
-    	this.ball_picker_left = new UnregulatedMotor(MotorPort.C); 
-        this.ball_picker_right = new UnregulatedMotor(MotorPort.D);
+    	this.ballPickerLeft = new UnregulatedMotor(MotorPort.C); 
+        this.ballPickerRight = new UnregulatedMotor(MotorPort.D);
         
         /* Setup wheels */
     	this.wheelDiameter = 6.88;
-    	this.trackWidth = 19.5;
-    	this.left_wheel = new EV3LargeRegulatedMotor(MotorPort.A);
-    	this.right_wheel = new EV3LargeRegulatedMotor(MotorPort.B);
+    	this.trackWidth = 22.8;
+    	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.A);
+    	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.B);
  
     	/* Setup navigator with pilot */
-        this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, left_wheel, right_wheel);
+        this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
         this.navigator = new Navigator(pilot);
         this.poseProvider = new OdometryPoseProvider(pilot);
     }
@@ -45,13 +44,7 @@ public class RobotMovement {
 		Point location = pose.getLocation();
 		pose.setLocation(location);				    // Set from coordinate using pose provider
 
-		
-		Path path = new Path();
-		path.add(new Waypoint(pose.getLocation().getX(), pose.getLocation().getY()));
-		path.add(new Waypoint(to.x, to.y));		
-		
-		navigator.setPath(path);
-		navigator.followPath();
+		navigator.goTo(new Waypoint(to.x, to.y));
 				
 		if(navigator.waitForStop()) {
 			return true;
@@ -65,8 +58,8 @@ public class RobotMovement {
 	}
 	
 	public void setPickUpSpeed(int speed) {
-		ball_picker_left.setPower(speed);
-		ball_picker_right.setPower(speed); 
+		ballPickerLeft.setPower(speed);
+		ballPickerRight.setPower(speed); 
 	}
 	
 	public void rotateToOrientation(double degrees) {
@@ -74,18 +67,18 @@ public class RobotMovement {
 	}
 	
 	public boolean pickUpBalls(boolean pickUp) {
-		ball_picker_left.setPower(85);
-		ball_picker_right.setPower(85); 
+		ballPickerLeft.setPower(85);
+		ballPickerRight.setPower(85); 
 		
 		if(pickUp) {
-		    ball_picker_left.backward();
-		    ball_picker_right.forward();
+		    ballPickerLeft.backward();
+		    ballPickerRight.forward();
 		    return true;
 		} else {
-			ball_picker_left.setPower(85);
-			ball_picker_right.setPower(85); 
-			ball_picker_left.forward();
-		    ball_picker_right.backward();
+			ballPickerLeft.setPower(85);
+			ballPickerRight.setPower(85); 
+			ballPickerLeft.forward();
+		    ballPickerRight.backward();
 		    return false;
 		}
 	}
