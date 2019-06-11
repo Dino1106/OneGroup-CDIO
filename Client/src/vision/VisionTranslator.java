@@ -19,29 +19,37 @@ public class VisionTranslator {
 	private VisionSnapShot visionSnapShot;
 	
 	public VisionTranslator(boolean testMode) {
-		visionController = new VisionController();
-		visionSnapShot = visionController.getSnapShot;
+		visionController = new VisionController(testMode, "a.jpg");
 		
-		//TODO: Change this in future.
-		/*
-		visionController = new VisionController("a.jpg");
 		Thread th = new Thread(visionController);
 		th.start();
-		*/
+		
+		try {
+			
+			th.join();
+			visionSnapShot = visionController.getSnapShot();
+			MapState map = this.getProcessedMap();
+			System.out.println(map.toString());
+			
+		} catch (InterruptedException e) {
+			System.out.println(e.getMessage());
+		}
+		
 	}
 	
 	public MapState getProcessedMap() {
 		
+		//TODO: CalculateRobot method should be created instead of this hard-code.
 		RobotLocation robot_start = new RobotLocation();
-		robot_start.coordinate.x = 0;
-		robot_start.coordinate.y = 0;
+		robot_start.coordinate = new Coordinate(0, 0);
 		
 		return new MapState(
 				calculateBalls(),
 				calculateCross(),
 				calculateWalls(),
-				calculateGoals().get(0),
-				calculateGoals().get(1),
+				//TODO: Insert calculateGoals, when it works :D
+				null, //calculateGoals().get(0),
+				null, //calculateGoals().get(1),
 				robot_start);
 	}
 	
@@ -59,16 +67,18 @@ public class VisionTranslator {
 	
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
-		
-		for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
-			Wall w = new Wall();
-			w.upper.x = (int) visionSnapShot.getWalls().get(i).get(0);
-			w.upper.y = (int) visionSnapShot.getWalls().get(i).get(1);
-			w.upper.x = (int) visionSnapShot.getWalls().get(i).get(2);
-			w.upper.y = (int) visionSnapShot.getWalls().get(i).get(3);
-			
-			walls.add(w);
+		if (visionSnapShot.getWalls() != null) {
+			for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
+				Wall w = new Wall();
+				w.upper.x = (int) visionSnapShot.getWalls().get(i).get(0);
+				w.upper.y = (int) visionSnapShot.getWalls().get(i).get(1);
+				w.upper.x = (int) visionSnapShot.getWalls().get(i).get(2);
+				w.upper.y = (int) visionSnapShot.getWalls().get(i).get(3);
+				
+				walls.add(w);
+			}
 		}
+		
 		return walls;
 	}
 
