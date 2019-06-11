@@ -1,53 +1,116 @@
 package client;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
-
-import lejos.robotics.geometry.Point;
-import model.Coordinate;
  
 public class MainClient { 
 
 	public static final int PORT = 1337;
+	
 	private static Socket socket;
-	private static ObjectOutputStream oOut;
-	private static ObjectInputStream oIn;
+	private static DataOutputStream dOut;
+	private static DataInputStream dIn;
  
 	public static void main(String[] args) throws IOException { 
 		String ip = "192.168.43.187"; 
 		if (args.length > 0) ip = args[0];
 		System.out.println("Starting client");
 		socket = new Socket(ip, PORT);
-		oOut = new ObjectOutputStream(socket.getOutputStream());
-		oIn = new ObjectInputStream(socket.getInputStream());
+		dOut = new DataOutputStream(socket.getOutputStream());
+		dIn = new DataInputStream(socket.getInputStream());	
 		
-		sendCommand(new Coordinate(10, 0));
+		pickUpBalls(true);
+		sendPickUpSpeed(60);
+		sendMotorSpeed(30);
+		sendCoordinate(new Coordinate(50, 0));
+		sendPickUpSpeed(85);
+		rotate(360);
+		pickUpBalls(false);
+		sendSound(2);
+		disconnect();
 	}
 	
-	private static void sendCommand(Coordinate coordinate){
-		// Send coordinates to server:
+	public static void sendMotorSpeed(int speed) {
 		try {
-			oOut.writeObject(coordinate);
+			String speedString = "1 " + speed;
+			dOut.writeUTF(speedString);
+			dOut.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		// Read response from server:
+	}
+
+	public static void sendCoordinate(Coordinate coordinate){
+		// Send coordinates to Server: 
 		try {
-			Point serverPoint = (Point) oIn.readObject();
-			System.out.println(serverPoint);
-		} catch (ClassNotFoundException | IOException e) {
+			String coordinateString = "2 " + coordinate.x + " " + coordinate.y;
+			dOut.writeUTF(coordinateString);
+			dOut.flush();
+			boolean serverResponse = dIn.readBoolean();
+			
+			if(serverResponse) {
+				System.out.println("Path done: " + serverResponse);
+			} else {
+				// TODO: Add what to do
+			}
+			
+		} catch(IOException io) {
+			io.printStackTrace();
+		}
+	}
+	
+	public static void pickUpBalls(boolean pickUp) {
+		try {
+			String pickUpString = "3 " + pickUp;
+			dOut.writeUTF(pickUpString);
+			dOut.flush();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void rotate(int degrees) {
+		try {
+			String rotateString = "4 " + degrees;
+			dOut.writeUTF(rotateString);
+			dOut.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void sendPickUpSpeed(int speed) {
+		try {
+			String speedString = "5 " + speed;
+			dOut.writeUTF(speedString);
+			dOut.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void sendSound(int sound) {
+		try {
+			String soundString = "6 " + sound;
+			dOut.writeUTF(soundString);
+			dOut.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
  
-	public void disconnect() { 
+	public static void disconnect() { 
 		try {
 			socket.close();
+			dOut.close();
+			dIn.close();
 		} catch (Exception exc) { 
-			System.out.println("Error: " + exc);
+			exc.printStackTrace();
 		} 
 	}
 } 
