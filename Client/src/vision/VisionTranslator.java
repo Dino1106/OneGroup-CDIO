@@ -57,18 +57,18 @@ public class VisionTranslator {
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		
-		for(int i = 0; i < visionSnapShot.getWalls().length; i++) {
+		for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
 			Wall w = new Wall();
-			w.upper.x = visionSnapShot.getWalls()[i][0];
-			w.upper.y = visionSnapShot.getWalls()[i][1];
-			w.upper.x = visionSnapShot.getWalls()[i][2];
-			w.upper.y = visionSnapShot.getWalls()[i][3];
+			w.upper.x = (int) visionSnapShot.getWalls().get(i).get(0);
+			w.upper.y = (int) visionSnapShot.getWalls().get(i).get(1);
+			w.upper.x = (int) visionSnapShot.getWalls().get(i).get(2);
+			w.upper.y = (int) visionSnapShot.getWalls().get(i).get(3);
 			
 			walls.add(w);
 		}
 		return walls;
 	}
-	
+
 	private Cross calculateCross() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
 		
