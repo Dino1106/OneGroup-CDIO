@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainServer extends Thread {
 	
@@ -115,7 +117,18 @@ public class MainServer extends Thread {
 				default:
 					break;
 				}
-			}
+				
+				/*boolean pickUp = (boolean) dIn.readObject();
+				carPickUpBalls(pickUp);
+				
+				int speed = (int) dIn.readObject();
+				setMotorSpeed(speed);*/
+				
+				/*String coordinateObject = (String) dIn.readObject();
+				String[] coordArray = coordinateObject.split(" ");
+				Coordinate coordinate = new Coordinate(Integer.parseInt(coordArray[0]), Integer.parseInt(coordArray[1]));
+				carDrive(coordinate);*/
+			//}
 			
 		} catch (IOException e) {
 			return;
