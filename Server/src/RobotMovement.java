@@ -1,14 +1,18 @@
 import lejos.robotics.geometry.Point;
+
+import java.io.File;
+
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.motor.Motor;
 import lejos.hardware.motor.UnregulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.robotics.RegulatedMotor;
-import lejos.robotics.chassis.*;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.Path;
 
+@SuppressWarnings("deprecation")
 public class RobotMovement { 
 	 
 	private UnregulatedMotor ball_picker_left, ball_picker_right;
@@ -35,34 +39,77 @@ public class RobotMovement {
         this.poseProvider = new OdometryPoseProvider(pilot);
     }
     
-	public Point drive(Coordinate to) {
-		// TODO: Maybe use coordinate from as method parameter instead of pose
+	public boolean drive(Coordinate to) {
 		
 		Pose pose = poseProvider.getPose();				// Gets the 'pose' of robot (position and heading)
 		Point location = pose.getLocation();
 		pose.setLocation(location);				    // Set from coordinate using pose provider
+
 		
-		navigator.goTo(new Waypoint(to.x, to.y));
-		System.out.println("Robot location is now " + location);
+		Path path = new Path();
+		path.add(new Waypoint(pose.getLocation().getX(), pose.getLocation().getY()));
+		path.add(new Waypoint(to.x, to.y));		
 		
-		return location;
+		navigator.setPath(path);
+		navigator.followPath();
+				
+		if(navigator.waitForStop()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void setMotorSpeed(int speed) {
+		pilot.setLinearSpeed(speed);
+	}
+	
+	public void setPickUpSpeed(int speed) {
+		ball_picker_left.setPower(speed);
+		ball_picker_right.setPower(speed); 
 	}
 	
 	public void rotateToOrientation(double degrees) {
 		pilot.rotate(degrees);
 	}
 	
-	public void pickUpBalls(boolean pickUp) {
+	public boolean pickUpBalls(boolean pickUp) {
 		ball_picker_left.setPower(85);
 		ball_picker_right.setPower(85); 
 		
 		if(pickUp) {
 		    ball_picker_left.backward();
 		    ball_picker_right.forward();
+		    return true;
 		} else {
+			ball_picker_left.setPower(85);
+			ball_picker_right.setPower(85); 
 			ball_picker_left.forward();
 		    ball_picker_right.backward();
+		    return false;
 		}
+	}
+	
+	public void playSound(int soundToPlay) {
+		File sound = null;
+		
+		switch (soundToPlay) {
+		case 1:
+			sound = new File("pickUpSound.wav");
+			break;
+		case 2:
+			sound = new File("victorySound.wav");
+			break;
+		default:
+			break;
+		}
+		
+		if(sound != null) {
+			Sound.playSample(sound);
+		} else {
+			System.out.println("No sound detected..");
+		}
+		
 	}
  
 } 
