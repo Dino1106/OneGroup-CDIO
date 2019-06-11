@@ -17,9 +17,11 @@ public class VisionTranslator {
 	
 	private VisionController visionController;
 	private VisionSnapShot visionSnapShot;
+	private double visionScale;
 	
-	public VisionTranslator(boolean testMode) {
+	public VisionTranslator(boolean testMode, double visionScale) {
 		visionController = new VisionController(testMode, "a.jpg");
+		this.visionScale = visionScale;
 		
 		Thread th = new Thread(visionController);
 		th.start();
@@ -57,8 +59,8 @@ public class VisionTranslator {
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 		
 		for(int i = 0; i < visionSnapShot.getBalls().get(0).sizeof(); i++) {
-			int x = (int) visionSnapShot.getBalls().get(i).get(0);
-			int y = (int) visionSnapShot.getBalls().get(i).get(1);
+			int x = (int) (visionSnapShot.getBalls().get(i).get(0)/visionScale);
+			int y = (int) (visionSnapShot.getBalls().get(i).get(1)/visionScale);
 			Ball b = new Ball(x,y);
 			balls.add(b);
 		}
@@ -70,10 +72,10 @@ public class VisionTranslator {
 		if (visionSnapShot.getWalls() != null) {
 			for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
 				Wall w = new Wall();
-				w.upper.x = (int) visionSnapShot.getWalls().get(i).get(0);
-				w.upper.y = (int) visionSnapShot.getWalls().get(i).get(1);
-				w.upper.x = (int) visionSnapShot.getWalls().get(i).get(2);
-				w.upper.y = (int) visionSnapShot.getWalls().get(i).get(3);
+				w.upper.x = (int) (visionSnapShot.getWalls().get(i).get(0)/visionScale);
+				w.upper.y = (int) (visionSnapShot.getWalls().get(i).get(1)/visionScale);
+				w.upper.x = (int) (visionSnapShot.getWalls().get(i).get(2)/visionScale);
+				w.upper.y = (int) (visionSnapShot.getWalls().get(i).get(3)/visionScale);
 				
 				walls.add(w);
 			}
@@ -86,8 +88,8 @@ public class VisionTranslator {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
 		
 		for(int i = 0; i < visionSnapShot.getCross()[0].length; i++) {
-			int x = visionSnapShot.getCross()[0][i];
-			int y = visionSnapShot.getCross()[1][i];
+			int x = (int) (visionSnapShot.getCross()[0][i]/visionScale);
+			int y = (int) (visionSnapShot.getCross()[1][i]/visionScale);
 			obstacle_coord.add(new Coordinate(x, y));
 		}
 		
@@ -104,8 +106,8 @@ public class VisionTranslator {
 		for(Wall wall : sides) {
 			Goal goal = new Goal();
 			
-			goal.coordinate1.x = ((wall.upper.x - wall.lower.x)/2) + wall.lower.x;
-			goal.coordinate1.y = ((wall.upper.y - wall.lower.y)/2) + wall.lower.y;
+			goal.coordinate1.x = (int) ((((wall.upper.x - wall.lower.x)/2) + wall.lower.x)/visionScale);
+			goal.coordinate1.y = (int) ((((wall.upper.y - wall.lower.y)/2) + wall.lower.y)/visionScale);
 			
 			goals.add(goal);
 		}
