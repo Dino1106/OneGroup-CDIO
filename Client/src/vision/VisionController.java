@@ -87,7 +87,7 @@ public class VisionController implements Runnable {
 			extractLayer(pictureGlobal);
 
 			// 1 - Identify balls with given parameters and draw circles
-			IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain, 1, 3, 120, 15, 2, 8, calib);
+			IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
 			identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 
 			// 2 - Identify cross with constant parameters
@@ -97,8 +97,8 @@ public class VisionController implements Runnable {
 
             // 3 - Identify Walls by cross
 			IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
-			identifyWalls.drawWalls(pictureColor,Scalar.RED);
-			line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
+			identifyWalls.draw(pictureColor,Scalar.RED);
+
 
 			// Update window frame with current picture frame
 			vidFrame.showImage(converter.convert(pictureColor));
@@ -129,10 +129,12 @@ public class VisionController implements Runnable {
 		}
 
 		cvtColor(picture, picture, COLOR_BGR2GRAY);
-		picturePlain = pictureGlobal.clone();
+		picturePlain = picture.clone();
 		cvtColor(picture, picture, COLOR_GRAY2BGR);
 	}
 
+	// TODO: EVERYTHING BELOW IS IRRELEVANT TO THIS CLASS
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
 	private void extract_lines(double rho, double theta, int threshold, int minLineLength, int maxLineGap,
 			Size filterDim, int threshold1, int threshold2) {

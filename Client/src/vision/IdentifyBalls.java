@@ -1,14 +1,12 @@
 package vision;
 
-import java.util.ArrayList;
-
-import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 
-import model.Ball;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
@@ -24,7 +22,7 @@ public class IdentifyBalls {
 	private int minRad, maxRad;
 	private int calib[];
 	private Mat picture;
-	private Vec3fVector circle;
+	private Vec3fVector circle = new Vec3fVector();
 
 	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad ) {
 		this.resolutionRatio = resolutionRatio;
@@ -100,7 +98,6 @@ public class IdentifyBalls {
 
 			}
 		} while (!eval(amount_circles--));
-
 	}
 
 	private boolean eval(int amount) {
@@ -109,38 +106,38 @@ public class IdentifyBalls {
 		return false;
 	}
 
-	public void draw(Mat DrawIn, Scalar color, boolean centers  )
+	public void draw(Mat drawIn, Scalar color, boolean centers  )
 	{
 		for (int i = 0; i < 7; i++) {
-			circle(DrawIn,
+			circle(drawIn,
 					new Point((int) circle.get(i).get(xCircle),
 							(int) circle.get(i).get(yCircle)),
 					(int) circle.get(i).get(radCircle),
 					Scalar.RED);
 			if (centers) {
-				line(DrawIn, new Point(getCircleXyr(i, xCircle) - 3, getCircleXyr(i, yCircle)),
-						new Point(getCircleXyr(i, xCircle) + 3, getCircleXyr(i, yCircle)), color);
-				line(DrawIn, new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) - 3),
-						new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle) + 3), color);
+				line(drawIn, new Point(getXyr(i, xCircle) - 3, getXyr(i, yCircle)),
+						new Point(getXyr(i, xCircle) + 3, getXyr(i, yCircle)), color);
+				line(drawIn, new Point(getXyr(i, xCircle), getXyr(i, yCircle) - 3),
+						new Point(getXyr(i, xCircle), getXyr(i, yCircle) + 3), color);
 			}
 		}
 
 	}
-		public synchronized int getCircleXyr(int circle_number, int parameter) {
+		public synchronized int getXyr(int circle_number, int parameter) {
 		return (int) circle.get(circle_number).get(parameter);
 	}
-	public void createNodes(Mat drawIn, Scalar color) {
+	public void drawNodes(Mat drawIn, Scalar color) {
 		int i;
 		int u;
-		for (u = 0; u < getCirclesAmount(); u++)
-			for (i = 0; i < getCirclesAmount(); i++)
+		for (u = 0; u < getSize(); u++)
+			for (i = 0; i < getSize(); i++)
 				if (i != u)
-					line(drawIn, new Point(getCircleXyr(u, xCircle), getCircleXyr(u, yCircle)),
-							new Point(getCircleXyr(i, xCircle), getCircleXyr(i, yCircle)), color);
+					line(drawIn, new Point(getXyr(u, xCircle), getXyr(u, yCircle)),
+							new Point(getXyr(i, xCircle), getXyr(i, yCircle)), color);
 	}
 
 
-	public synchronized int getCirclesAmount() {
+	public synchronized int getSize() {
 		return (int) circle.size();
 	}
 

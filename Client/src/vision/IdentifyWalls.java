@@ -47,7 +47,7 @@ public class IdentifyWalls {
         coords[1][3] = centerCross[1] + distEdgeY;
     }
 
-    public void drawWalls(Mat colorMap, Scalar BoxColor)
+    public void draw(Mat colorMap, Scalar BoxColor)
     {
         line(colorMap,new Point(coords[0][0],coords[1][0]),new Point(coords[0][1],coords[1][1]),BoxColor);
         line(colorMap,new Point(coords[0][1],coords[1][1]),new Point(coords[0][2],coords[1][2]),BoxColor);
