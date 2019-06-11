@@ -1,5 +1,7 @@
 package vision;
 
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_HOUGH_GRADIENT;
+import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
@@ -35,7 +37,6 @@ public class IdentifyBalls {
 		calib = new int[5];
 		circle = new Vec3fVector();
 
-
 		extractCircles(resolutionRatio, minDistance, cannyThreshold, centerThreshold, minRad, maxRad);
 	}
 
@@ -51,14 +52,11 @@ public class IdentifyBalls {
 		this.calib = calib;
 		circle = new Vec3fVector();
 
-
 		autoCircle(minDistance, cannyThreshold, centerThreshold, minRad, maxRad);
 	}
 
-	private void extractCircles(int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold,
-								 int minRad, int maxRad) {
-		HoughCircles(picture, circle, CV_HOUGH_GRADIENT, resolutionRatio, minDistance, cannyThreshold,
-				centerThreshold, minRad, maxRad);
+	private void extractCircles(int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad) {
+		HoughCircles(picture, circle, CV_HOUGH_GRADIENT, resolutionRatio, minDistance, cannyThreshold, centerThreshold, minRad, maxRad);
 	}
 
 	public synchronized Vec3fVector getCircle() {
@@ -71,34 +69,35 @@ public class IdentifyBalls {
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop:
-		do {
-			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
-				extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-				if (eval(amount_circles))
-					break outerloop;
-				for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
+			do {
+				for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
 					extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 					if (eval(amount_circles))
 						break outerloop;
-					for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
+					for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
 						extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 						if (eval(amount_circles))
 							break outerloop;
-						for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
+						for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
 							extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 							if (eval(amount_circles))
 								break outerloop;
-							for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
+							for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
 								extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 								if (eval(amount_circles))
 									break outerloop;
+								for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
+									extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+									if (eval(amount_circles))
+										break outerloop;
+								}
 							}
 						}
 					}
-				}
 
-			}
-		} while (!eval(amount_circles--));
+				}
+			} while (!eval(amount_circles--));
+
 	}
 
 	private boolean eval(int amount) {

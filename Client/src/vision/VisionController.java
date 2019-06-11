@@ -113,6 +113,7 @@ public class VisionController implements Runnable {
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
 				identifyCross.draw(pictureColor, Scalar.BLUE);
+				identifyCross.get_array();
 
 				// 3 - Identify Walls by cross
 				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());

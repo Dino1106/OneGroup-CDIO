@@ -14,4 +14,12 @@ public class Cross {
 		this.coordinate3 = coordinate3;
 		this.coordinate4 = coordinate4;
 	}
+
+	@Override
+	public String toString() {
+		return "Cross [coordinate1=" + coordinate1 + ", coordinate2=" + coordinate2 + ", coordinate3=" + coordinate3
+				+ ", coordinate4=" + coordinate4 + "]";
+	}
+	
+	
 }
