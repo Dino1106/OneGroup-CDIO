@@ -71,11 +71,19 @@ public class VisionTranslator {
 	
 	private Cross calculateCross() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
-		for(int i = 0; i < visionSnapShot.getCross().get(i).sizeof(); i++) {
+		
+		for(int i = 0; i < visionSnapShot.getCross().length; i++) {
+			int x = visionSnapShot.getCross()[0][i];
+			int y = visionSnapShot.getCross()[1][i];
+			obstacle_coord.add(new Coordinate(x, y));
+		}
+		
+		
+		/*for(int i = 0; i < visionSnapShot.getCross().get(i).sizeof(); i++) {
 			int x = new IntPointer(visionSnapShot.getCross().get(i)).get(0);
 			int y = new IntPointer(visionSnapShot.getCross().get(i)).get(1);
 			obstacle_coord.add(new Coordinate(x, y));
-		}
+		}*/
 		
 		Cross obstacle = new Cross(obstacle_coord.get(0),obstacle_coord.get(1),obstacle_coord.get(2),obstacle_coord.get(3));
 		
