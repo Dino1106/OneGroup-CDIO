@@ -24,7 +24,7 @@ public class IdentifyRobot {
 		return coords;
 	}
 	
-	public void draw_box(Mat color_map, Scalar BoxColor)
+	public void draw(Mat color_map, Scalar BoxColor)
 	{
 		line(color_map,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
 		line(color_map,new Point(coords[1][0],coords[1][1]),new Point(coords[2][0],coords[2][1]),BoxColor);

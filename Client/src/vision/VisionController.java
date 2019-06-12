@@ -44,16 +44,16 @@ public class VisionController implements Runnable {
 	private static final int xEndLine = 2;
 	private static final int yEndLine = 3;
 
-	private Vec3fVector balls = new Vec3fVector();
-	private Vec3fVector circleSet = new Vec3fVector();
-	private Vec4iVector walls;
-	private Vec4iVector robot = new Vec4iVector();
-	private Vec4iVector lineSet = new Vec4iVector();
+	private Vec3fVector balls;
+	private int[][] walls;
 	private int[][] cross;
+	private int[][] robot;
+	
+	private Vec4iVector lineSet = new Vec4iVector();
 
 
-	private CanvasFrame vidFrame = new CanvasFrame("frame1");
-	private CanvasFrame vidFrameBlue = new CanvasFrame("blue");
+	private CanvasFrame vidFrame;
+	private CanvasFrame vidFrameBlue;
 
 	private Mat pictureGlobal = new Mat();
 	private Mat picturePlain = new Mat(); 
@@ -70,9 +70,10 @@ public class VisionController implements Runnable {
 
 		if(testMode) {
 			this.vidFrame = new CanvasFrame("frame1");
+			this.vidFrameBlue = new CanvasFrame("blue");
 			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
-
 	}
 
 	// USB plugged camera.
@@ -81,12 +82,13 @@ public class VisionController implements Runnable {
 		this.cameraId = camera;
 		this.vid = true;
 		this.testMode = testMode;
-
+		
 		if(testMode) {
 			this.vidFrame = new CanvasFrame("frame1");
+			this.vidFrameBlue = new CanvasFrame("blue");
 			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
-
 	}
 
 	// Constructor with a static image
@@ -97,11 +99,10 @@ public class VisionController implements Runnable {
 
 		if(testMode) {
 			this.vidFrame = new CanvasFrame("frame1");
+			this.vidFrameBlue = new CanvasFrame("blue");
 			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
-
-		// Copy image for color recognition 
-		this.pictureColor = pictureGlobal.clone();
 	}
 
 
@@ -120,12 +121,7 @@ public class VisionController implements Runnable {
 				grabber.start(); 
 			}
 
-
 			do {
-
-				// Save the frame as a Mat
-				//pictureGlobal = converter.convert(grabber.grab());
-
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
 				picturePlain = pictureGlobal.clone();
@@ -138,22 +134,28 @@ public class VisionController implements Runnable {
 
 				// 1 - Identify balls with given parameters and draw circles
 				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
-				identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+				this.balls = identifyBalls.getCircles();
 
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-				identifyCross.draw(pictureColor, Scalar.BLUE);
-				identifyCross.get_array();
+				this.cross = identifyCross.get_array();
 
 				// 3 - Identify Walls by cross
 				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
-				identifyWalls.draw(pictureColor,Scalar.RED);
-				line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
+				this.walls = identifyWalls.get_array();
 
 				// 4 - Identify robot				
 				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot.clone());
-				identifyRobot.draw_box(pictureRobot, Scalar.BLUE);
-
+				this.robot = identifyRobot.get_array();
+				
+				if (testMode) {
+					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+					identifyCross.draw(pictureColor, Scalar.BLUE);
+					identifyWalls.draw(pictureColor,Scalar.RED);
+					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
+					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+				}
+				
 				// Update window frame with current picture frame
 				vidFrame.showImage(converter.convert(pictureColor));
 				vidFrameBlue.showImage(converter.convert(pictureRobot));

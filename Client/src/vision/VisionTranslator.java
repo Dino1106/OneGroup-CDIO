@@ -18,39 +18,32 @@ public class VisionTranslator {
 	private double visionScale;
 	
 	public VisionTranslator(boolean testMode, double visionScale) {
-		visionController = new VisionController(testMode, "e.jpg");
+		visionController = new VisionController(testMode, "a.jpg");
 		this.visionScale = visionScale;
+	}
+	
+	public MapState getProcessedMap() {
 		
 		Thread th = new Thread(visionController);
 		th.start();
 		
 		try {
-			
-			th.join();
+			th.join(1000);
 			visionSnapShot = visionController.getSnapShot();
-			MapState map = getProcessedMap();
-			System.out.println("\n\n\n\n HELO ----" + map.toString() + "\n\n\n\n");
+			
+			return new MapState(
+					calculateBalls(),
+					calculateCross(),
+					calculateWalls(),
+					calculateGoals().get(0),
+					calculateGoals().get(1),
+					calculateRobotLocation());
 			
 		} catch (InterruptedException e) {
 			System.out.println(e.getMessage());
+			return null;
 		}
 		
-	}
-	
-	public MapState getProcessedMap() {
-		
-		//TODO: CalculateRobot method should be created instead of this hard-code.
-		RobotLocation robot_start = new RobotLocation();
-		robot_start.coordinate = new Coordinate(0, 0);
-		
-		return new MapState(
-				calculateBalls(),
-				calculateCross(),
-				calculateWalls(),
-				//TODO: Insert calculateGoals, when it works :D
-				null, //calculateGoals().get(0),
-				null, //calculateGoals().get(1),
-				robot_start);
 	}
 	
 	private ArrayList<Ball> calculateBalls() {
@@ -68,7 +61,7 @@ public class VisionTranslator {
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		if (visionSnapShot.getWalls() != null) {
-			for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
+			/*for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
 				Wall w = new Wall();
 				w.upper.x = (int) (visionSnapShot.getWalls().get(i).get(0)/visionScale);
 				w.upper.y = (int) (visionSnapShot.getWalls().get(i).get(1)/visionScale);
@@ -77,6 +70,7 @@ public class VisionTranslator {
 				
 				walls.add(w);
 			}
+			*/
 		}
 		
 		return walls;
@@ -111,6 +105,13 @@ public class VisionTranslator {
 		}
 		
 		return goals;
+	}
+	
+	private RobotLocation calculateRobotLocation() {
+		//TODO: Make calculateRobotLocation
+		
+		return null;
+		
 	}
 	
 }

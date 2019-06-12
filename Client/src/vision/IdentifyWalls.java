@@ -62,4 +62,9 @@ public class IdentifyWalls {
 		line(colorMap,new Point(coords[0][3],coords[1][3]),new Point(coords[0][0],coords[1][0]),BoxColor);
 	}
 
+	public int[][] get_array() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
