@@ -307,7 +307,7 @@ public class PathFinder {
 		Coordinate goToCoordinate = getPartwayCoordinate(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y), robotDiameter/4);
 		MainClient.sendCoordinate(goToCoordinate);
 		
-		MainClient.sendTravelDistanceBackwards(robotDiameter);
+		MainClient.sendTravelDistanceBackwards(robotDiameter, speedSlow);
 		
 	}
 

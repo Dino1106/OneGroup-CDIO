@@ -128,7 +128,7 @@ public class MainServer extends Thread {
 				String[] coordArray = coordinateObject.split(" ");
 				Coordinate coordinate = new Coordinate(Integer.parseInt(coordArray[0]), Integer.parseInt(coordArray[1]));
 				carDrive(coordinate);*/
-			//}
+			}
 			
 		} catch (IOException e) {
 			return;
