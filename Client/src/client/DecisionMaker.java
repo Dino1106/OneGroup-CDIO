@@ -32,9 +32,10 @@ public class DecisionMaker {
 	
 	public static void main(String[] args) {
 		
-		VisionTranslator visionT = new VisionTranslator(false);
-		System.out.println(visionT.getProcessedMap().toString());
-		/*
+		//TODO: Implement visionTranslator implementation.
+		//VisionTranslator visionT = new VisionTranslator(false);
+		//System.out.println(visionT.getProcessedMap().toString());
+		
 		try {
 			MainClient.connect();
 			ballList.add(new Ball(80, 40));
@@ -66,7 +67,6 @@ public class DecisionMaker {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
 	}
 	
 	public static void mainLoop() {
