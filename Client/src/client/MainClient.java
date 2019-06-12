@@ -113,6 +113,16 @@ public class MainClient {
 		}
 		
 	}
+	
+	public static void setRobotLocation(Coordinate coordinate) {
+		try {
+			String coordinateString = "8 " + coordinate.x + " " + coordinate.y;
+			dOut.writeUTF(coordinateString);
+			dOut.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
  
 	public static void disconnect() { 
 		try {

@@ -90,6 +90,12 @@ public class RobotMovement {
 		}
 	}
 	
+	public void setRobotLocation(Coordinate coordinate) {
+		Pose pose = poseProvider.getPose();  // Gets the 'pose' of robot (position and heading)
+		Point point = new Point(coordinate.x, coordinate.y);
+		pose.setLocation(point);
+	}
+	
 	public void playSound(int soundToPlay) {
 		File sound = null;
 		

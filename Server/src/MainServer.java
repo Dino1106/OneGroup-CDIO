@@ -114,6 +114,10 @@ public class MainServer extends Thread {
 					int soundToPlay = Integer.parseInt(splitInputs[1]);
 					playSound(soundToPlay);
 					break;
+				case 8:
+					Coordinate robotLocation = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
+					robotControls.setRobotLocation(robotLocation);
+					break;
 				default:
 					break;
 				}
