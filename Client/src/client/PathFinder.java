@@ -11,6 +11,13 @@ import model.Wall;
 
 public class PathFinder {
 
+	public static final int robotDiameter = 25; // The "diameter" of the robot - its thickness.
+	public static final int shootSpace = 4; // The buffer distance we want between the robot and an edge.
+	public static final int speedSlow = 10;
+	public static final int speedFast = 500;
+	public static final int sleepTime = 5; // Sleep time in seconds.
+	
+	
 	Coordinate northWest;
 	Coordinate northEast;
 	Coordinate southWest;
@@ -26,29 +33,25 @@ public class PathFinder {
 		calculateGoalRobotLocations(mapState);
 	}
 
-	// We want to return routes to all balls.
-	public ArrayList<Route> getCalculatedRoutesBalls(MapState mapState) {
-		ArrayList<Route> routes = new ArrayList<Route>();
-		for (Ball ball : mapState.ballList) {
-			Route route = new Route();
-			route.robotCoordinate = mapState.robotLocation.coordinate;
-			// This is where the magic happens.
-			// First we find out which quadrant is nearest to the ball.
-			Coordinate nearestToBall;
-			nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
-			// Now we find out which quadrant is nearest to the robot.
-			Coordinate nearestToRobot;
-			nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
-			// The first coordinate we go to is the one nearest to the robot.
-			route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
-			// Now we calculate a route between these two coordinates. A method has been
-			// created, dedicated to finding a path between quadrants.
-			route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
-			// Now we go to the ball.
-			route.coordinates.add(new Coordinate(ball.x, ball.y));
-			routes.add(route);
-		}
-		return routes;
+	// We want to return route to a given ball.
+	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
+		Route route = new Route();
+		route.robotCoordinate = mapState.robotLocation.coordinate;
+		// This is where the magic happens.
+		// First we find out which quadrant is nearest to the ball.
+		Coordinate nearestToBall;
+		nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
+		// Now we find out which quadrant is nearest to the robot.
+		Coordinate nearestToRobot;
+		nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
+		// The first coordinate we go to is the one nearest to the robot.
+		route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
+		// Now we calculate a route between these two coordinates. A method has been
+		// created, dedicated to finding a path between quadrants.
+		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
+		// Now check if ball is near wall. If it isn't, then we end here.
+		route.coordinates.add(new Coordinate(ball.x, ball.y));
+		return route;
 	}
 
 	// We want to return routes to both goals.
@@ -85,7 +88,8 @@ public class PathFinder {
 		int orientation1, orientation2;
 		// Find the closest goal.
 		Goal goal = null;
-		if (calculateDistances(mapState.robotLocation.coordinate, mapState.goal1.coordinate1) > calculateDistances(mapState.robotLocation.coordinate, mapState.goal2.coordinate1)) {
+		if (calculateDistances(mapState.robotLocation.coordinate, mapState.goal1.coordinate1) > calculateDistances(
+				mapState.robotLocation.coordinate, mapState.goal2.coordinate1)) {
 			goal = mapState.goal1;
 		} else {
 			goal = mapState.goal2;
@@ -95,10 +99,18 @@ public class PathFinder {
 		MainClient.rotate(-orientation1);
 		MainClient.rotate(orientation2);
 		MainClient.pickUpBalls(false);
+		// Wait for 5 seconds.
+		try {
+			Thread.sleep(sleepTime * 1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MainClient.pickUpBalls(true);
 	}
 
 	// 'Afstandsformlen' to calculate distance between two coordinates.
-	private int calculateDistances(Coordinate coordinate1, Coordinate coordinate2) {
+	public int calculateDistances(Coordinate coordinate1, Coordinate coordinate2) {
 		return (int) Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
 	}
 
@@ -180,20 +192,20 @@ public class PathFinder {
 		if (mapState.goal1.coordinate1.x < mapState.wallList.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
 			mapState.goal1.robotLocation.orientation = 180;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x + 20;
+			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x + (robotDiameter / 2 + shootSpace);
 			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate1.y + mapState.goal1.coordinate2.y)
 					/ 2;
 			mapState.goal2.robotLocation.orientation = 0;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate2.x - 20;
+			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate2.x - (robotDiameter / 2 + shootSpace);
 			mapState.goal2.robotLocation.coordinate.y = (mapState.goal2.coordinate2.y + mapState.goal2.coordinate2.y)
 					/ 2;
 		} else {
 			mapState.goal2.robotLocation.orientation = 180;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x + 20;
+			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x + (robotDiameter / 2 + shootSpace);
 			mapState.goal2.robotLocation.coordinate.y = (mapState.goal2.coordinate1.y + mapState.goal2.coordinate2.y)
 					/ 2;
 			mapState.goal1.robotLocation.orientation = 0;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate2.x - 20;
+			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate2.x - (robotDiameter / 2 + shootSpace);
 			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate2.y + mapState.goal1.coordinate2.y)
 					/ 2;
 		}
@@ -276,7 +288,7 @@ public class PathFinder {
 			break;
 		}
 	}
-	
+
 	public void pickUpMode(boolean swallow) {
 		MainClient.pickUpBalls(swallow);
 	}
@@ -286,6 +298,25 @@ public class PathFinder {
 		for (Coordinate coordinate : route.coordinates) {
 			MainClient.sendCoordinate(coordinate);
 		}
+	}
+
+	public void swallowAndReverse(MapState mapState, Ball bestBall) {
+		MainClient.sendMotorSpeed(speedSlow);
+		Coordinate tempCoordinate = mapState.robotLocation.coordinate;
+		// Now we gotta calculate a coordinate about half the robot breadth away from the ball.
+		Coordinate goToCoordinate = getPartwayCoordinate(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y), robotDiameter/4);
+		MainClient.sendCoordinate(goToCoordinate);
+		
+		MainClient.sendTravelDistanceBackwards(robotDiameter);
+		
+	}
+
+	// Get's a new coordinate that is 'distance' away from coordinate 2, coming from coordinate 1.
+	private Coordinate getPartwayCoordinate(Coordinate coordinate1, Coordinate coordinate2, int distance) {
+		Coordinate output = new Coordinate(0, 0);
+		output.x = coordinate2.x - ((robotDiameter/4)/calculateDistances(coordinate1, coordinate2))*(coordinate2.x-coordinate1.x);
+		output.y = coordinate2.y - ((robotDiameter/4)/calculateDistances(coordinate1, coordinate2))*(coordinate2.y-coordinate1.y);
+		return output;
 	}
 
 }
