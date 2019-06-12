@@ -72,8 +72,8 @@ public class VisionTranslator {
 				Wall w = new Wall();
 				w.upper.x = (int) (visionSnapShot.getWalls().get(i).get(0)/visionScale);
 				w.upper.y = (int) (visionSnapShot.getWalls().get(i).get(1)/visionScale);
-				w.upper.x = (int) (visionSnapShot.getWalls().get(i).get(2)/visionScale);
-				w.upper.y = (int) (visionSnapShot.getWalls().get(i).get(3)/visionScale);
+				w.lower.x = (int) (visionSnapShot.getWalls().get(i).get(2)/visionScale);
+				w.lower.y = (int) (visionSnapShot.getWalls().get(i).get(3)/visionScale);
 				
 				walls.add(w);
 			}
