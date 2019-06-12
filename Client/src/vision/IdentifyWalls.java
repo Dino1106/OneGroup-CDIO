@@ -48,12 +48,9 @@ public class IdentifyWalls {
         SearchCoordinates[3][1] = centerCross[1] + distEdgeY;
     */
 
-private int[][] getArray(){
-    return BoxCoordinates;
-
-
-
-}
+    public int[][] getArray(){
+        return BoxCoordinates;
+    }
 
 	public void draw(Mat colorMap, Scalar BoxColor)
 	{

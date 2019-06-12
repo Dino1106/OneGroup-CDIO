@@ -146,7 +146,7 @@ public class VisionController implements Runnable {
 
 				// 3 - Identify Walls by cross
 				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
-				this.walls = identifyWalls.get_array();
+				this.walls = identifyWalls.getArray();
 
 				// 4 - Identify robot				
 				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot.clone());
