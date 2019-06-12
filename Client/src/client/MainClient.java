@@ -53,10 +53,10 @@ public class MainClient {
 		}
 	}
 
-	public static void sendTravelDistanceBackwards(int centimeters, int speed){
+	public static void sendTravelDistance(int centimeters, int speed){
 		// Send coordinates to Server: 
 		try {
-			String coordinateString = "3 " + -centimeters + " " + speed;
+			String coordinateString = "3 " + centimeters + " " + speed;
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
 			boolean serverResponse = dIn.readBoolean();

@@ -18,8 +18,6 @@ public class PathFinder {
 	public static final int speedFast = 500;
 	public static final int sleepTime = 5; // Sleep time in seconds.
 	
-	private MapState mapState;
-	
 	
 	Coordinate northWest;
 	Coordinate northEast;
@@ -31,7 +29,6 @@ public class PathFinder {
 	// coordinates".
 	// Also starts swallowing balls.
 	public PathFinder(MapState mapState) {
-		this.mapState = mapState;
 		MainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
 		calculateGoalRobotLocations(mapState);
@@ -53,7 +50,7 @@ public class PathFinder {
 		// created, dedicated to finding a path between quadrants.
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now check if ball is near wall. If it isn't, then we end here.
-		route.coordinates.add(new Coordinate(ball.x, ball.y));
+		// TODO: Add more to get closer to a "wall-ball" without picking it up.
 		return route;
 	}
 
@@ -303,21 +300,17 @@ public class PathFinder {
 	}
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
-		Coordinate tempCoordinate = mapState.robotLocation.coordinate;
-		// Now we gotta calculate a coordinate about half the robot breadth away from the ball.
-		Coordinate goToCoordinate = getPartwayCoordinate(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y), robotDiameter/4);
-		MainClient.sendCoordinate(goToCoordinate, speedSlow);
-		
-		MainClient.sendTravelDistanceBackwards(robotDiameter, speedSlow);
+		int orientation1, orientation2;
+		orientation1 = mapState.robotLocation.orientation;
+		// We make use of atan: tan = close cathete over far cathete. Should this really be cast to an int?
+		orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)/(bestBall.x - mapState.robotLocation.coordinate.x));
+				
+		MainClient.rotate(-orientation1);
+		MainClient.rotate(orientation2);
+		int distance = calculateDistances(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y));
+		MainClient.sendTravelDistance(distance - robotDiameter/4, speedSlow);
+		MainClient.sendTravelDistance(-robotDiameter, speedSlow);
 		MainClient.sendMotorSpeed(speedFast);
-	}
-
-	// Get's a new coordinate that is 'distance' away from coordinate 2, coming from coordinate 1.
-	private Coordinate getPartwayCoordinate(Coordinate coordinate1, Coordinate coordinate2, int distance) {
-		Coordinate output = new Coordinate(0, 0);
-		output.x = coordinate2.x - ((robotDiameter/4)/calculateDistances(coordinate1, coordinate2))*(coordinate2.x-coordinate1.x);
-		output.y = coordinate2.y - ((robotDiameter/4)/calculateDistances(coordinate1, coordinate2))*(coordinate2.y-coordinate1.y);
-		return output;
 	}
 
 }
