@@ -23,7 +23,7 @@ public class MainClient {
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
 		
-		rotate(360);
+		sendTravelDistanceBackwards(50, 720);
 	}
 	
 	public static void sendMotorSpeed(int speed) {
@@ -36,7 +36,7 @@ public class MainClient {
 		}
 		
 	}
-
+	
 	public static void sendCoordinate(Coordinate coordinate){
 		// Send coordinates to Server: 
 		try {
@@ -55,10 +55,29 @@ public class MainClient {
 			io.printStackTrace();
 		}
 	}
+
+	public static void sendTravelDistanceBackwards(int centimeters, int speed){
+		// Send coordinates to Server: 
+		try {
+			String coordinateString = "3 " + -centimeters + " " + speed;
+			dOut.writeUTF(coordinateString);
+			dOut.flush();
+			boolean serverResponse = dIn.readBoolean();
+			
+			if(serverResponse) {
+				System.out.println("Path done: " + serverResponse);
+			} else {
+				// TODO: Add what to do
+			}
+			
+		} catch(IOException io) {
+			io.printStackTrace();
+		}
+	}
 	
 	public static void pickUpBalls(boolean pickUp) {
 		try {
-			String pickUpString = "3 " + pickUp;
+			String pickUpString = "4 " + pickUp;
 			dOut.writeUTF(pickUpString);
 			dOut.flush();
 		} catch (IOException e) {
@@ -68,7 +87,7 @@ public class MainClient {
 	
 	public static void rotate(int degrees) {
 		try {
-			String rotateString = "4 " + degrees;
+			String rotateString = "5 " + degrees;
 			dOut.writeUTF(rotateString);
 			dOut.flush();
 		} catch (IOException e) {
@@ -78,7 +97,7 @@ public class MainClient {
 	
 	public static void sendPickUpSpeed(int speed) {
 		try {
-			String speedString = "5 " + speed;
+			String speedString = "6 " + speed;
 			dOut.writeUTF(speedString);
 			dOut.flush();
 		} catch (IOException e) {
@@ -89,7 +108,7 @@ public class MainClient {
 	
 	public static void sendSound(int sound) {
 		try {
-			String soundString = "6 " + sound;
+			String soundString = "7 " + sound;
 			dOut.writeUTF(soundString);
 			dOut.flush();
 		} catch (IOException e) {

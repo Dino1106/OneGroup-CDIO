@@ -42,6 +42,10 @@ public class MainServer extends Thread {
 
 	}
 	
+	public void carDriveBackwards(int centimeters, int speed) {
+		robotControls.driveBackwards(centimeters, speed);
+	}
+	
 	public void setMotorSpeed(int speed) {
 		robotControls.setMotorSpeed(speed);
 	}
@@ -84,22 +88,27 @@ public class MainServer extends Thread {
 					setMotorSpeed(speed);
 					break;
 				case 2:
-					Coordinate coordinate = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
-					carDrive(coordinate);
+					Coordinate coordinateBackward = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
+					carDrive(coordinateBackward);
 					break;
 				case 3:
+					int centimeters = Integer.parseInt(splitInputs[1]);
+					int backwardsSpeed = Integer.parseInt(splitInputs[2]);
+					carDriveBackwards(centimeters, backwardsSpeed);
+					break;
+				case 4:
 					boolean pickUp = Boolean.parseBoolean(splitInputs[1]);
 					carPickUpBalls(pickUp);
 					break;
-				case 4:
+				case 5:
 					int degrees = Integer.parseInt(splitInputs[1]);
 					rotate(degrees);
 					break;
-				case 5:
+				case 6:
 					int pickUpSpeed = Integer.parseInt(splitInputs[1]);
 					setPickUpSpeed(pickUpSpeed);
 					break;
-				case 6:
+				case 7:
 					int soundToPlay = Integer.parseInt(splitInputs[1]);
 					playSound(soundToPlay);
 					break;

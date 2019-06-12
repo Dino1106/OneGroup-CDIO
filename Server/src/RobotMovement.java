@@ -42,7 +42,7 @@ public class RobotMovement {
 		
 		Pose pose = poseProvider.getPose();				// Gets the 'pose' of robot (position and heading)
 		Point location = pose.getLocation();
-		pose.setLocation(location);				    // Set from coordinate using pose provider
+		pose.setLocation(location);				   	 	// Set from coordinate using pose provider
 
 		navigator.goTo(new Waypoint(to.x, to.y));
 				
@@ -52,6 +52,12 @@ public class RobotMovement {
 			return false;
 		}
 	}
+	
+	public void driveBackwards(int centimeters, int speed) {
+		setMotorSpeed(speed);
+		pilot.travel(centimeters);
+	}
+	
 	
 	public void setMotorSpeed(int speed) {
 		pilot.setLinearSpeed(speed);
