@@ -15,12 +15,14 @@ public class MainClient {
 	private static DataOutputStream dOut;
 	private static DataInputStream dIn;
  
-	public static void connect() throws IOException { 
+	public static void connect() throws IOException {
 		String ip = "192.168.43.187"; 
 		System.out.println("Starting client");
 		socket = new Socket(ip, PORT);
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
+		
+		sendTravelDistance(50, 720);
 	}
 	
 	public static void sendMotorSpeed(int speed) {

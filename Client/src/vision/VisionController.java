@@ -2,10 +2,7 @@ package vision;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
-import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
-
-import java.util.ArrayList;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -18,14 +15,7 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
 
-import model.Ball;
-import model.Cross;
-import model.Goal;
-import model.MapState;
-import model.RobotLocation;
 import model.VisionSnapShot;
-import model.Wall;
-
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_core.*;
 
@@ -45,7 +35,7 @@ public class VisionController implements Runnable {
 	private int[][] walls;
 	private int[][] cross;
 	private int[][] robot;
-	
+
 	private Vec4iVector lineSet = new Vec4iVector();
 
 	private CanvasFrame vidFrame;
@@ -79,7 +69,7 @@ public class VisionController implements Runnable {
 		this.cameraId = camera;
 		this.vid = true;
 		this.testMode = testMode;
-		
+
 		if(testMode) {
 			this.vidFrame = new CanvasFrame("frame1");
 			this.vidFrameBlue = new CanvasFrame("blue");
@@ -102,7 +92,6 @@ public class VisionController implements Runnable {
 			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
 	}
-
 
 	// Code to execute in the class:
 	@Override
@@ -134,8 +123,8 @@ public class VisionController implements Runnable {
 				int[] calib = {6, 5, 2, 6, 20}; 
 
 				// 1 - Identify balls with given parameters and draw circles
-				//IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
-				//this.balls = identifyBalls.getCircles();
+				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
+				this.balls = identifyBalls.getCircles();
 
 
 				// 2 - Identify cross with constant parameters
@@ -149,15 +138,15 @@ public class VisionController implements Runnable {
 				// 4 - Identify robot				
 				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
 				this.robot = identifyRobot.getArray();
-				
+
 				if (testMode) {
-					//identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 					identifyCross.draw(pictureColor, Scalar.BLUE);
 					identifyWalls.draw(pictureColor,Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-					//identifyRobot.draw(pictureRobot, Scalar.BLUE);
-					
+					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+
 					// Update window frame with current picture frame
 					vidFrame.showImage(converter.convert(pictureColor));
 					vidFrameBlue.showImage(converter.convert(pictureRobot));
@@ -236,25 +225,6 @@ public class VisionController implements Runnable {
 			line(getPic(), new Point(getLineXyxy(i, xStartLine), getLineXyxy(i, yStartLine)),
 					new Point(getLineXyxy(i, xEndLine), getLineXyxy(i, yEndLine)), Scalar.RED);
 		}
-		// System.out.println(new IntPointer(Line_set.get(0)).get(0));
 	}
 
-	/*
-// TODO: Do not delete comments below
-	/*
-	 * @Override public void run() { try {
-	 * 
-	 * FrameGrabber grabber = FrameGrabber.createDefault(Camera_id);
-	 * OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat(); if
-	 * (vid) { grabber.start();
-	 * 
-	 * while (vid) { update_image(converter.convert(grabber.grab())); //
-	 * extract_circles(1,50,120,80,50,100); extract_layer();
-	 * vid_frame.showImage(converter.convert(get_pic()));
-	 * vid_edges.showImage(converter.convert(get_edges())); } } else {
-	 * Generate_Objects(); // extract_circles(1,50,120,80,50,100);
-	 * vid_frame.showImage(converter.convert(get_pic()));
-	 * vid_edges.showImage(converter.convert(get_plain())); } } catch (Exception e)
-	 * { e.printStackTrace(); } }
-	 */
 }

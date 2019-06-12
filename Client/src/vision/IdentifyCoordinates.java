@@ -43,8 +43,8 @@ public class IdentifyCoordinates {
 
 		int[][] coords = new int[2][2];
 
-		Mat extractedMat = extractColor(picture, "blue");
-		medianBlur(extractedMat, extractedMat, 5);
+		extractColor(picture, "blue");
+		medianBlur(picture, picture, 5);
 
 		//BytePointer p = extractedMat.data();
 
@@ -101,8 +101,8 @@ public class IdentifyCoordinates {
 		int[] lowerLeftBoundary  = { center[0]-100, center[1]-100 };
 		int[] lowerRightBoundary = { center[0]+100, center[1]-100 };
 
-		Mat color_map = extractColor(picture, "red");
-		BytePointer p = color_map.data();
+		extractColor(picture, "red");
+		BytePointer p = picture.data();
 
 
 		d21:
@@ -110,7 +110,7 @@ public class IdentifyCoordinates {
 				for( int x = upperLeftBoundary[0]; x < upperRightBoundary[0]; x++ ){
 
 					//System.out.print( p.get((y*color_map.arrayWidth())+x));
-					if(p.get((y*color_map.arrayWidth())+x) == -1){
+					if(p.get((y * picture.arrayWidth())+x) == -1){
 
 						coords[0][1] = y;
 						coords[1][1] = y;
@@ -122,7 +122,7 @@ public class IdentifyCoordinates {
 			for( int y = upperLeftBoundary[1]; y >= lowerLeftBoundary[1]; y-- )
 				for( int x = upperLeftBoundary[0]; x < upperRightBoundary[0]; x++ ){
 
-					if(p.get((y*color_map.arrayWidth())+x) == -1){
+					if(p.get((y * picture.arrayWidth())+x) == -1){
 
 						coords[3][1] = y;
 						coords[2][1] = y;
@@ -135,7 +135,7 @@ public class IdentifyCoordinates {
 					for( int x = lowerLeftBoundary[0]; x <= lowerRightBoundary[0]; x++ )
 						for( int y = lowerLeftBoundary[1]; y <= upperRightBoundary[1]; y++ ){
 
-							if(p.get((y*color_map.arrayWidth())+x) == -1){
+							if(p.get((y * picture.arrayWidth())+x) == -1){
 
 								coords[0][0] = x;
 								coords[3][0] = x;
@@ -148,7 +148,7 @@ public class IdentifyCoordinates {
 					for( int x = lowerRightBoundary[0]; x >= lowerLeftBoundary[0]; x-- )
 						for( int y = lowerLeftBoundary[1]; y <= upperRightBoundary[1]; y++ ){
 
-							if(p.get((y*color_map.arrayWidth())+x) == -1){
+							if(p.get((y * picture.arrayWidth())+x) == -1){
 
 								coords[1][0] = x;
 								coords[2][0] = x;
@@ -160,7 +160,7 @@ public class IdentifyCoordinates {
 						return coords;
 	}
 
-	public Mat extractColor(Mat picture, String color) {
+	public void extractColor(Mat picture, String color) {
 
 		//Mat to_out = new Mat();
 
@@ -208,8 +208,6 @@ public class IdentifyCoordinates {
 
 		// Remove any other color than in the range of min and max
 		opencv_core.inRange(picture, min_Mat, max_Mat, picture);
-
-		return picture;
 	}
 
 	public void checkRedundant(int x, int y, int[][] coords) {

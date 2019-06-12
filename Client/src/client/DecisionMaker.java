@@ -31,6 +31,10 @@ public class DecisionMaker {
 	private static RobotLocation robotLocation;
 	
 	public static void main(String[] args) {
+		
+		VisionTranslator visionT = new VisionTranslator(false);
+		System.out.println(visionT.getProcessedMap().toString());
+		/*
 		try {
 			MainClient.connect();
 			ballList.add(new Ball(80, 40));
@@ -62,6 +66,7 @@ public class DecisionMaker {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	public static void mainLoop() {
