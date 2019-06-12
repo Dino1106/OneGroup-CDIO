@@ -147,14 +147,34 @@ public class VisionTranslator {
 	}
 
 	private RobotLocation calculateRobotLocation() {
-		
 		int recievedArray[][] = visionSnapShot.getRobot();
-		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][1],recievedArray[0][1]);
-		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[0][1],recievedArray[0][1]);
+		int orientation;
+		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][0],recievedArray[0][1]);
+		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[1][0],recievedArray[1][1]);
 		
-		//TODO: Implement orientation from the two recieved circles.
-		return null;
-
+		if(largeCircleCoordinate.x != smallCircleCoordinate.x) {
+			int adjacent = smallCircleCoordinate.x - largeCircleCoordinate.x;
+			int opposite = smallCircleCoordinate.y - largeCircleCoordinate.y;
+			
+			int degrees = (int) Math.toDegrees(Math.atan(opposite/adjacent));
+			
+			if(degrees < 0) {
+				orientation = 360 + degrees;
+			}
+			
+			else orientation = 360 - degrees;
+			
+		}
+		else {
+			if(largeCircleCoordinate.y > smallCircleCoordinate.y) {
+				orientation = 270;
+			}
+			else orientation = 90;
+		}
+		
+		RobotLocation roboloc = new RobotLocation(largeCircleCoordinate, orientation);
+		
+		return roboloc;
 	}
 
 }

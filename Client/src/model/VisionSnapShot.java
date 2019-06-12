@@ -1,7 +1,6 @@
 package model;
 
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
-import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
 
 public class VisionSnapShot {
 	
