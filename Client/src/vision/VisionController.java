@@ -134,8 +134,8 @@ public class VisionController implements Runnable {
 				int[] calib = {6, 5, 2, 6, 20}; 
 
 				// 1 - Identify balls with given parameters and draw circles
-				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
-				this.balls = identifyBalls.getCircles();
+				//IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
+				//this.balls = identifyBalls.getCircles();
 
 
 				// 2 - Identify cross with constant parameters
@@ -147,16 +147,16 @@ public class VisionController implements Runnable {
 				this.walls = identifyWalls.getArray();
 
 				// 4 - Identify robot				
-				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot.clone());
+				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
 				this.robot = identifyRobot.getArray();
 				
 				if (testMode) {
-					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+					//identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 					identifyCross.draw(pictureColor, Scalar.BLUE);
 					identifyWalls.draw(pictureColor,Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+					//identifyRobot.draw(pictureRobot, Scalar.BLUE);
 					
 					// Update window frame with current picture frame
 					vidFrame.showImage(converter.convert(pictureColor));

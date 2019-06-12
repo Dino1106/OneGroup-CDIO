@@ -21,7 +21,7 @@ public class IdentifyCoordinates {
 	
 
 	public int[] getWallCorners(Mat picture)
-	{ {
+	{
 		int frameWidth  = picture.cols();
 		int frameHeight = picture.rows();
 		int center[] = {frameWidth/2,frameHeight/2};
@@ -37,20 +37,7 @@ public class IdentifyCoordinates {
 
 	//	Mat color_map = extractColor(picture, "blue");
 	//	BytePointer p = color_map.data();
-
-    }
-
-
 	}
-
-
-
-
-
-	public int[][] getEdgesTriangle(Mat picture) {
-		// Dimensions of frame
-		int frameWidth  = picture.cols();
-		int frameHeight = picture.rows();
 
 	public int[][] getCirleCoordinates(Mat picture) {
 
