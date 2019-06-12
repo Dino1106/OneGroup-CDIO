@@ -154,7 +154,7 @@ public class IdentifyCoordinates {
 
 	public Mat extractColor(Mat picture, String color) {
 
-		Mat to_out = new Mat();
+		//Mat to_out = new Mat();
 
 		int h_min = 0, h_max = 255;
 		int s_min = 0, s_max = 255;
@@ -162,10 +162,10 @@ public class IdentifyCoordinates {
 
 
 		// Transform the picture for a more precise calibration
-		medianBlur(picture, to_out, 9);
+		medianBlur(picture, picture, 9);
 
 		// Prepare for HSV color extraction
-		cvtColor(to_out, to_out, COLOR_BGR2HSV);
+		cvtColor(picture, picture, COLOR_BGR2HSV);
 
 		if(color.contentEquals("red")) {
 			// Range of red color of cross
@@ -185,11 +185,11 @@ public class IdentifyCoordinates {
 
 		} else if(color.contentEquals("blue")) {
 			// Range of red color of cross
-			h_min = 150; 		
-			h_max = 180;
+			h_min = 105; 		
+			h_max = 125;
 			s_min = 120;
 			s_max = 255;
-			v_min = 120;
+			v_min = 30;
 			v_max = 255;
 		}
 
@@ -199,9 +199,9 @@ public class IdentifyCoordinates {
 		Mat max_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(h_max, s_max, v_max, 0));
 
 		// Remove any other color than in the range of min and max
-		opencv_core.inRange(to_out, min_Mat, max_Mat, to_out);
+		opencv_core.inRange(picture, min_Mat, max_Mat, picture);
 
-		return to_out;
+		return picture;
 	}
 
 	public void checkRedundant(int x, int y, int[][] coords) {
@@ -221,5 +221,10 @@ public class IdentifyCoordinates {
 				}
 			}
 		}
+	}
+	
+	public void createTrackbars(Mat picture) {
+		
+		
 	}
 }

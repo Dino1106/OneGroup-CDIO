@@ -88,6 +88,7 @@ public class VisionController implements Runnable {
 
 
 			do {
+				
 				// Save the frame as a Mat
 				pictureGlobal = converter.convert(grabber.grab());
 
