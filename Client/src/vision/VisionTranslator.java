@@ -1,6 +1,8 @@
 package vision;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import model.Ball;
 import model.Coordinate;
@@ -60,17 +62,45 @@ public class VisionTranslator {
 	
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
+		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
+		Comparator<Coordinate> sortCoord =  new Comparator<Coordinate>() {
+
+			@Override
+			public int compare(Coordinate c1, Coordinate c2) {
+				return -Integer.compare(c1.x,c2.x);
+			}
+		};
+		
 		if (visionSnapShot.getWalls() != null) {
-			/*for(int i = 0; i < visionSnapShot.getWalls().get(0).sizeof(); i++) {
+			for(int i = 0; i < visionSnapShot.getWalls()[0].length; i++) {
+				int x = (int) (visionSnapShot.getWalls()[i][0]/visionScale);
+				int y = (int) (visionSnapShot.getWalls()[i][1]/visionScale);
+				
+				Coordinate c = new Coordinate(x,y);
+				coords.add(c);
+				
+			}
+			
+			Collections.sort(coords, sortCoord);
+			
+			for(int i = 0; i < coords.size(); i+=2) {
 				Wall w = new Wall();
-				w.upper.x = (int) (visionSnapShot.getWalls().get(i).get(0)/visionScale);
-				w.upper.y = (int) (visionSnapShot.getWalls().get(i).get(1)/visionScale);
-				w.lower.x = (int) (visionSnapShot.getWalls().get(i).get(2)/visionScale);
-				w.lower.y = (int) (visionSnapShot.getWalls().get(i).get(3)/visionScale);
+				if(coords.get(i).y > coords.get(i).y) {
+					w.upper.x = coords.get(i).x;
+					w.upper.y = coords.get(i).y;
+					w.lower.x = coords.get(i+1).y;
+					w.upper.x = coords.get(i+1).x;
+				}
+				else {
+					w.upper.x = coords.get(i+1).x;
+					w.upper.y = coords.get(i+1).y;
+					w.lower.x = coords.get(i).y;
+					w.upper.x = coords.get(i).x;
+				}
 				
 				walls.add(w);
 			}
-			*/
+			
 		}
 		
 		return walls;
