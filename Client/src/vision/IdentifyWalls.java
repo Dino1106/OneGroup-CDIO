@@ -7,18 +7,21 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
 public class IdentifyWalls {
-  private  int[][] BoxCoordinates = new int[4][2], coords = new int [4][2];
+  private  int[][] BoxCoordinates = new int[4][2],
+                   SearchCoordinates  = new int [4][2];
+
    public  int centerCross[] = new int[2];
 
     public IdentifyWalls(int[][] CrossBoxCoordinates) {
         this.BoxCoordinates = CrossBoxCoordinates;
-        calculateWalls();
+       // calculateWalls();
     }
-
+/*
     private void calculateWalls()
     {
-    	// Proportion from edges of the cross to the edges of the walls 
-    	int horizontalProportion = 8, verticalProportion = 6;
+        int scale = 2;
+    	// Proportion from edges of the cross to the edges of the walls
+    	int horizontalProportion = 8/scale, verticalProportion = 6/scale;
         
     	// Determine the vertical/ horizontal distance from center of cross to its edges
         int distCrossX, distCrossY;
@@ -35,36 +38,30 @@ public class IdentifyWalls {
         centerCross[1] = (BoxCoordinates[0][1] + BoxCoordinates[2][1]) / 2;
         
         // Calculate the position of the edge's corners 
-        coords[0][0] = centerCross[0] - distEdgeX;
-        coords[0][1] = centerCross[1] - distEdgeY;
-        coords[1][0] = centerCross[0] + distEdgeX;
-        coords[1][1] = centerCross[1] - distEdgeY;
-        coords[2][0] = centerCross[0] + distEdgeX;
-        coords[2][1] = centerCross[1] + distEdgeY;
-        coords[3][0] = centerCross[0] - distEdgeX;
-        coords[3][1] = centerCross[1] + distEdgeY;
-    }
+        SearchCoordinates[0][0] = centerCross[0] - distEdgeX;
+        SearchCoordinates[0][1] = centerCross[1] - distEdgeY;
+        SearchCoordinates[1][0] = centerCross[0] + distEdgeX;
+        SearchCoordinates[1][1] = centerCross[1] - distEdgeY;
+        SearchCoordinates[2][0] = centerCross[0] + distEdgeX;
+        SearchCoordinates[2][1] = centerCross[1] + distEdgeY;
+        SearchCoordinates[3][0] = centerCross[0] - distEdgeX;
+        SearchCoordinates[3][1] = centerCross[1] + distEdgeY;
+    */
 
-    public void draw(Mat colorMap, Scalar BoxColor)
-    {
-        
-		line(colorMap,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
-		line(colorMap,new Point(coords[1][0],coords[1][1]),new Point(coords[2][0],coords[2][1]),BoxColor);
-		line(colorMap,new Point(coords[2][0],coords[2][1]),new Point(coords[3][0],coords[3][1]),BoxColor);
-		line(colorMap,new Point(coords[3][0],coords[3][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
-    }
+private int[][] getArray(){
+    return BoxCoordinates;
 
-	public void drawWalls(Mat colorMap, Scalar BoxColor)
+
+
+}
+
+	public void draw(Mat colorMap, Scalar BoxColor)
 	{
-		line(colorMap,new Point(coords[0][0],coords[1][0]),new Point(coords[0][1],coords[1][1]),BoxColor);
-		line(colorMap,new Point(coords[0][1],coords[1][1]),new Point(coords[0][2],coords[1][2]),BoxColor);
-		line(colorMap,new Point(coords[0][2],coords[1][2]),new Point(coords[0][3],coords[1][3]),BoxColor);
-		line(colorMap,new Point(coords[0][3],coords[1][3]),new Point(coords[0][0],coords[1][0]),BoxColor);
+		line(colorMap,new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),new Point(SearchCoordinates[0][1],SearchCoordinates[1][1]),BoxColor);
+		line(colorMap,new Point(SearchCoordinates[0][1],SearchCoordinates[1][1]),new Point(SearchCoordinates[0][2],SearchCoordinates[1][2]),BoxColor);
+		line(colorMap,new Point(SearchCoordinates[0][2],SearchCoordinates[1][2]),new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),BoxColor);
+		line(colorMap,new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),BoxColor);
 	}
 
-	public int[][] get_array() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

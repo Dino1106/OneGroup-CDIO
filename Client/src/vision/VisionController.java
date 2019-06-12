@@ -122,6 +122,10 @@ public class VisionController implements Runnable {
 			}
 
 			do {
+
+				// Save the frame as a Mat
+				if (vid) pictureGlobal = converter.convert(grabber.grab());
+
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
 				picturePlain = pictureGlobal.clone();
@@ -157,6 +161,7 @@ public class VisionController implements Runnable {
 				}
 				
 				// Update window frame with current picture frame
+
 				vidFrame.showImage(converter.convert(pictureColor));
 				vidFrameBlue.showImage(converter.convert(pictureRobot));
 
