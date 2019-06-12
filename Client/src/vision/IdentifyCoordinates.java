@@ -13,23 +13,25 @@ import org.opencv.core.CvType;
 public class IdentifyCoordinates {
 
 
-	public int[][] getWallCorners(Mat picture)
-	{
+	public int[] getWallCorners(Mat picture)
+	{ {
 		int frameWidth  = picture.cols();
 		int frameHeight = picture.rows();
 		int center[] = {frameWidth/2,frameHeight/2};
 
-		int[][] upperLeftBoundary  = { {} };
-		int[][] upperRightBoundary = { center[0]+100, center[1]+100 };
-		int[][] lowerLeftBoundary  = { center[0]-100, center[1]-100 };
-		int[][] lowerRightBoundary = { center[0]+100, center[1]-100 };
+		int[][] upperLeftBoundary  = { {0,0},{center[0],0},{} };
+		int[][] upperRightBoundary = { {center[0],0} };
+		int[][] lowerLeftBoundary  = { {center[0],center[1]} };
+		int[][] lowerRightBoundary = {  {0,center[1]}      };
 
 		int[][] coords = new int[4][2];
 
-		Mat color_map = extractColor(picture, "blue");
-		BytePointer p = color_map.data();
+		return center;
 
+	//	Mat color_map = extractColor(picture, "blue");
+	//	BytePointer p = color_map.data();
 
+    }
 
 
 	}

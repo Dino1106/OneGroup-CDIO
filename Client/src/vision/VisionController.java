@@ -140,6 +140,7 @@ public class VisionController implements Runnable {
 				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
 				this.balls = identifyBalls.getCircles();
 
+
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
 				this.cross = identifyCross.get_array();
@@ -157,13 +158,15 @@ public class VisionController implements Runnable {
 					identifyCross.draw(pictureColor, Scalar.BLUE);
 					identifyWalls.draw(pictureColor,Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
+					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+					vidFrame.showImage(converter.convert(pictureColor));
+					vidFrameBlue.showImage(converter.convert(pictureRobot));
 				}
 				
 				// Update window frame with current picture frame
 
-				vidFrame.showImage(converter.convert(pictureColor));
-				vidFrameBlue.showImage(converter.convert(pictureRobot));
+
 
 
 			}while(vid);} catch (Exception e) {

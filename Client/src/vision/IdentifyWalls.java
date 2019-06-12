@@ -54,10 +54,11 @@ public class IdentifyWalls {
 
 	public void draw(Mat colorMap, Scalar BoxColor)
 	{
-		line(colorMap,new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),new Point(SearchCoordinates[0][1],SearchCoordinates[1][1]),BoxColor);
-		line(colorMap,new Point(SearchCoordinates[0][1],SearchCoordinates[1][1]),new Point(SearchCoordinates[0][2],SearchCoordinates[1][2]),BoxColor);
-		line(colorMap,new Point(SearchCoordinates[0][2],SearchCoordinates[1][2]),new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),BoxColor);
-		line(colorMap,new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),BoxColor);
+        line(colorMap,new Point(0,0),new Point(colorMap.cols()/2,colorMap.rows()/2),BoxColor);
+
+        line(colorMap,new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),new Point(SearchCoordinates[0][1],SearchCoordinates[1][1]),BoxColor);
+	//	line(colorMap,new Point(SearchCoordinates[0][2],SearchCoordinates[1][2]),new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),BoxColor);
+	//	line(colorMap,new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),BoxColor);
 	}
 
 
