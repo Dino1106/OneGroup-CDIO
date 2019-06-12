@@ -41,7 +41,7 @@ public class IdentifyCoordinates {
 
 	public int[][] getCirleCoordinates(Mat picture) {
 
-		int[][] coords = new int[4][2];
+		int[][] coords = new int[2][2];
 
 		Mat extractedMat = extractColor(picture, "blue");
 		medianBlur(extractedMat, extractedMat, 5);
@@ -51,11 +51,36 @@ public class IdentifyCoordinates {
 		Vec3fVector circles = new Vec3fVector();
 		findCircles(picture, circles);
 
+		// Draw circles
 		for(int i=0; i<circles.size(); i++) {
 			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.GREEN);
 			System.out.println("Cicles: "+circles.get(i).get(0)+"\t"+circles.get(i).get(1));
 		}
+		
+		// Determine small/large circle
+		if((int) circles.get(0).get(2) < (int) circles.get(1).get(2)) {
+			// Small circle
+			coords[0][0] = (int) circles.get(0).get(0);
+			coords[0][1] = (int) circles.get(0).get(1);
 
+			// Large circle
+			coords[1][0] = (int) circles.get(1).get(0);
+			coords[1][1] = (int) circles.get(1).get(1);
+		
+		} else {
+			// Small circle
+			coords[0][0] = (int) circles.get(1).get(0);
+			coords[0][1] = (int) circles.get(1).get(1);
+
+			// Large circle
+			coords[1][0] = (int) circles.get(0).get(0);
+			coords[1][1] = (int) circles.get(0).get(1);
+
+		}
+		
+		System.out.println("Small circle: "+coords[0][0]+", "+coords[0][1]);
+		System.out.println("Large circle: "+coords[1][0]+", "+coords[1][1]);
+		
 		return coords;
 
 	}
