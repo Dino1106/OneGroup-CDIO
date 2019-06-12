@@ -54,11 +54,10 @@ public class IdentifyCoordinates {
 		// Draw circles
 		for(int i=0; i<circles.size(); i++) {
 			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.GREEN);
-			System.out.println("Cicles: "+circles.get(i).get(0)+"\t"+circles.get(i).get(1));
 		}
 		
 		// Determine small/large circle
-		if((int) circles.get(0).get(2) < (int) circles.get(1).get(2)) {
+		if((int) circles.get(0).get(2) <= (int) circles.get(1).get(2)) {
 			// Small circle
 			coords[0][0] = (int) circles.get(0).get(0);
 			coords[0][1] = (int) circles.get(0).get(1);
