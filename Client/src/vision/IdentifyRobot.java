@@ -9,7 +9,7 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 public class IdentifyRobot {
 	
 	IdentifyCoordinates identify = new IdentifyCoordinates();
-	private int coords[][] = new int [3][2];
+	private int coords[][] = new int [2][2];
 
 	public IdentifyRobot(Mat picture)	{
 		coords = identify.getCirleCoordinates(picture);

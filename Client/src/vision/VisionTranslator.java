@@ -20,7 +20,7 @@ public class VisionTranslator {
 	private double visionScale = 1;
 
 	public VisionTranslator(boolean testMode) {
-		visionController = new VisionController(testMode, "b.jpg");
+		visionController = new VisionController(testMode, "e.jpg");
 
 		Thread th = new Thread(visionController);
 		th.start();
@@ -148,16 +148,11 @@ public class VisionTranslator {
 
 	private RobotLocation calculateRobotLocation() {
 		
-		int awai[][] = visionSnapShot.getRobot();
+		int recievedArray[][] = visionSnapShot.getRobot();
+		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][1],recievedArray[0][1]);
+		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[0][1],recievedArray[0][1]);
 		
-		for(int i = 0; i < awai.length ; i++) {
-			for(int j = 0; j < awai[0].length; j++) {
-				System.out.println("LEL [" + i + "][" + j + "] - " + awai[i][j]);
-			}
-			
-		}
-		
-		//TODO: Make calculateRobotLocation - get info from snapshot.
+		//TODO: Implement orientation from the two recieved circles.
 		return null;
 
 	}
