@@ -39,12 +39,13 @@ public class RobotMovement {
         this.poseProvider = new OdometryPoseProvider(pilot);
     }
     
-	public boolean drive(Coordinate to) {
+	public boolean drive(Coordinate to, int speed) {
 		
 		Pose pose = poseProvider.getPose();				// Gets the 'pose' of robot (position and heading)
 		Point location = pose.getLocation();
 		pose.setLocation(location);				   	 	// Set from coordinate using pose provider
 
+		pilot.setLinearSpeed(speed);
 		navigator.goTo(new Waypoint(to.x, to.y));
 				
 		if(navigator.waitForStop()) {
@@ -74,10 +75,9 @@ public class RobotMovement {
 	}
 	
 	public boolean pickUpBalls(boolean pickUp) {
-		ballPickerLeft.setPower(85);
-		ballPickerRight.setPower(85); 
-		
 		if(pickUp) {
+			ballPickerLeft.setPower(30);
+			ballPickerRight.setPower(30);
 		    ballPickerLeft.backward();
 		    ballPickerRight.forward();
 		    return true;

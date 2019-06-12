@@ -32,10 +32,10 @@ public class MainServer extends Thread {
 		}
     }
 	
-	public void carDrive(Coordinate coordinate) {
+	public void carDrive(Coordinate coordinate, int speed) {
 		try {
 			// Write response to client
-			boolean response = robotControls.drive(coordinate);
+			boolean response = robotControls.drive(coordinate, speed);
 			dOut.writeBoolean(response);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -89,8 +89,9 @@ public class MainServer extends Thread {
 					setMotorSpeed(speed);
 					break;
 				case 2:
-					Coordinate coordinateBackward = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
-					carDrive(coordinateBackward);
+					Coordinate coordinateForward = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
+					int driveToSpeed = Integer.parseInt(splitInputs[3]);
+					carDrive(coordinateForward, driveToSpeed);
 					break;
 				case 3:
 					int centimeters = Integer.parseInt(splitInputs[1]);

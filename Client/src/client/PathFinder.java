@@ -1,5 +1,6 @@
 package client;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import model.Ball;
@@ -17,6 +18,8 @@ public class PathFinder {
 	public static final int speedFast = 500;
 	public static final int sleepTime = 5; // Sleep time in seconds.
 	
+	private MapState mapState;
+	
 	
 	Coordinate northWest;
 	Coordinate northEast;
@@ -28,6 +31,7 @@ public class PathFinder {
 	// coordinates".
 	// Also starts swallowing balls.
 	public PathFinder(MapState mapState) {
+		this.mapState = mapState;
 		MainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
 		calculateGoalRobotLocations(mapState);
@@ -35,8 +39,7 @@ public class PathFinder {
 
 	// We want to return route to a given ball.
 	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
-		Route route = new Route();
-		route.robotCoordinate = mapState.robotLocation.coordinate;
+		Route route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
 		// First we find out which quadrant is nearest to the ball.
 		Coordinate nearestToBall;
@@ -59,8 +62,7 @@ public class PathFinder {
 	public ArrayList<Route> getCalculatedRoutesGoals(MapState mapState) {
 		ArrayList<Route> routes = new ArrayList<Route>();
 		Route route;
-		route = new Route();
-		route.robotCoordinate = mapState.robotLocation.coordinate;
+		route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
 		Coordinate nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
 		route.coordinates.add(nearestToRobot);
@@ -70,8 +72,7 @@ public class PathFinder {
 
 		routes.add(route);
 
-		route = new Route();
-		route.robotCoordinate = mapState.robotLocation.coordinate;
+		route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
 		nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
 		route.coordinates.add(nearestToRobot);
@@ -278,9 +279,10 @@ public class PathFinder {
 	public void playSound(String sound) {
 		switch (sound) {
 		case "victory":
-			// TODO: Make Robert play his tune.
+			MainClient.sendSound(2);
 			break;
 		case "ball":
+			MainClient.sendSound(1);
 			break;
 		case "goal":
 			break;
@@ -296,19 +298,18 @@ public class PathFinder {
 	// We want the robot to drive a whole route.
 	public void driveRoute(Route route, MapState mapState) {
 		for (Coordinate coordinate : route.coordinates) {
-			MainClient.sendCoordinate(coordinate);
+			MainClient.sendCoordinate(coordinate, speedFast);
 		}
 	}
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
-		MainClient.sendMotorSpeed(speedSlow);
 		Coordinate tempCoordinate = mapState.robotLocation.coordinate;
 		// Now we gotta calculate a coordinate about half the robot breadth away from the ball.
 		Coordinate goToCoordinate = getPartwayCoordinate(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y), robotDiameter/4);
-		MainClient.sendCoordinate(goToCoordinate);
+		MainClient.sendCoordinate(goToCoordinate, speedSlow);
 		
 		MainClient.sendTravelDistanceBackwards(robotDiameter, speedSlow);
-		
+		MainClient.sendMotorSpeed(speedFast);
 	}
 
 	// Get's a new coordinate that is 'distance' away from coordinate 2, coming from coordinate 1.

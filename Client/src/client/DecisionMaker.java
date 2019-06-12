@@ -1,27 +1,70 @@
 package client;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Ball;
 import model.Coordinate;
+import model.Cross;
+import model.Goal;
 import model.MapState;
+import model.RobotLocation;
 import model.Route;
+import model.Wall;
 import vision.VisionTranslator;
 
 public class DecisionMaker {
 	
 	static final int maxBalls = 6; // Maximum number of balls in our robot.
 	
-	private VisionTranslator visionTranslator;
-	private PathFinder pathFinder;
-	private MapState mapState;
-	private int onFieldBallCount;
-	private int pickedUpBallCount;
+	private static VisionTranslator visionTranslator;
+	private static PathFinder pathFinder;
+	private static MapState mapState;
+	private static int onFieldBallCount;
+	private static int pickedUpBallCount;
 	
+	private static ArrayList<Ball> ballList = new ArrayList<>();
+	private static ArrayList<Wall> wallList = new ArrayList<>();
+	private static Cross cross;
+	private static Goal goal1, goal2;
+	private static RobotLocation robotLocation;
 	
+	public static void main(String[] args) {
+		try {
+			MainClient.connect();
+			ballList.add(new Ball(80, 40));
+			Wall wall1 = new Wall();
+			wall1.upper = new Coordinate(0, 90);
+			wall1.lower = new Coordinate(0, 0);
+			wallList.add(wall1);
+			
+			Wall wall2 = new Wall();
+			wall2.upper = new Coordinate(160, 90);
+			wall2.lower = new Coordinate(160, 0);
+			wallList.add(wall2);
+			
+			cross = new Cross(new Coordinate(80, 65), new Coordinate(80, 25), new Coordinate(60, 45), new Coordinate(100, 45));
+			goal1 = new Goal();
+			goal1.coordinate1 = new Coordinate(0, 0);
+			goal1.coordinate2 = new Coordinate(0, 90);
+			goal1.robotLocation = new RobotLocation(new Coordinate(0, 0), 0);
+			
+			goal2 = new Goal();
+			goal2.coordinate1 = new Coordinate(160, 0);
+			goal2.coordinate2 = new Coordinate(160, 90);
+			goal2.robotLocation = new RobotLocation(new Coordinate(0, 0), 0);
+			robotLocation = new RobotLocation(new Coordinate(10, 10), 0);
+			
+			mapState = new MapState(ballList, cross, wallList, goal1, goal2, robotLocation);
+			pathFinder = new PathFinder(mapState);
+			mainLoop();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
-	public void MainLoop() {
+	public static void mainLoop() {
 		boolean keepRunning = true;
 		while (keepRunning) {
 			updateMap();
@@ -53,13 +96,13 @@ public class DecisionMaker {
 	}
 
 	// Gets new map info, updates data.
-	private void updateMap() {
-		mapState = visionTranslator.getProcessedMap();
+	private static void updateMap() {
+		//mapState = visionTranslator.getProcessedMap();
 		onFieldBallCount = countBallsOnField();
 	}
 
 	// Let's pick up a ball.
-	private void pickupBall() {
+	private static void pickupBall() {
 		Ball bestBall = decideBestBall();
 		Route route = choosePathBall(bestBall);
 		pathFinder.driveRoute(route, mapState);
@@ -69,7 +112,7 @@ public class DecisionMaker {
 	}
 
 	// We wish to deliver all of our balls. Let's go to the nearest goal and do so.
-	private void deliverBalls() {
+	private static void deliverBalls() {
 		Route route = choosePathGoals();
 		pathFinder.driveRoute(route, mapState);
 		mapState = visionTranslator.getProcessedMap();
@@ -77,7 +120,7 @@ public class DecisionMaker {
 		pickedUpBallCount = 0;
 	}
 	
-	private Ball decideBestBall() {
+	private static Ball decideBestBall() {
 		Ball bestBall = mapState.ballList.get(0);
 		int bestRisk;
 		// TODO: For now, best ball is simply decided based on distance to robot.
@@ -92,14 +135,14 @@ public class DecisionMaker {
 		return bestBall;
 	}
 	
-	public Route choosePathBall(Ball ball) {
+	public static Route choosePathBall(Ball ball) {
 		Route route = pathFinder.getCalculatedRouteBall(mapState, ball);
 		return route;
 	}
 	
 	// Let's find the routes to what we're searching for.
 	// if FindBalls is false, we're searching for a goal instead.
-	public Route choosePathGoals() {
+	public static Route choosePathGoals() {
 		ArrayList<Route> Routes;
 		Routes = pathFinder.getCalculatedRoutesGoals(mapState);
 		int best = 999; // Arbitrarily large value.
@@ -113,11 +156,11 @@ public class DecisionMaker {
 		return bestRoute;
 	}
 	
-	public int countBallsOnField() {
+	public static int countBallsOnField() {
 		return mapState.ballList.size();
 	}
 	
-	public List<Ball> lowRiskBalls(){
+	public static List<Ball> lowRiskBalls(){
 		List<Ball> safeBalls = new ArrayList<Ball>();
 		int paddingVert, paddingHori;
 		

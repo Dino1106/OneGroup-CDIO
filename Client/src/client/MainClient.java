@@ -15,15 +15,12 @@ public class MainClient {
 	private static DataOutputStream dOut;
 	private static DataInputStream dIn;
  
-	public static void main(String[] args) throws IOException { 
+	public static void connect() throws IOException { 
 		String ip = "192.168.43.187"; 
-		if (args.length > 0) ip = args[0];
 		System.out.println("Starting client");
 		socket = new Socket(ip, PORT);
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
-		
-		sendTravelDistanceBackwards(50, 720);
 	}
 	
 	public static void sendMotorSpeed(int speed) {
@@ -37,10 +34,10 @@ public class MainClient {
 		
 	}
 	
-	public static void sendCoordinate(Coordinate coordinate){
+	public static void sendCoordinate(Coordinate coordinate, int speed){
 		// Send coordinates to Server: 
 		try {
-			String coordinateString = "2 " + coordinate.x + " " + coordinate.y;
+			String coordinateString = "2 " + coordinate.x + " " + coordinate.y + " " + speed;
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
 			boolean serverResponse = dIn.readBoolean();
