@@ -1,17 +1,24 @@
 package vision;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
+import static org.bytedeco.opencv.global.opencv_imgproc.CV_HOUGH_GRADIENT;
+import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
+import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_imgproc.line;
 import static org.bytedeco.opencv.global.opencv_imgproc.medianBlur;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.opencv.core.CvType;
 
 public class IdentifyCoordinates {
 
+	
 
 	public int[] getWallCorners(Mat picture)
 	{ {
@@ -45,59 +52,26 @@ public class IdentifyCoordinates {
 		int frameWidth  = picture.cols();
 		int frameHeight = picture.rows();
 
+	public int[][] getCirleCoordinates(Mat picture) {
+
 		int[][] coords = new int[4][2];
 
-		Mat color_map = extractColor(picture, "blue");
-		BytePointer p = color_map.data();
-		
-		
+		Mat extractedMat = extractColor(picture, "blue");
+		medianBlur(extractedMat, extractedMat, 9);
 
-		d21:
-			for( int y = 0; y <= frameHeight; y++ )
-				for( int x = 0; x < frameWidth; x++ ){
+		//BytePointer p = extractedMat.data();
 
-					//System.out.print( p.get((y*color_map.arrayWidth())+x));
-					if(p.get((y*color_map.arrayWidth())+x) == -1){
+		Vec3fVector circles = new Vec3fVector();
+		findCircles(picture, circles);
 
-						checkRedundant(x, y, coords);
+		for(int i=0; i<circles.size(); i++) {
+			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.RED);
+			System.out.println("Cicles: "+circles.get(i).get(0)+"\t"+circles.get(i).get(1));
+		}
 
-						break d21;
-					}
-				}
-		d22:
-			for( int y = 0; y >= frameHeight; y-- )
-				for( int x = frameWidth; x < 0; x++ ){
 
-					if(p.get((y*color_map.arrayWidth())+x) == -1){
-						
-						checkRedundant(x, y, coords);
-						break d22;
-					}
-				}
 
-				d23:
-					for( int x = 0; x <= frameWidth; x++ )
-						for( int y = 0; y <= frameHeight; y++ ){
-
-							if(p.get((y*color_map.arrayWidth())+x) == -1){
-						
-								checkRedundant(x, y, coords);
-								break d23;
-							}
-						}
-
-				d24:
-					for( int x = frameWidth; x >= 0; x-- )
-						for( int y = 0; y <= frameHeight; y++ ){
-
-							if(p.get((y*color_map.arrayWidth())+x) == -1){
-								
-								checkRedundant(x, y, coords);
-								break d24;
-							}
-						}
-
-						return coords;
+		return coords;
 
 
 
@@ -249,9 +223,10 @@ public class IdentifyCoordinates {
 			}
 		}
 	}
-	
-	public void createTrackbars(Mat picture) {
-		
-		
+
+
+	public void findCircles(Mat picture, Vec3fVector circles) {
+		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 10, 40);
 	}
+
 }

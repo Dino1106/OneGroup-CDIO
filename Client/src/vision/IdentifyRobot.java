@@ -12,7 +12,7 @@ public class IdentifyRobot {
 	private int coords[][] = new int [3][2];
 
 	public IdentifyRobot(Mat picture)	{
-		coords = identify.getEdgesTriangle(picture);
+		coords = identify.getCirleCoordinates(picture);
 	}
 	
 	int get_coords(int x_y,int position)
