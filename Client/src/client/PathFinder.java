@@ -81,8 +81,15 @@ public class PathFinder {
 	}
 
 	// We want the robot to turn towards the goal, and then spit out balls.
-	public void deliverBalls(MapState mapState, Goal goal) {
+	public void deliverBalls(MapState mapState) {
 		int orientation1, orientation2;
+		// Find the closest goal.
+		Goal goal = null;
+		if (calculateDistances(mapState.robotLocation.coordinate, mapState.goal1.coordinate1) > calculateDistances(mapState.robotLocation.coordinate, mapState.goal2.coordinate1)) {
+			goal = mapState.goal1;
+		} else {
+			goal = mapState.goal2;
+		}
 		orientation1 = mapState.robotLocation.orientation;
 		orientation2 = goal.robotLocation.orientation;
 		MainClient.rotate(-orientation1);
