@@ -33,7 +33,7 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController implements Runnable {
 
-	private boolean testingMode = false;
+	private boolean testMode = false;
 
 	private int imageHeight = 720;
 	private int imageWidth = 1366;
@@ -50,23 +50,18 @@ public class VisionController implements Runnable {
 	private Vec4iVector robot = new Vec4iVector();
 	private Vec4iVector lineSet = new Vec4iVector();
 	private int[][] cross;
-	private Vec4iVector robot;
 
 
 	private CanvasFrame vidFrame = new CanvasFrame("frame1");
 	private CanvasFrame vidFrameBlue = new CanvasFrame("blue");
 
-	private Vec4iVector lineSet = new Vec4iVector();
-	private Vec3fVector circleSet = new Vec3fVector();
-
 	private Mat pictureGlobal = new Mat();
 	private Mat picturePlain = new Mat(); 
 	private Mat pictureColor = new Mat();
-	
+	private Mat pictureRobot = new Mat();
+
 	private int cameraId;
 	private boolean vid = false;
-	private boolean testMode = false;
-
 
 	public VisionController(boolean testMode) {
 		this.cameraId = 0;
@@ -127,20 +122,20 @@ public class VisionController implements Runnable {
 
 
 			do {
-				
+
 				// Save the frame as a Mat
 				//pictureGlobal = converter.convert(grabber.grab());
 
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
 				picturePlain = pictureGlobal.clone();
-				picutreRobot = pictureGlobal.clone();
+				pictureRobot = pictureGlobal.clone();
 
 				extractLayer(pictureGlobal);
 
 				// Set Calibration values for Identify Balls 
 				int[] calib = {6, 5, 2, 6, 20}; 
-				
+
 				// 1 - Identify balls with given parameters and draw circles
 				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
 				identifyBalls.draw(pictureColor,Scalar.CYAN,true);
@@ -156,13 +151,13 @@ public class VisionController implements Runnable {
 				line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 
 				// 4 - Identify robot				
-				IdentifyRobot identifyRobot = new IdentifyRobot(picutreRobot.clone());
-				identifyRobot.draw_box(picutreRobot, Scalar.BLUE);
-				
+				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot.clone());
+				identifyRobot.draw_box(pictureRobot, Scalar.BLUE);
+
 				// Update window frame with current picture frame
 				vidFrame.showImage(converter.convert(pictureColor));
-				vidFrameBlue.showImage(converter.convert(picutreRobot));
-				
+				vidFrameBlue.showImage(converter.convert(pictureRobot));
+
 
 			}while(vid);} catch (Exception e) {
 				e.printStackTrace();

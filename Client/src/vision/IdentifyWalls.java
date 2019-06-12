@@ -25,11 +25,10 @@ public class IdentifyWalls {
         distCrossX = (BoxCoordinates[1][0] - BoxCoordinates[0][0])/2;
         distCrossY = (BoxCoordinates[2][1] - BoxCoordinates[1][1])/2;
 
-		// Determine the vertical/ horizontal distance from center of cross to its edges
-		int distCrossX, distCrossY;
-		distCrossX = (BoxCoordinates[0][1] - BoxCoordinates[0][0])/2;
-		distCrossY = (BoxCoordinates[1][2] - BoxCoordinates[1][1])/2;
-
+        // Determine the distance to edges
+        int distEdgeX, distEdgeY;
+        distEdgeX = distCrossX * horizontalProportion;
+        distEdgeY = distCrossY * verticalProportion;
         
         // Center of cross x and y
         centerCross[0] = (BoxCoordinates[0][0] + BoxCoordinates[1][0]) / 2;
@@ -54,21 +53,6 @@ public class IdentifyWalls {
 		line(colorMap,new Point(coords[2][0],coords[2][1]),new Point(coords[3][0],coords[3][1]),BoxColor);
 		line(colorMap,new Point(coords[3][0],coords[3][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
     }
-
-		// Center of cross x and y
-		centerCross[0] = (BoxCoordinates[0][0] + BoxCoordinates[0][1]) / 2;
-		centerCross[1] = (BoxCoordinates[1][0] + BoxCoordinates[1][2]) / 2;
-
-		// Calculate the position of the edge's corners 
-		coords[0][0] = centerCross[0] - distEdgeX;
-		coords[1][0] = centerCross[1] - distEdgeY;
-		coords[0][1] = centerCross[0] + distEdgeX;
-		coords[1][1] = centerCross[1] - distEdgeY;
-		coords[0][2] = centerCross[0] + distEdgeX;
-		coords[1][2] = centerCross[1] + distEdgeY;
-		coords[0][3] = centerCross[0] - distEdgeX;
-		coords[1][3] = centerCross[1] + distEdgeY;
-	}
 
 	public void drawWalls(Mat colorMap, Scalar BoxColor)
 	{

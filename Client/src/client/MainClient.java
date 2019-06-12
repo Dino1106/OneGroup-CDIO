@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 import model.Coordinate;
-import vision.VisionTranslator;
  
 public class MainClient { 
 
@@ -17,7 +16,7 @@ public class MainClient {
 	private static DataInputStream dIn;
  
 	public static void main(String[] args) throws IOException { 
-	/*	String ip = "192.168.43.187"; 
+		String ip = "192.168.43.187"; 
 		if (args.length > 0) ip = args[0];
 		System.out.println("Starting client");
 		socket = new Socket(ip, PORT);
