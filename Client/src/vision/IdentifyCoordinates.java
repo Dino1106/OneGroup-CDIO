@@ -57,7 +57,7 @@ public class IdentifyCoordinates {
 		int[][] coords = new int[4][2];
 
 		Mat extractedMat = extractColor(picture, "blue");
-		medianBlur(extractedMat, extractedMat, 9);
+		medianBlur(extractedMat, extractedMat, 5);
 
 		//BytePointer p = extractedMat.data();
 
@@ -65,15 +65,11 @@ public class IdentifyCoordinates {
 		findCircles(picture, circles);
 
 		for(int i=0; i<circles.size(); i++) {
-			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.RED);
+			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.GREEN);
 			System.out.println("Cicles: "+circles.get(i).get(0)+"\t"+circles.get(i).get(1));
 		}
 
-
-
 		return coords;
-
-
 
 	}
 
@@ -226,7 +222,7 @@ public class IdentifyCoordinates {
 
 
 	public void findCircles(Mat picture, Vec3fVector circles) {
-		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 10, 40);
+		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 2, 12);
 	}
 
 }
