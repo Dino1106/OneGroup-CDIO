@@ -20,7 +20,7 @@ public class IdentifyRobot {
 		return coords[x_y][position];
 	}
 	
-	public int[][] get_array(){
+	public int[][] getArray(){
 		return coords;
 	}
 	

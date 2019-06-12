@@ -33,11 +33,8 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController implements Runnable {
 
-	private boolean testMode = false;
-
 	private int imageHeight = 720;
 	private int imageWidth = 1366;
-
 
 	private static final int xStartLine = 0;
 	private static final int yStartLine = 1;
@@ -51,7 +48,6 @@ public class VisionController implements Runnable {
 	
 	private Vec4iVector lineSet = new Vec4iVector();
 
-
 	private CanvasFrame vidFrame;
 	private CanvasFrame vidFrameBlue;
 
@@ -62,6 +58,7 @@ public class VisionController implements Runnable {
 
 	private int cameraId;
 	private boolean vid = false;
+	private boolean testMode = false;
 
 	public VisionController(boolean testMode) {
 		this.cameraId = 0;
@@ -96,6 +93,7 @@ public class VisionController implements Runnable {
 		this.cameraId = 0;
 		this.vid = false;
 		this.pictureGlobal = imread(imgpath);
+		this.testMode = testMode;
 
 		if(testMode) {
 			this.vidFrame = new CanvasFrame("frame1");
@@ -117,12 +115,11 @@ public class VisionController implements Runnable {
 			grabber.setImageWidth(imageWidth);
 			//grabber.setFrameRate(5.0);
 
-			if (vid) { 
+			if (vid) {
 				grabber.start(); 
 			}
 
 			do {
-
 				// Save the frame as a Mat
 				if (vid) pictureGlobal = converter.convert(grabber.grab());
 
@@ -143,15 +140,15 @@ public class VisionController implements Runnable {
 
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-				this.cross = identifyCross.get_array();
+				this.cross = identifyCross.getArray();
 
 				// 3 - Identify Walls by cross
-				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.get_array());
+				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.getArray());
 				this.walls = identifyWalls.getArray();
 
 				// 4 - Identify robot				
 				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot.clone());
-				this.robot = identifyRobot.get_array();
+				this.robot = identifyRobot.getArray();
 				
 				if (testMode) {
 					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
@@ -160,16 +157,13 @@ public class VisionController implements Runnable {
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+					
+					// Update window frame with current picture frame
 					vidFrame.showImage(converter.convert(pictureColor));
 					vidFrameBlue.showImage(converter.convert(pictureRobot));
 				}
-				
-				// Update window frame with current picture frame
 
-
-
-
-			}while(vid);} catch (Exception e) {
+			} while(vid);} catch (Exception e) {
 				e.printStackTrace();
 			}
 	}
@@ -177,10 +171,6 @@ public class VisionController implements Runnable {
 	public VisionSnapShot getSnapShot() {
 		return new VisionSnapShot(this.balls, this.walls, this.cross, this.robot);
 	}
-
-	// Creates lines between all circles
-
-
 
 	// Takes Value layer and generates single-layered Mat
 	private void extractLayer(Mat picture) {
@@ -225,7 +215,6 @@ public class VisionController implements Runnable {
 		return new IntPointer(lineSet.get(line_number)).get(parameter);
 	}
 
-
 	public synchronized int getLinesAmount() {
 		return (int) lineSet.size();
 	}
@@ -242,20 +231,12 @@ public class VisionController implements Runnable {
 		return pictureColor;
 	}
 
-	//private synchronized void toVec(Vec3fVector vec) {
-	//	Circle_set = vec;
-	//}
-
-
-
 	private void drawLines() {
 		for (int i = 0; i < getLinesAmount(); i++) {
 			line(getPic(), new Point(getLineXyxy(i, xStartLine), getLineXyxy(i, yStartLine)),
 					new Point(getLineXyxy(i, xEndLine), getLineXyxy(i, yEndLine)), Scalar.RED);
 		}
-
 		// System.out.println(new IntPointer(Line_set.get(0)).get(0));
-
 	}
 
 	/*
