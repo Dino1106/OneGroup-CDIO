@@ -304,11 +304,18 @@ public class IdentifyCoordinates {
 
 		} else if(color.contentEquals("blue")) {
 			// Range of red color of cross
-			h_min = 105; 		
+			/*h_min = 105; 		
 			h_max = 125;
 			s_min = 120;
 			s_max = 255;
 			v_min = 30;
+			v_max = 255;*/
+			
+			h_min = 105; 		
+			h_max = 125;
+			s_min = 60;
+			s_max = 255;
+			v_min = 120;
 			v_max = 255;
 		}
 
@@ -342,7 +349,7 @@ public class IdentifyCoordinates {
 
 
 	public void findCircles(Mat picture, Vec3fVector circles) {
-		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 2, 12);
+		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 2, 40);
 	}
 
 }

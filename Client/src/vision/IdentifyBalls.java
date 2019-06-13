@@ -68,7 +68,7 @@ public class IdentifyBalls {
 
 	private void autoCircle(int param1, int param2, int param3, int param4, int param5) {
 
-		int amount_circles = 7;
+		int amount_circles = 10;
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop:
