@@ -36,6 +36,7 @@ public class DecisionMaker {
 		//VisionTranslator visionT = new VisionTranslator(false);
 		//System.out.println(visionT.getProcessedMap().toString());
 		
+		// TODO: Remove this test data.
 		try {
 			MainClient.connect();
 			ballList.add(new Ball(80, 40));

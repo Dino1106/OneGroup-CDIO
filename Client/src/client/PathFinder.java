@@ -1,6 +1,5 @@
 package client;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import model.Ball;
@@ -13,17 +12,19 @@ import model.Wall;
 public class PathFinder {
 
 	public static final int robotDiameter = 25; // The "diameter" of the robot - its thickness.
-	public static final int shootSpace = 4; // The buffer distance we want between the robot and an edge.
+	public static final int robotBufferSize = 4; // The buffer distance we want between the robot and an edge.
 	public static final int speedSlow = 10;
 	public static final int speedFast = 500;
 	public static final int sleepTime = 5; // Sleep time in seconds.
-	
-	
+
 	Coordinate northWest;
 	Coordinate northEast;
 	Coordinate southWest;
 	Coordinate southEast;
 	Coordinate middleOfMap;
+
+	Wall leftWall;
+	Wall rightWall;
 
 	// Create this PathFinder which will then find 4 distinct "quadrant
 	// coordinates".
@@ -50,7 +51,24 @@ public class PathFinder {
 		// created, dedicated to finding a path between quadrants.
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now check if ball is near wall. If it isn't, then we end here.
-		// TODO: Add more to get closer to a "wall-ball" without picking it up.
+		// Let's see if a ball is close to one of the four walls. If it is, we set up
+		// the route to now stand adjacent to the wall.
+		// TODO: CANNOT TAKE TOP AND BOTTOM WALLS PROPERLY INTO ACCOUNT UNTIL WE GET NEW
+		// WALL MODEL
+		if (isBallCloseToWall(ball, leftWall)) {
+			// TODO: Refine where the robot goes here before approaching a wall-close ball.
+			// TODO: Doesn't take corners into account.
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
+			newCoordinate.y = ball.y;
+			route.coordinates.add(newCoordinate);
+		}
+		if (isBallCloseToWall(ball, rightWall)) {
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
+			newCoordinate.y = ball.y;
+			route.coordinates.add(newCoordinate);
+		}
 		return route;
 	}
 
@@ -99,9 +117,8 @@ public class PathFinder {
 		MainClient.pickUpBalls(false);
 		// Wait for 5 seconds.
 		try {
-			Thread.sleep(sleepTime * 1000);
+			Thread.sleep(sleepTime * 1000); // TODO: Is Thread.sleep the right thing to do?
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MainClient.pickUpBalls(true);
@@ -110,6 +127,26 @@ public class PathFinder {
 	// 'Afstandsformlen' to calculate distance between two coordinates.
 	public int calculateDistances(Coordinate coordinate1, Coordinate coordinate2) {
 		return (int) Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
+	}
+
+	// Finds the distance between a coordinate to a line between two coordinates.
+	public int calculateDistancesLine(Coordinate coordinate, Coordinate line1, Coordinate line2) {
+		// First we gotta find the values of the line between line1 and line2.
+		double a = (line2.y - line1.y) / (line2.x - line1.x);
+		double b = line1.y - (a * line1.x);
+		double upper = Math.abs(a * line1.x + b - line1.y);
+		double lower = Math.sqrt(Math.pow(a, 2) + 1);
+		double dist = upper / lower;
+		return (int) dist; // There's a minor loss here in conversion.
+	}
+
+	private boolean isBallCloseToWall(Ball ball, Wall wall) {
+		if (calculateDistancesLine(new Coordinate(ball.x, ball.y), wall.upper, wall.lower) < robotDiameter
+				+ robotBufferSize) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// Gets a route between two quadrants. Has been created as a mess of if
@@ -190,20 +227,24 @@ public class PathFinder {
 		if (mapState.goal1.coordinate1.x < mapState.wallList.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
 			mapState.goal1.robotLocation.orientation = 180;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x + (robotDiameter / 2 + shootSpace);
+			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x
+					+ (robotDiameter / 2 + robotBufferSize);
 			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate1.y + mapState.goal1.coordinate2.y)
 					/ 2;
 			mapState.goal2.robotLocation.orientation = 0;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate2.x - (robotDiameter / 2 + shootSpace);
+			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate2.x
+					- (robotDiameter / 2 + robotBufferSize);
 			mapState.goal2.robotLocation.coordinate.y = (mapState.goal2.coordinate2.y + mapState.goal2.coordinate2.y)
 					/ 2;
 		} else {
 			mapState.goal2.robotLocation.orientation = 180;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x + (robotDiameter / 2 + shootSpace);
+			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x
+					+ (robotDiameter / 2 + robotBufferSize);
 			mapState.goal2.robotLocation.coordinate.y = (mapState.goal2.coordinate1.y + mapState.goal2.coordinate2.y)
 					/ 2;
 			mapState.goal1.robotLocation.orientation = 0;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate2.x - (robotDiameter / 2 + shootSpace);
+			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate2.x
+					- (robotDiameter / 2 + robotBufferSize);
 			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate2.y + mapState.goal1.coordinate2.y)
 					/ 2;
 		}
@@ -218,8 +259,8 @@ public class PathFinder {
 				+ mapState.cross.coordinate4.y) / 4;
 		// Before we can find quadrants, we gotta determine which wall is which.
 		// TODO: If walls change, we gotta fix this part.
-		Wall leftWall = new Wall();
-		Wall rightWall = new Wall();
+		leftWall = new Wall();
+		rightWall = new Wall();
 		// Figure out which wall is left wall.
 		if (mapState.wallList.get(0).upper.x < mapState.wallList.get(1).upper.x) {
 			leftWall = mapState.wallList.get(0);
@@ -302,13 +343,16 @@ public class PathFinder {
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
 		int orientation1, orientation2;
 		orientation1 = mapState.robotLocation.orientation;
-		// We make use of atan: tan = close cathete over far cathete. Should this really be cast to an int?
-		orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)/(bestBall.x - mapState.robotLocation.coordinate.x));
-				
+		// We make use of atan: tan = close cathete over far cathete. Should this really
+		// be cast to an int?
+		orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)
+				/ (bestBall.x - mapState.robotLocation.coordinate.x));
+
 		MainClient.rotate(-orientation1);
 		MainClient.rotate(orientation2);
+
 		int distance = calculateDistances(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y));
-		MainClient.sendTravelDistance(distance - robotDiameter/4, speedSlow);
+		MainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);
 		MainClient.sendTravelDistance(-robotDiameter, speedSlow);
 		MainClient.sendMotorSpeed(speedFast);
 	}
