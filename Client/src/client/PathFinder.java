@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import model.Ball;
 import model.Coordinate;
 import model.Goal;
-import model.InterfaceWall;
 import model.MapState;
 import model.PseudoWall;
 import model.Route;
@@ -37,6 +36,7 @@ public class PathFinder {
 		MainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
 		calculateGoalRobotLocations(mapState);
+		generateWalls();
 	}
 
 	// We want to return route to a given ball.
@@ -71,6 +71,18 @@ public class PathFinder {
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
 			newCoordinate.y = ball.y;
+			route.coordinates.add(newCoordinate);
+		}
+		if (isBallCloseToWall(ball, upperWall)) {
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = ball.x;
+			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize;
+			route.coordinates.add(newCoordinate);
+		}
+		if (isBallCloseToWall(ball, lowerWall)) {
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = ball.x;
+			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		return route;
@@ -152,6 +164,15 @@ public class PathFinder {
 			return false;
 		}
 	}
+	
+	private boolean isBallCloseToWall(Ball ball, PseudoWall wall) {
+		if (calculateDistancesLine(new Coordinate(ball.x, ball.y), wall.left, wall.right) < robotDiameter
+				+ robotBufferSize) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	// Gets a route between two quadrants. Has been created as a mess of if
 	// statements - a manual deduction is the most effective.
@@ -223,6 +244,16 @@ public class PathFinder {
 		}
 
 		return output;
+	}
+	
+	// Generates pseudowalls.
+	private void generateWalls() {
+		upperWall = new PseudoWall();
+		lowerWall = new PseudoWall();
+		upperWall.left = new Coordinate(leftWall.upper.x, leftWall.upper.y);
+		upperWall.right = new Coordinate(rightWall.upper.x, rightWall.upper.y);
+		lowerWall.left = new Coordinate(leftWall.lower.x, leftWall.lower.y);
+		lowerWall.right = new Coordinate(rightWall.lower.x, rightWall.lower.y);
 	}
 
 	// Creates RobotLocations for each of the two goals.
