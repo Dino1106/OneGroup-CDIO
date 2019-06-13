@@ -63,26 +63,26 @@ public class PathFinder {
 			// TODO: Refine where the robot goes here before approaching a wall-close ball.
 			// TODO: Doesn't take corners into account.
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
+			newCoordinate.x = leftWall.upper.x + robotDiameter*2 + robotBufferSize;
 			newCoordinate.y = ball.y;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToWall(ball, rightWall)) {
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
+			newCoordinate.x = rightWall.upper.x - robotDiameter*2 - robotBufferSize;
 			newCoordinate.y = ball.y;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToWall(ball, upperWall)) {
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = ball.x;
-			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize;
+			newCoordinate.y = upperWall.left.y - robotDiameter*2 - robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToWall(ball, lowerWall)) {
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = ball.x;
-			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
+			newCoordinate.y = lowerWall.left.y + robotDiameter*2 + robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		return route;
