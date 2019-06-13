@@ -10,4 +10,9 @@ public class RobotLocation {
 		this.orientation = orientation;
 	}
 
+	@Override
+	public String toString() {
+		return "RobotLocation [coordinate=" + coordinate + ", orientation=" + orientation + "]";
+	}
+
 }

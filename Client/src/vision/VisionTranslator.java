@@ -20,7 +20,7 @@ public class VisionTranslator {
 	private double visionScale = 1;
 
 	public VisionTranslator(boolean testMode) {
-		visionController = new VisionController(testMode, "e.jpg");
+		visionController = new VisionController(testMode, "e2.jpg");
 
 		Thread th = new Thread(visionController);
 		th.start();

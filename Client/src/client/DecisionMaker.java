@@ -33,10 +33,10 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		//VisionTranslator visionT = new VisionTranslator(false);
-		//System.out.println(visionT.getProcessedMap().toString());
+		VisionTranslator visionT = new VisionTranslator(false);
+		System.out.println(visionT.getProcessedMap().toString());
 		
-		// TODO: Remove this test data.
+		/*
 		try {
 			MainClient.connect();
 			ballList.add(new Ball(80, 40));
@@ -99,6 +99,7 @@ public class DecisionMaker {
 				pickupBall();
 			}
 		}
+			*/
 	}
 
 	// Gets new map info, updates data.
@@ -183,8 +184,6 @@ public class DecisionMaker {
 			}
 		}
 		
-		return safeBalls;
-		
+		return safeBalls;	
 	}
-
 }
