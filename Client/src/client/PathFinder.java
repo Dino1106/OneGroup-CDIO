@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import model.Ball;
 import model.Coordinate;
 import model.Goal;
+import model.InterfaceWall;
 import model.MapState;
+import model.PseudoWall;
 import model.Route;
 import model.Wall;
 
@@ -25,6 +27,8 @@ public class PathFinder {
 
 	Wall leftWall;
 	Wall rightWall;
+	PseudoWall upperWall;
+	PseudoWall lowerWall;
 
 	// Create this PathFinder which will then find 4 distinct "quadrant
 	// coordinates".

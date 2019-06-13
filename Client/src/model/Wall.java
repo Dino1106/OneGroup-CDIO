@@ -1,6 +1,6 @@
 package model;
 
-public class Wall implements InterfaceWall {
+public class Wall {
 	
 	public Coordinate upper;
 	public Coordinate lower;
