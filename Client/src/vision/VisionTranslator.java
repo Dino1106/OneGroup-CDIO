@@ -1,5 +1,6 @@
 package vision;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -151,26 +152,18 @@ public class VisionTranslator {
 		int orientation;
 		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][0],recievedArray[0][1]);
 		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[1][0],recievedArray[1][1]);
+		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+5, recievedArray[1][1]);
 		
-		if(largeCircleCoordinate.x != smallCircleCoordinate.x) {
-			int adjacent = smallCircleCoordinate.x - largeCircleCoordinate.x;
-			int opposite = smallCircleCoordinate.y - largeCircleCoordinate.y;
-			
-			int degrees = (int) Math.toDegrees(Math.atan(opposite/adjacent));
-			
-			if(degrees < 0) {
-				orientation = 360 + degrees;
-			}
-			
-			else orientation = 360 - degrees;
-			
+		double b = zeroPoint.x - largeCircleCoordinate.x; 
+		double c = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
+		double a = Point2D.distance(smallCircleCoordinate.x, smallCircleCoordinate.y, zeroPoint.x, zeroPoint.y);
+		
+		int degrees = (int) Math.toDegrees(Math.acos((b*b+c*c-a*a)/(2*b*c)));
+		
+		if(largeCircleCoordinate.y > smallCircleCoordinate.y) {
+			orientation = 360 - degrees;
 		}
-		else {
-			if(largeCircleCoordinate.y > smallCircleCoordinate.y) {
-				orientation = 270;
-			}
-			else orientation = 90;
-		}
+		else orientation = degrees;
 		
 		RobotLocation roboloc = new RobotLocation(largeCircleCoordinate, orientation);
 		
