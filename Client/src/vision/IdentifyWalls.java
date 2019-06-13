@@ -7,59 +7,78 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
 public class IdentifyWalls {
-  private  int[][] BoxCoordinates = new int[4][2],
-                   SearchCoordinates  = new int [4][2];
+    public  int[][] boxCoordinates = new int[4][2],
+            searchCoordinates  = new int [8][2];
+    IdentifyCoordinates identifyCoordinates = new IdentifyCoordinates();
+    public int[] test;
 
-   public  int centerCross[] = new int[2];
 
-    public IdentifyWalls(int[][] CrossBoxCoordinates) {
-        this.BoxCoordinates = CrossBoxCoordinates;
-       // calculateWalls();
-    }
-/*
-    private void calculateWalls()
-    {
-        int scale = 2;
-    	// Proportion from edges of the cross to the edges of the walls
-    	int horizontalProportion = 8/scale, verticalProportion = 6/scale;
-        
-    	// Determine the vertical/ horizontal distance from center of cross to its edges
-        int distCrossX, distCrossY;
-        distCrossX = (BoxCoordinates[1][0] - BoxCoordinates[0][0])/2;
-        distCrossY = (BoxCoordinates[2][1] - BoxCoordinates[1][1])/2;
+    public  int centerCross[] = new int[2];
 
-        // Determine the distance to edges
-        int distEdgeX, distEdgeY;
-        distEdgeX = distCrossX * horizontalProportion;
-        distEdgeY = distCrossY * verticalProportion;
-        
-        // Center of cross x and y
-        centerCross[0] = (BoxCoordinates[0][0] + BoxCoordinates[1][0]) / 2;
-        centerCross[1] = (BoxCoordinates[0][1] + BoxCoordinates[2][1]) / 2;
-        
-        // Calculate the position of the edge's corners 
-        SearchCoordinates[0][0] = centerCross[0] - distEdgeX;
-        SearchCoordinates[0][1] = centerCross[1] - distEdgeY;
-        SearchCoordinates[1][0] = centerCross[0] + distEdgeX;
-        SearchCoordinates[1][1] = centerCross[1] - distEdgeY;
-        SearchCoordinates[2][0] = centerCross[0] + distEdgeX;
-        SearchCoordinates[2][1] = centerCross[1] + distEdgeY;
-        SearchCoordinates[3][0] = centerCross[0] - distEdgeX;
-        SearchCoordinates[3][1] = centerCross[1] + distEdgeY;
-    */
+    public IdentifyWalls(Mat picture) {
 
-    public int[][] getArray(){
-        return BoxCoordinates;
+        identifyCoordinates.extractColor(picture,"red");
+        searchCoordinates  = identifyCoordinates.getWallCorners(picture);
+        boxCoordinates[0] = calculate_walls_edges(searchCoordinates[0],searchCoordinates[2],searchCoordinates[1],searchCoordinates[6]);
+        boxCoordinates[1] = calculate_walls_edges(searchCoordinates[7],searchCoordinates[4],searchCoordinates[1],searchCoordinates[6]);
+        boxCoordinates[2] = calculate_walls_edges(searchCoordinates[7],searchCoordinates[4],searchCoordinates[5],searchCoordinates[3]);
+        boxCoordinates[3] = calculate_walls_edges(searchCoordinates[0],searchCoordinates[2],searchCoordinates[5],searchCoordinates[3]);
+
+
     }
 
-	public void draw(Mat colorMap, Scalar BoxColor)
-	{
-        line(colorMap,new Point(0,0),new Point(colorMap.cols()/2,colorMap.rows()/2),BoxColor);
+    public int[] calculate_walls_edges(int l1p1[], int l1p2[], int l2p1[], int l2p2[]) {
+        if (l1p1[0] > l1p2[0]) {
+            int[] temp;
+            temp = l1p1;
+            l1p1 = l1p2;
+            l1p2 = temp;
+        }
+        if (l2p1[0] > l2p2[0]) {
+            int[] temp;
+            temp = l2p1;
+            l2p1 = l2p2;
+            l2p2 = temp;
+        }
 
-        line(colorMap,new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),new Point(SearchCoordinates[0][1],SearchCoordinates[1][1]),BoxColor);
-	//	line(colorMap,new Point(SearchCoordinates[0][2],SearchCoordinates[1][2]),new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),BoxColor);
-	//	line(colorMap,new Point(SearchCoordinates[0][3],SearchCoordinates[1][3]),new Point(SearchCoordinates[0][0],SearchCoordinates[1][0]),BoxColor);
-	}
+
+        int[] to_out = new int[2];
+        double l1a = (double) (l1p2[1] - l1p1[1]) / (double) (l1p2[0] - l1p1[0]);
+        double l2a = (double) (l2p2[1] - l2p1[1]) / (double) (l2p2[0] - l2p1[0]);
+        double l1b = (double) l1p1[1] - l1a * (double) l1p1[0];
+        double l2b = (double) l2p1[1] - l2a * (double) l2p1[0];
+        to_out[0] = (int) ((l2b - l1b) / (l1a - l2a));
+        to_out[1] = (int) (l1a * ((l2b - l1b) / (l1a - l2a)) + l1b);
+        {
+            if (l1p1[0] > l1p2[0]) {
+                int[] temp;
+                temp = l1p1;
+                l1p1 = l1p2;
+                l1p2 = temp;
+            }
+            if (l2p1[0] > l2p2[0]) {
+                int[] temp;
+                temp = l2p1;
+                l2p1 = l2p2;
+                l2p2 = temp;
+            }
+            return to_out;
+        }
+    }
+    public int[][] getArray() {
+        return this.boxCoordinates;
+    }
 
 
-}
+    public void drawAnchors(Mat drawIn,Scalar color){
+        for(int i = 0; i < 4 ;i++)
+            line(drawIn, new Point(0,0), new Point(boxCoordinates[i][0],boxCoordinates[i][1]),color);
+
+        for(int i = 0; i < 8 ;i++)
+            line(drawIn, new Point(0,0), new Point(searchCoordinates[i][0],searchCoordinates[i][1]),color);
+
+
+
+
+
+    }}

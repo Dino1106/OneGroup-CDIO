@@ -17,26 +17,137 @@ import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 import org.opencv.core.CvType;
 
 public class IdentifyCoordinates {
+	private BytePointer colorP;
 
-	
-
-	public int[] getWallCorners(Mat picture)
+	public int[][] getWallCorners(Mat picture)
 	{
 		int frameWidth  = picture.cols();
 		int frameHeight = picture.rows();
 		int center[] = {frameWidth/2,frameHeight/2};
+		int col = frameWidth-1;
+		int row = frameHeight-1;
+		int[][] coords = new int[8][2];
 
-		int[][] upperLeftBoundary  = { {0,0},{center[0],0},{} };
-		int[][] upperRightBoundary = { {center[0],0} };
-		int[][] lowerLeftBoundary  = { {center[0],center[1]} };
-		int[][] lowerRightBoundary = {  {0,center[1]}      };
+		colorP = picture.data();
+		int[] lu={0,0};
+		int[] u={center[0],0};
+		int[] ru={col,0};
+		int[] lc={0,center[1]};
+		int [] c=center;
+		int [] rc={col,center[1]};
+		int [] ld={0,row};
+		int [] d={center[0],row};
+		int [] rd={col,row};
 
-		int[][] coords = new int[4][2];
+		coords[0] = findPixel(u,lu[0],c[1],false,picture.arrayWidth());
+		coords[1] = findPixel(lc,c[0],lu[1],true,picture.arrayWidth());
+		coords[2] = findPixel(d,ld[0],c[1],false,picture.arrayWidth());
+		coords[3] = findPixel(lc,c[0],ld[1],true,picture.arrayWidth());
+		coords[4] = findPixel(d,rd[0],c[1],false,picture.arrayWidth());
+		coords[5] = findPixel(rc,c[0],rd[1],true,picture.arrayWidth());
+		coords[6] = findPixel(rc,c[0],ru[1],true,picture.arrayWidth());
+		coords[7] = findPixel(u,ru[0],c[1],false,picture.arrayWidth());
 
-		return center;
+		return coords;
+	}
 
-	//	Mat color_map = extractColor(picture, "blue");
-	//	BytePointer p = color_map.data();
+	private int[] findPixel(int[] start, int stop_x, int stop_y,boolean flip, int PictureWidth){
+		int[] to_out = new int[2];
+		int temp;
+		if(flip){
+			temp = stop_x; stop_x = stop_y; stop_y = temp;temp = start[0]; start[0] = start[1]; start[1] = temp;
+		}
+
+		if(start[1] < stop_y){
+			for(int i = start[1]; i <= stop_y;i++ ) {
+				if (start[0] < stop_x) {
+					for (int u = start[0]; u <= stop_x; u++) {
+						if(!flip){
+							if(colorP.get((i*PictureWidth)+u) == -1){
+								to_out[0] = u;
+								to_out[1] = i;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}else{
+							if(colorP.get((u*PictureWidth)+i) == -1){
+								to_out[0] = i;
+								to_out[1] = u;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}
+					}
+				} else {
+
+					for (int u = start[0]; u >= stop_x; u--) {
+
+						if(!flip){
+							if(colorP.get((i*PictureWidth)+u) == -1){
+								to_out[0] = u;
+								to_out[1] = i;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}else{
+							if(colorP.get((u*PictureWidth)+i) == -1){
+								to_out[0] = i;
+								to_out[1] = u;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}
+
+
+					}
+				}
+			}
+		}
+
+		else{
+			for(int i = start[1]; i >= stop_y;i-- ){
+				if(start[0] < stop_x){
+					for(int u= start[0]; u <= stop_x;u++){
+						if(!flip){
+							if(colorP.get((i*PictureWidth)+u) == -1){
+								to_out[0] = u;
+								to_out[1] = i;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}else{
+							if(colorP.get((u*PictureWidth)+i) == -1){
+								to_out[0] = i;
+								to_out[1] = u;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}
+					}
+				}else{
+					for(int u= start[0]; u >= stop_x;u--){
+						if(!flip){
+							if(colorP.get((i*PictureWidth)+u) == -1){
+								to_out[0] = u;
+								to_out[1] = i;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}else{
+							if(colorP.get((u*PictureWidth)+i) == -1){
+								to_out[0] = i;
+								to_out[1] = u;
+								if(flip) {temp = start[0]; start[0] = start[1]; start[1] = temp;}
+								return to_out;
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+		return to_out;
 	}
 
 	public int[][] getCirleCoordinates(Mat picture) {

@@ -132,7 +132,7 @@ public class VisionController implements Runnable {
 				this.cross = identifyCross.getArray();
 
 				// 3 - Identify Walls by cross
-				IdentifyWalls identifyWalls = new IdentifyWalls(identifyCross.getArray());
+				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
 				this.walls = identifyWalls.getArray();
 
 				// 4 - Identify robot				
@@ -142,10 +142,10 @@ public class VisionController implements Runnable {
 				if (testMode) {
 					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 					identifyCross.draw(pictureColor, Scalar.BLUE);
-					identifyWalls.draw(pictureColor,Scalar.RED);
+					identifyWalls.drawAnchors(pictureColor,Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+					//identifyRobot.draw(pictureRobot, Scalar.BLUE);
 
 					// Update window frame with current picture frame
 					vidFrame.showImage(converter.convert(pictureColor));
