@@ -33,10 +33,22 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		VisionTranslator visionT = new VisionTranslator(false);
-		System.out.println(visionT.getProcessedMap().toString());
+		visionTranslator = new VisionTranslator(false);
+		System.out.println(visionTranslator.getProcessedMap().toString());
 		
-		/*
+		
+		/*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
+		try {
+			MainClient.connect();
+			updateMap();
+			pathFinder = new PathFinder(mapState);
+			mainLoop();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		*/
+		
+		/* -------- FOR TEST ONLY ------
 		try {
 			MainClient.connect();
 			ballList.add(new Ball(80, 40));
@@ -68,6 +80,7 @@ public class DecisionMaker {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
 	public static void mainLoop() {
@@ -99,12 +112,11 @@ public class DecisionMaker {
 				pickupBall();
 			}
 		}
-			*/
 	}
 
 	// Gets new map info, updates data.
 	private static void updateMap() {
-		//mapState = visionTranslator.getProcessedMap();
+		mapState = visionTranslator.getProcessedMap();
 		onFieldBallCount = countBallsOnField();
 	}
 
@@ -122,7 +134,7 @@ public class DecisionMaker {
 	private static void deliverBalls() {
 		Route route = choosePathGoals();
 		pathFinder.driveRoute(route, mapState);
-		mapState = visionTranslator.getProcessedMap();
+		updateMap();
 		pathFinder.deliverBalls(mapState);
 		pickedUpBallCount = 0;
 	}
