@@ -54,9 +54,15 @@ public class PathFinder {
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
-		// Now check if ball is near wall. If it isn't, then we end here.
-		// Let's see if ball is close to a corner. If it is, we disregard the "ball
-		// close to wall" part.
+		// Now we need to get an auxiliary coordinate for balls near corners or walls.
+		getCoordinatesForRiskyBalls(ball, route);
+		return route;
+	}
+	
+	// Now check if ball is near wall. If it isn't, then we end here.
+	// Let's see if ball is close to a corner. If it is, we disregard the "ball
+	// close to wall" part.
+	private void getCoordinatesForRiskyBalls(Ball ball, Route route) {
 		boolean ballCloseToCorner = false;
 		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
 			ballCloseToCorner = true;
@@ -115,7 +121,6 @@ public class PathFinder {
 				route.coordinates.add(newCoordinate);
 			}
 		}
-		return route;
 	}
 
 	// We want to return routes to both goals.
