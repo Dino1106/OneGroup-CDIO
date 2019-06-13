@@ -1,10 +1,12 @@
 package vision;
 
+import static org.bytedeco.opencv.global.opencv_core.CV_32F;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FrameGrabber;
@@ -32,7 +34,7 @@ public class VisionController implements Runnable {
 	private static final int yEndLine = 3;
 
 	private Vec3fVector balls;
-	private int[][] walls;
+	private int[][] walls = new int[4][2];
 	private int[][] cross;
 	private int[][] robot;
 
@@ -120,7 +122,16 @@ public class VisionController implements Runnable {
 				extractLayer(pictureGlobal);
 
 				// Set Calibration values for Identify Balls 
-				int[] calib = {6, 5, 2, 6, 20}; 
+				int[] calib = {6, 5, 2, 6, 20};
+
+				// 3 - Identify Walls by cross
+				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
+				this.walls = identifyWalls.getArray();
+				transform(pictureColor,walls);
+				transform(picturePlain,walls);
+
+
+
 
 				// 1 - Identify balls with given parameters and draw circles
 				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
@@ -131,9 +142,8 @@ public class VisionController implements Runnable {
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
 				this.cross = identifyCross.getArray();
 
-				// 3 - Identify Walls by cross
-				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
-				this.walls = identifyWalls.getArray();
+
+
 
 				// 4 - Identify robot				
 				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
@@ -226,5 +236,29 @@ public class VisionController implements Runnable {
 					new Point(getLineXyxy(i, xEndLine), getLineXyxy(i, yEndLine)), Scalar.RED);
 		}
 	}
+
+
+	private void transform(Mat picture,int [][] rectangle)
+	{
+		int width = picture.size().width() ;
+		int height = picture.size().height();
+		FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
+											rectangle[1][0],rectangle[1][1],
+											rectangle[2][0],rectangle[2][1],
+											rectangle[3][0],rectangle[3][1]);
+
+		FloatPointer dstC= new FloatPointer(0,0,
+											width,0,
+											width,height,
+											0,height);
+
+		Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
+		Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
+
+		Mat perspective = getPerspectiveTransform(src,dst);
+		warpPerspective(picture,picture,perspective,new Size(width,height));
+	}
+
+
 
 }
