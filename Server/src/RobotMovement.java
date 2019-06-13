@@ -28,8 +28,8 @@ public class RobotMovement {
         this.ballPickerRight = new UnregulatedMotor(MotorPort.D);
         
         /* Setup wheels */
-    	this.wheelDiameter = 6.88;
-    	this.trackWidth = 22.8;
+    	this.wheelDiameter = 5.05;
+    	this.trackWidth = 16.3;
     	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.A);
     	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.B);
  
@@ -40,7 +40,6 @@ public class RobotMovement {
     }
     
 	public boolean drive(Coordinate to, int speed) {
-		
 		Pose pose = poseProvider.getPose();				// Gets the 'pose' of robot (position and heading)
 		Point location = pose.getLocation();
 		pose.setLocation(location);				   	 	// Set from coordinate using pose provider

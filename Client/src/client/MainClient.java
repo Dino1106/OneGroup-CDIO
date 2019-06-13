@@ -22,7 +22,7 @@ public class MainClient {
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
 		
-		sendTravelDistance(50, 720);
+
 	}
 	
 	public static void sendMotorSpeed(int speed) {
@@ -42,9 +42,11 @@ public class MainClient {
 			String coordinateString = "2 " + coordinate.x + " " + coordinate.y + " " + speed;
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
-			boolean serverResponse = dIn.readBoolean();
+			String serverResponse = dIn.readUTF();
+			String[] splitResponse = serverResponse.split(" ");
+			boolean convertedResponse = Boolean.parseBoolean(splitResponse[1]);
 			
-			if(serverResponse) {
+			if(convertedResponse) {
 				System.out.println("Path done: " + serverResponse);
 			} else {
 				// TODO: Add what to do

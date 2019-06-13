@@ -1,11 +1,13 @@
 
 import java.io.DataInputStream;
-
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import lejos.hardware.Sound;
 
 public class MainServer extends Thread {
 	
@@ -23,7 +25,8 @@ public class MainServer extends Thread {
 	
 	public static void main(String[] args) throws IOException {
 		server = new ServerSocket(PORT);
-		
+		Sound.playSample(new File("pickUpSound.wav"));
+
 		while(looping) {
 			System.out.println("Awaiting client...");
 			client = server.accept();
@@ -36,7 +39,7 @@ public class MainServer extends Thread {
 		try {
 			// Write response to client
 			boolean response = robotControls.drive(coordinate, speed);
-			dOut.writeBoolean(response);
+			dOut.writeUTF("2 " + response);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -54,7 +57,8 @@ public class MainServer extends Thread {
 	public void carPickUpBalls(boolean pickUp) {
 		try {
 			boolean response = robotControls.pickUpBalls(pickUp);
-			dOut.writeBoolean(response);
+			dOut.writeUTF("1 " + response);
+			dOut.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
