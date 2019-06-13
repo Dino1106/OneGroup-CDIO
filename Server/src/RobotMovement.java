@@ -21,6 +21,7 @@ public class RobotMovement {
     private PoseProvider poseProvider;
     private Navigator navigator;
 	private double wheelDiameter, trackWidth;
+	private Pose pose;
     
     public RobotMovement() {
     	/* Setup ball-picker motors */
@@ -37,24 +38,29 @@ public class RobotMovement {
         this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
         this.navigator = new Navigator(pilot);
         this.poseProvider = new OdometryPoseProvider(pilot);
+		this.pose = poseProvider.getPose();  // Gets the 'pose' of robot (position and heading)
     }
     
 	public boolean drive(Coordinate to, int speed) {
-		Pose pose = poseProvider.getPose();				// Gets the 'pose' of robot (position and heading)
 		Point location = pose.getLocation();
 		pose.setLocation(location);				   	 	// Set from coordinate using pose provider
 
+		System.out.println("I think my location is: x = " + location.x + ", y = " + location.y);
+		System.out.println("I am going to x = " + to.x + ", y = " + to.y);
 		pilot.setLinearSpeed(speed);
 		navigator.goTo(new Waypoint(to.x, to.y));
 				
 		if(navigator.waitForStop()) {
+			System.out.println("I have stopped");
 			return true;
 		} else {
+			System.out.println("I am still driving");
 			return false;
 		}
 	}
 	
 	public void driveBackwards(int centimeters, int speed) {
+		System.out.println("Driving " + centimeters +" centimeters backwards with " + speed + " speed");
 		setMotorSpeed(speed);
 		pilot.travel(centimeters);
 	}
@@ -70,17 +76,20 @@ public class RobotMovement {
 	}
 	
 	public void rotateToOrientation(double degrees) {
+		System.out.println("I am rotating " + degrees + " degrees");
 		pilot.rotate(degrees);
 	}
 	
 	public boolean pickUpBalls(boolean pickUp) {
 		if(pickUp) {
+			System.out.println("Picking up balls");
 			ballPickerLeft.setPower(30);
 			ballPickerRight.setPower(30);
 		    ballPickerLeft.backward();
 		    ballPickerRight.forward();
 		    return true;
 		} else {
+			System.out.println("Spitting out balls");
 			ballPickerLeft.setPower(85);
 			ballPickerRight.setPower(85); 
 			ballPickerLeft.forward();
@@ -90,9 +99,9 @@ public class RobotMovement {
 	}
 	
 	public void setRobotLocation(Coordinate coordinate) {
-		Pose pose = poseProvider.getPose();  // Gets the 'pose' of robot (position and heading)
 		Point point = new Point(coordinate.x, coordinate.y);
 		pose.setLocation(point);
+		System.out.println("My new location is x = " + coordinate.x + ", y = " + coordinate.y);
 	}
 	
 	public void playSound(int soundToPlay) {
