@@ -24,9 +24,11 @@ public class VisionTranslator {
 	private int cameraX, cameraY;
 	
 	private double robotHeight = 20.0;
+	private boolean testMode;
 
 	public VisionTranslator(boolean testMode) {
-		visionController = new VisionController(testMode, "a.jpg");
+		this.testMode = testMode;
+		visionController = new VisionController(testMode, 1);
 
 		Thread th = new Thread(visionController);
 		th.start();
@@ -46,13 +48,15 @@ public class VisionTranslator {
 		cameraX = (int) (visionController.getPic().cols() * visionScale);
 		cameraY = (int) (visionController.getPic().rows() * visionScale);
 
+		ArrayList<Wall> walls = calculateWalls();
+		ArrayList<Goal> goals = calculateGoals(walls);
+		
 		return new MapState(
 				calculateBalls(),
 				calculateCross(),
-				calculateWalls(),
-				//TODO: Uncomment when walls works.
-				new Goal(),//calculateGoals().get(0),
-				new Goal(),//calculateGoals().get(1),
+				walls,
+				goals.get(0),
+				goals.get(1),
 				calculateRobotLocation());
 	}
 	
@@ -77,6 +81,9 @@ public class VisionTranslator {
 	private ArrayList<Wall> calculateWalls() {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
+		
+		
+		/*
 		Comparator<Coordinate> sortCoord =  new Comparator<Coordinate>() {
 
 			@Override
@@ -84,40 +91,35 @@ public class VisionTranslator {
 				return -Integer.compare(c1.x,c2.x);
 			}
 		};
+		*/
+		
 
 		if (visionSnapShot.getWalls() != null) {
 			for(int i = 0; i < visionSnapShot.getWalls().length; i++) {
 				int x = (int) (visionSnapShot.getWalls()[i][0]/visionScale);
 				int y = (int) (visionSnapShot.getWalls()[i][1]/visionScale);
-
+				
 				Coordinate c = new Coordinate(x,y);
+				System.out.println(c.toString());
 				coords.add(c);
 
 			}
 
 			//TODO: Uncomment when walls works. 
-			/*
-			Collections.sort(coords, sortCoord);
+			
+			//Collections.sort(coords, sortCoord);
 
-			for(int i = 0; i < coords.size(); i+=2) {
-				Wall w = new Wall();
+			Wall w = new Wall();
+			Wall w2 = new Wall();
+			
+			w.upper = coords.get(0);
+			w.lower = coords.get(2);
+			
+			w2.upper = coords.get(1);
+			w2.lower = coords.get(3);
 
-				if(coords.get(i).y > coords.get(i).y) {
-					w.upper.x = coords.get(i).x;
-					w.upper.y = coords.get(i).y;
-					w.lower.x = coords.get(i+1).y;
-					w.upper.x = coords.get(i+1).x;
-				}
-				else {
-					w.upper.x = coords.get(i+1).x;
-					w.upper.y = coords.get(i+1).y;
-					w.lower.x = coords.get(i).y;
-					w.upper.x = coords.get(i).x;
-				}
-
-				walls.add(w);
-			}
-			 */
+			walls.add(w);
+			walls.add(w2);
 		}
 
 		return walls;
@@ -138,18 +140,20 @@ public class VisionTranslator {
 
 	}
 
-	private ArrayList<Goal> calculateGoals(){
-		ArrayList<Wall> sides = calculateWalls();
+	private ArrayList<Goal> calculateGoals(ArrayList<Wall> walls){
 		ArrayList<Goal> goals = new ArrayList<Goal>();
 
-		for(Wall wall : sides) {
-			Goal goal = new Goal();
-
-			goal.coordinate1.x = (int) ((((wall.upper.x - wall.lower.x)/2) + wall.lower.x)/visionScale);
-			goal.coordinate1.y = (int) ((((wall.upper.y - wall.lower.y)/2) + wall.lower.y)/visionScale);
-
-			goals.add(goal);
-		}
+		Goal goal1 = new Goal();
+		Goal goal2 = new Goal();
+		
+		Wall wall1 = walls.get(0);
+		Wall wall2 = walls.get(1);
+		
+		goal1.coordinate1 = new Coordinate(wall1.upper.x, wall1.lower.y);
+		goal2.coordinate1 = new Coordinate(wall2.upper.x, wall2.lower.y);
+		
+		goals.add(goal1);
+		goals.add(goal2);
 
 		return goals;
 	}

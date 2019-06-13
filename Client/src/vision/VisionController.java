@@ -34,7 +34,7 @@ public class VisionController implements Runnable {
 	private static final int yEndLine = 3;
 
 	private Vec3fVector balls;
-	private int[][] walls = new int[4][2];
+	private int[][] walls;
 	private int[][] cross;
 	private int[][] robot;
 
@@ -125,14 +125,20 @@ public class VisionController implements Runnable {
 				int[] calib = {6, 5, 2, 6, 20};
                 extractLayer(pictureGlobal);
 
-                // 3 - Identify Walls by cross
-                IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
-                this.walls = identifyWalls.getArray();
-                transform(pictureColor,walls);
-                transform(picturePlain,walls);
-
-
-
+				// 3 - Identify Walls by cross
+				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
+				this.walls = identifyWalls.getArray();
+				transform(pictureColor,walls);
+				transform(picturePlain,walls);
+				this.walls = new int[4][2];
+				this.walls[0][0] = 0;
+				this.walls[0][1] = 0;
+				this.walls[1][0] = pictureColor.arrayWidth();
+				this.walls[1][1] = 0;
+				this.walls[2][0] = 0;
+				this.walls[2][1] = pictureColor.arrayHeight();
+				this.walls[3][0] = pictureColor.arrayWidth();
+				this.walls[3][1] = pictureColor.arrayHeight();
 
 				// 1 - Identify balls with given parameters and draw circles
 				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
@@ -142,8 +148,6 @@ public class VisionController implements Runnable {
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
 				this.cross = identifyCross.getArray();
-
-
 
 
 				// 4 - Identify robot				
@@ -162,14 +166,16 @@ public class VisionController implements Runnable {
 					vidFrame.showImage(converter.convert(pictureColor));
 					vidFrameBlue.showImage(converter.convert(pictureRobot));
 				}
-
+				break;
 			} while(vid);} catch (Exception e) {
 				e.printStackTrace();
 			}
 	}
 
 	public VisionSnapShot getSnapShot() {
-		return new VisionSnapShot(this.balls, this.walls, this.cross, this.robot);
+		VisionSnapShot vs = new VisionSnapShot(this.balls, this.walls, this.cross, this.robot);
+				
+		return vs;
 	}
 
 	// Takes Value layer and generates single-layered Mat

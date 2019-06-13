@@ -4,9 +4,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		boolean testMode = true;
+		boolean testMode = false;
 		
-		VisionController test = new VisionController(testMode, 0);
+		VisionController test = new VisionController(testMode, 1);
 		Thread th = new Thread(test);
 		th.start();
 	}

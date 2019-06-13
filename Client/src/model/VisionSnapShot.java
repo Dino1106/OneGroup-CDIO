@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Arrays;
+
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 
 public class VisionSnapShot {
@@ -12,7 +14,6 @@ public class VisionSnapShot {
 	
 	
 	public VisionSnapShot(Vec3fVector balls, int[][] walls, int[][] cross, int[][] robot) {
-		super();
 		this.balls = balls;
 		this.walls = walls;
 		this.cross = cross;
@@ -43,10 +44,13 @@ public class VisionSnapShot {
 	public void setRobot(int[][] robot) {
 		this.robot = robot;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "VisionSnapShot [balls=" + balls + ", walls=" + walls + ", cross=" + cross + ", robot=" + robot + "]";
+		return "VisionSnapShot [\nballs=" + balls + ", \nwalls=" + Arrays.toString(walls) + ", \ncross="
+				+ Arrays.toString(cross) + ", \nrobot=" + Arrays.toString(robot) + "]";
 	}
+	
+	
 	
 }

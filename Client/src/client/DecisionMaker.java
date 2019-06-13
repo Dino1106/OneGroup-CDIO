@@ -33,11 +33,11 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		visionTranslator = new VisionTranslator(false);
-		System.out.println(visionTranslator.getProcessedMap().toString());
+		//visionTranslator = new VisionTranslator(false);
+		//System.out.println(visionTranslator.getProcessedMap().toString());
 		
 		
-		/*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
+		///*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
 		try {
 			MainClient.connect();
 			updateMap();
@@ -46,7 +46,7 @@ public class DecisionMaker {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
+		//*/
 		
 		/* -------- FOR TEST ONLY ------
 		try {

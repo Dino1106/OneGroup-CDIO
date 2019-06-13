@@ -22,12 +22,11 @@ public class MapState {
 		this.robotLocation = robotLocation;
 	}
 
+
 	@Override
 	public String toString() {
-		return "MapState [ballList=" + ballList + ", \ncross=" + cross + ", \nwallList=" + wallList + ", \ngoal1=" + goal1
-				+ ", \ngoal2=" + goal2 + ", \nrobotLocation=" + robotLocation + "]";
+		return "MapState [\nballList=" + ballList + ",\n cross=" + cross + ",\n wallList=" + wallList + ",\n goal1=" + goal1
+				+ ",\n goal2=" + goal2 + ",\n robotLocation=" + robotLocation + "]";
 	}
-
-	
 	
 }
