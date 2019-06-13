@@ -19,6 +19,11 @@ public class VisionTranslator {
 	private VisionController visionController;
 	private VisionSnapShot visionSnapShot;
 	private double visionScale = 1;
+	
+	private double cameraHeight = 150.0;
+	private int cameraX, cameraY;
+	
+	private double robotHeight = 20.0;
 
 	public VisionTranslator(boolean testMode) {
 		visionController = new VisionController(testMode, "a.jpg");
@@ -38,6 +43,8 @@ public class VisionTranslator {
 	public MapState getProcessedMap() {
 
 		this.visionScale = getScale();
+		cameraX = (int) (visionController.getPic().cols() * visionScale);
+		cameraY = (int) (visionController.getPic().rows() * visionScale);
 
 		return new MapState(
 				calculateBalls(),
@@ -150,6 +157,8 @@ public class VisionTranslator {
 	private RobotLocation calculateRobotLocation() {
 		int recievedArray[][] = visionSnapShot.getRobot();
 		int orientation;
+		
+		// Calculate orientation via geometry
 		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][0],recievedArray[0][1]);
 		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[1][0],recievedArray[1][1]);
 		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+5, recievedArray[1][1]);
@@ -167,7 +176,18 @@ public class VisionTranslator {
 		
 		RobotLocation roboloc = new RobotLocation(largeCircleCoordinate, orientation);
 		
+		
 		return roboloc;
+	}
+	
+	private void perspectiveTransform(Coordinate coord) {
+		// Find height differences and the proportion
+		double heightProportion = (double) (cameraHeight - robotHeight)/cameraHeight;
+		
+		// Find the scewed distance caused of height differences
+		coord.x = (int) ((1-heightProportion)*coord.x + heightProportion*cameraX);
+		coord.y = (int) ((1-heightProportion)*coord.y + heightProportion*cameraY);
+		
 	}
 
 }

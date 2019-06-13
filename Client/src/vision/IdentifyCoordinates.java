@@ -161,6 +161,7 @@ public class IdentifyCoordinates {
 
 		Vec3fVector circles = new Vec3fVector();
 		findCircles(picture, circles);
+		
 
 		// Draw circles
 		for(int i=0; i<circles.size(); i++) {
@@ -346,7 +347,6 @@ public class IdentifyCoordinates {
 			}
 		}
 	}
-
 
 	public void findCircles(Mat picture, Vec3fVector circles) {
 		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 2, 40);

@@ -2,6 +2,8 @@ package vision;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
+import java.awt.Color;
+
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
@@ -24,10 +26,9 @@ public class IdentifyRobot {
 		return coords;
 	}
 	
-	public void draw(Mat color_map, Scalar BoxColor)
+	public void draw(Mat picture, Scalar BoxColor)
 	{
-		line(color_map,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
-		line(color_map,new Point(coords[1][0],coords[1][1]),new Point(coords[2][0],coords[2][1]),BoxColor);
-		line(color_map,new Point(coords[2][0],coords[2][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
+		line(picture,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
+		line(picture,new Point(coords[1][0],coords[1][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
 	}
 }
