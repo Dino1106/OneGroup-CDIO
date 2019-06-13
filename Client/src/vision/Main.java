@@ -4,7 +4,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		boolean testMode = false;
+		boolean testMode = true;
 		
 		VisionController test = new VisionController(testMode, 1);
 		Thread th = new Thread(test);

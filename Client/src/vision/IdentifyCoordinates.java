@@ -162,6 +162,8 @@ public class IdentifyCoordinates {
 		Vec3fVector circles = new Vec3fVector();
 		findCircles(picture, circles);
 		
+		System.out.println(circles.get(0));
+		
 
 		// Draw circles
 		for(int i=0; i<circles.size(); i++) {
@@ -188,10 +190,6 @@ public class IdentifyCoordinates {
 			coords[1][1] = (int) circles.get(0).get(1);
 
 		}
-		
-		System.out.println("Small circle: "+coords[0][0]+", "+coords[0][1]);
-		System.out.println("Large circle: "+coords[1][0]+", "+coords[1][1]);
-		
 		return coords;
 
 	}
@@ -282,7 +280,7 @@ public class IdentifyCoordinates {
 
 
 		// Transform the picture for a more precise calibration
-		medianBlur(picture, picture, 9);
+		//medianBlur(picture, picture, 9);
 
 		// Prepare for HSV color extraction
 		cvtColor(picture, picture, COLOR_BGR2HSV);
@@ -305,21 +303,21 @@ public class IdentifyCoordinates {
 
 		} else if(color.contentEquals("blue")) {
 			// Range of red color of cross
-			/*h_min = 105; 		
-			h_max = 125;
-			s_min = 120;
-			s_max = 255;
-			v_min = 30;
-			v_max = 255;*/
+//			h_min = 105; 		
+//			h_max = 125;
+//			s_min = 120;
+//			s_max = 255;
+//			v_min = 30;
+//			v_max = 255;
+			
 			
 			h_min = 105; 		
 			h_max = 125;
-			s_min = 60;
+			s_min = 90;//120;
 			s_max = 255;
-			v_min = 120;
+			v_min = 60;//120;
 			v_max = 255;
 		}
-
 
 		// Create Mat's based of the colors for the inRange function
 		Mat min_Mat = new Mat(1, 1, CvType.CV_32SC4, new Scalar(h_min, s_min, v_min, 0));

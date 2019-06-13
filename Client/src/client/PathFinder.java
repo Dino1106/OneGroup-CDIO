@@ -301,6 +301,7 @@ public class PathFinder {
 	// Creates RobotLocations for each of the two goals.
 	private void calculateGoalRobotLocations(MapState mapState) {
 		// Figure out which wall is left wall.
+		/*
 		if (mapState.goal1.coordinate1.x < mapState.wallList.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
 			mapState.goal1.robotLocation.orientation = 180;
@@ -325,6 +326,7 @@ public class PathFinder {
 			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate2.y + mapState.goal1.coordinate2.y)
 					/ 2;
 		}
+		*/
 	}
 
 	// Set the middle of the map and all quadrant points.

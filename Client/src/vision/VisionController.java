@@ -105,7 +105,6 @@ public class VisionController implements Runnable {
 			OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 			grabber.setImageHeight(imageHeight);
 			grabber.setImageWidth(imageWidth);
-			//grabber.setFrameRate(5.0);
 
 			if (vid) {
 				grabber.start(); 
@@ -130,6 +129,7 @@ public class VisionController implements Runnable {
 				this.walls = identifyWalls.getArray();
 				transform(pictureColor,walls);
 				transform(picturePlain,walls);
+				transform(pictureRobot,walls);
 				this.walls = new int[4][2];
 				this.walls[0][0] = 0;
 				this.walls[0][1] = 0;
@@ -160,21 +160,21 @@ public class VisionController implements Runnable {
 					//identifyWalls.drawAnchors(pictureColor,Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-					//identifyRobot.draw(pictureRobot, Scalar.BLUE);
+					identifyRobot.draw(pictureRobot, Scalar.BLUE);
 
 					// Update window frame with current picture frame
 					vidFrame.showImage(converter.convert(pictureColor));
 					vidFrameBlue.showImage(converter.convert(pictureRobot));
 				}
-				break;
+				//break;
 			} while(vid);} catch (Exception e) {
 				e.printStackTrace();
 			}
 	}
 
 	public VisionSnapShot getSnapShot() {
+		System.out.println("VisionController - getSnapShot sending snapshot");
 		VisionSnapShot vs = new VisionSnapShot(this.balls, this.walls, this.cross, this.robot);
-				
 		return vs;
 	}
 
@@ -235,8 +235,6 @@ public class VisionController implements Runnable {
 		lineSet = lines;
 		drawLines();
 	}
-
-
 
 	public synchronized int getLineXyxy(int line_number, int parameter) {
 		return new IntPointer(lineSet.get(line_number)).get(parameter);

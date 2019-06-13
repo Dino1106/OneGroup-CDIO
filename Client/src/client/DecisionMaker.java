@@ -33,14 +33,14 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		//visionTranslator = new VisionTranslator(false);
+		visionTranslator = new VisionTranslator(true);
 		//System.out.println(visionTranslator.getProcessedMap().toString());
-		
 		
 		///*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
 		try {
 			MainClient.connect();
 			updateMap();
+			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
 			pathFinder = new PathFinder(mapState);
 			mainLoop();
 		} catch (IOException e) {
@@ -117,6 +117,9 @@ public class DecisionMaker {
 	// Gets new map info, updates data.
 	private static void updateMap() {
 		mapState = visionTranslator.getProcessedMap();
+		
+		//System.out.println("\n\n" + mapState.toString() + "\n\n");
+		
 		onFieldBallCount = countBallsOnField();
 	}
 
@@ -195,7 +198,6 @@ public class DecisionMaker {
 				}
 			}
 		}
-		
 		return safeBalls;	
 	}
 }

@@ -21,8 +21,6 @@ public class MainClient {
 		socket = new Socket(ip, PORT);
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
-		
-
 	}
 	
 	public static void sendMotorSpeed(int speed) {
@@ -33,11 +31,11 @@ public class MainClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public static void sendCoordinate(Coordinate coordinate, int speed){
 		// Send coordinates to Server: 
+		System.out.println("Going to coordinate: " + coordinate);
 		try {
 			String coordinateString = "2 " + coordinate.x + " " + coordinate.y + " " + speed;
 			dOut.writeUTF(coordinateString);
@@ -58,6 +56,7 @@ public class MainClient {
 	}
 
 	public static void sendTravelDistance(int centimeters, int speed){
+		System.out.println("SendTravelDistance: " + centimeters + ", " + speed);
 		// Send coordinates to Server: 
 		try {
 			String coordinateString = "3 " + centimeters + " " + speed;
@@ -77,6 +76,7 @@ public class MainClient {
 	}
 	
 	public static void pickUpBalls(boolean pickUp) {
+		System.out.println("pickUpBalls: " + pickUp);
 		try {
 			String pickUpString = "4 " + pickUp;
 			dOut.writeUTF(pickUpString);
@@ -87,6 +87,7 @@ public class MainClient {
 	}
 	
 	public static void rotate(int degrees) {
+		System.out.println("rotate, degrees: " + degrees);
 		try {
 			String rotateString = "5 " + degrees;
 			dOut.writeUTF(rotateString);
@@ -97,6 +98,7 @@ public class MainClient {
 	}
 	
 	public static void sendPickUpSpeed(int speed) {
+		System.out.println("sendPickUpSpeed, speed: " + speed);
 		try {
 			String speedString = "6 " + speed;
 			dOut.writeUTF(speedString);
@@ -108,6 +110,7 @@ public class MainClient {
 	}
 	
 	public static void sendSound(int sound) {
+		System.out.println("sendSound, sound: " + sound);
 		try {
 			String soundString = "7 " + sound;
 			dOut.writeUTF(soundString);
@@ -119,6 +122,7 @@ public class MainClient {
 	}
 	
 	public static void setRobotLocation(Coordinate coordinate) {
+		System.out.println("setRobotLocation, coordinate: " + coordinate);
 		try {
 			String coordinateString = "8 " + coordinate.x + " " + coordinate.y;
 			dOut.writeUTF(coordinateString);
