@@ -47,6 +47,7 @@ public class VisionController implements Runnable {
 	private Mat picturePlain = new Mat(); 
 	private Mat pictureColor = new Mat();
 	private Mat pictureRobot = new Mat();
+    private Mat perspective = new Mat();
 
 	private int cameraId;
 	private boolean vid = false;
@@ -116,31 +117,33 @@ public class VisionController implements Runnable {
 
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
-				picturePlain = pictureGlobal.clone();
 				pictureRobot = pictureGlobal.clone();
 
-				extractLayer(pictureGlobal);
+
 
 				// Set Calibration values for Identify Balls 
 				int[] calib = {6, 5, 2, 6, 20};
+                extractLayer(pictureGlobal);
 
-				// 3 - Identify Walls by cross
-				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
-				this.walls = identifyWalls.getArray();
-				transform(pictureColor,walls);
-				transform(picturePlain,walls);
+                // 3 - Identify Walls by cross
+                IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
+                this.walls = identifyWalls.getArray();
+                transform(pictureColor,walls);
+                transform(picturePlain,walls);
 
 
 
 
 				// 1 - Identify balls with given parameters and draw circles
-				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 3, 120, 15, 2, 8, calib);
+				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
 				this.balls = identifyBalls.getCircles();
 
 
 				// 2 - Identify cross with constant parameters
 				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
 				this.cross = identifyCross.getArray();
+
+
 
 
 
@@ -152,7 +155,7 @@ public class VisionController implements Runnable {
 				if (testMode) {
 					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
 					identifyCross.draw(pictureColor, Scalar.BLUE);
-					identifyWalls.drawAnchors(pictureColor,Scalar.RED);
+					//identifyWalls.drawAnchors(pictureColor,Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					//identifyRobot.draw(pictureRobot, Scalar.BLUE);
@@ -187,6 +190,27 @@ public class VisionController implements Runnable {
 		picturePlain = picture.clone();
 		cvtColor(picture, picture, COLOR_GRAY2BGR);
 	}
+
+    private void transform(Mat picture,int [][] rectangle)
+    {
+        int width = picture.size().width() ;
+        int height = picture.size().height();
+        FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
+                rectangle[1][0],rectangle[1][1],
+                rectangle[2][0],rectangle[2][1],
+                rectangle[3][0],rectangle[3][1]);
+
+        FloatPointer dstC= new FloatPointer(0,0,
+                width,0,
+                width,height,
+                0,height);
+
+        Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
+        Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
+
+        perspective = getPerspectiveTransform(src,dst);
+        warpPerspective(picture,picture,perspective,new Size(width,height));
+    }
 
 	// TODO: EVERYTHING BELOW IS IRRELEVANT TO THIS CLASS
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,26 +262,9 @@ public class VisionController implements Runnable {
 	}
 
 
-	private void transform(Mat picture,int [][] rectangle)
-	{
-		int width = picture.size().width() ;
-		int height = picture.size().height();
-		FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
-											rectangle[1][0],rectangle[1][1],
-											rectangle[2][0],rectangle[2][1],
-											rectangle[3][0],rectangle[3][1]);
 
-		FloatPointer dstC= new FloatPointer(0,0,
-											width,0,
-											width,height,
-											0,height);
 
-		Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
-		Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
 
-		Mat perspective = getPerspectiveTransform(src,dst);
-		warpPerspective(picture,picture,perspective,new Size(width,height));
-	}
 
 
 

@@ -1,13 +1,18 @@
 package vision;
 
+import static org.bytedeco.opencv.global.opencv_core.CV_32F;
+import static org.bytedeco.opencv.global.opencv_core.CV_8U;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_HOUGH_GRADIENT;
 import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
 import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
@@ -29,7 +34,7 @@ public class IdentifyBalls {
 	private Mat picture;
 	private Vec3fVector circle = new Vec3fVector();
 
-	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad ) {
+	public IdentifyBalls(Mat picture, int resolutionRatio, int minDistance, int cannyThreshold, int centerThreshold, int minRad, int maxRad) {
 		this.resolutionRatio = resolutionRatio;
 		this.minDistance = minDistance;
 		this.cannyThreshold = cannyThreshold;
@@ -72,34 +77,34 @@ public class IdentifyBalls {
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop:
-			do {
-				for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
+		do {
+			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
+				extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+				if (eval(amount_circles))
+					break outerloop;
+				for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
 					extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 					if (eval(amount_circles))
 						break outerloop;
-					for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
+					for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
 						extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 						if (eval(amount_circles))
 							break outerloop;
-						for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
+						for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
 							extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 							if (eval(amount_circles))
 								break outerloop;
-							for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
+							for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
 								extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 								if (eval(amount_circles))
 									break outerloop;
-								for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
-									extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-									if (eval(amount_circles))
-										break outerloop;
-								}
 							}
 						}
 					}
-
 				}
-			} while (!eval(amount_circles--));
+
+			}
+		} while (!eval(amount_circles--));
 	}
 
 	private boolean eval(int amount) {
@@ -108,8 +113,7 @@ public class IdentifyBalls {
 		return false;
 	}
 
-	public void draw(Mat drawIn, Scalar color, boolean centers  )
-	{
+	public void draw(Mat drawIn, Scalar color, boolean centers) {
 		for (int i = 0; i < 7; i++) {
 			circle(drawIn,
 					new Point((int) circle.get(i).get(xCircle),
@@ -125,9 +129,11 @@ public class IdentifyBalls {
 		}
 
 	}
-		public synchronized int getXyr(int circle_number, int parameter) {
+
+	public synchronized int getXyr(int circle_number, int parameter) {
 		return (int) circle.get(circle_number).get(parameter);
 	}
+
 	public void drawNodes(Mat drawIn, Scalar color) {
 		int i;
 		int u;
@@ -144,9 +150,41 @@ public class IdentifyBalls {
 	}
 
 
+/*
+	public void moveBalls( Mat pictureGlobal,Mat perspective)
+	{
+
+		//FloatPointer a = new FloatPointer(pictureGlobal.arrayWidth()*pictureGlobal.arrayHeight());
+		Mat template = new Mat(new Size(pictureGlobal.arrayWidth(),pictureGlobal.arrayHeight()),CV_8U);
+		int width =template.arrayWidth();
+		long actualArrayPosition;
+		long x,y;
+		int height = template.arrayHeight();
+		BytePointer p = template.data();
+		int n = 0;
+		for(int i = 0; i < circle.size();i++){
+			y = (long) (width*circle.get(i).get(1));
+			x= (int) (circle.get(i).get(0));
+			actualArrayPosition =  (y+x);
+			p.put(actualArrayPosition,(byte)1);
+		}
 
 
+		warpPerspective(template,template,perspective,new Size(width,height));
+
+		for(int i = 0; i < template.arrayHeight();i++)
+			for(int u = 0; u < template.arrayWidth();u++){
+				if(p.get((i*template.arrayWidth())+u)==1){
+					circle.get(n).put(0,u);
+					circle.get(n++).put(1,i);
+				}
+			}
+
+
+
+	}
 }
 
-	
 
+*/
+}
