@@ -146,8 +146,6 @@ public class VisionController implements Runnable {
 
 
 
-
-
 				// 4 - Identify robot				
 				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
 				this.robot = identifyRobot.getArray();
@@ -262,9 +260,26 @@ public class VisionController implements Runnable {
 	}
 
 
+	private void transform(Mat picture,int [][] rectangle)
+	{
+		int width = picture.size().width() ;
+		int height = picture.size().height();
+		FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
+											rectangle[1][0],rectangle[1][1],
+											rectangle[2][0],rectangle[2][1],
+											rectangle[3][0],rectangle[3][1]);
 
+		FloatPointer dstC= new FloatPointer(0,0,
+											width,0,
+											width,height,
+											0,height);
 
+		Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
+		Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
 
+		Mat perspective = getPerspectiveTransform(src,dst);
+		warpPerspective(picture,picture,perspective,new Size(width,height));
+	}
 
 
 
