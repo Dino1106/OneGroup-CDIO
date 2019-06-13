@@ -129,8 +129,8 @@ public class DecisionMaker {
 	private static Ball decideBestBall() {
 		Ball bestBall = mapState.ballList.get(0);
 		int bestRisk;
-		// TODO: For now, best ball is simply decided based on distance to robot.
 		bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robotLocation.coordinate);
+		// TODO: Risk calculation here should be more advanced than simply distance.
 		for (Ball ball : mapState.ballList) {
 			int ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robotLocation.coordinate);
 			if (ballRisk < bestRisk) {

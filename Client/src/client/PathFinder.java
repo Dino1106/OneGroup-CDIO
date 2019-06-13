@@ -156,7 +156,7 @@ public class PathFinder {
 		return (int) dist; // There's a minor loss here in conversion.
 	}
 
-	private boolean isBallCloseToWall(Ball ball, Wall wall) {
+	public boolean isBallCloseToWall(Ball ball, Wall wall) {
 		if (calculateDistancesLine(new Coordinate(ball.x, ball.y), wall.upper, wall.lower) < robotDiameter
 				+ robotBufferSize) {
 			return true;
@@ -165,7 +165,7 @@ public class PathFinder {
 		}
 	}
 	
-	private boolean isBallCloseToWall(Ball ball, PseudoWall wall) {
+	public boolean isBallCloseToWall(Ball ball, PseudoWall wall) {
 		if (calculateDistancesLine(new Coordinate(ball.x, ball.y), wall.left, wall.right) < robotDiameter
 				+ robotBufferSize) {
 			return true;
