@@ -47,7 +47,7 @@ public class VisionController implements Runnable {
 	private Mat picturePlain = new Mat(); 
 	private Mat pictureColor = new Mat();
 	private Mat pictureRobot = new Mat();
-    private Mat perspective = new Mat();
+	private Mat perspective = new Mat();
 
 	private int cameraId;
 	private boolean vid = false;
@@ -122,7 +122,7 @@ public class VisionController implements Runnable {
 
 				// Set Calibration values for Identify Balls 
 				int[] calib = {6, 5, 2, 6, 20};
-                extractLayer(pictureGlobal);
+				extractLayer(pictureGlobal);
 
 				// 3 - Identify Walls by cross
 				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
@@ -130,14 +130,14 @@ public class VisionController implements Runnable {
 				transform(pictureColor,walls);
 				transform(picturePlain,walls);
 				transform(pictureRobot,walls);
-				
+
 				for(int i = 0; i < walls.length; i++) {
 					for(int j = 0; j < walls[0].length; j++) {
 						System.out.println("walls: [" + i + "][" + j + "]: " + walls[i][j]);
 					}
 				}
-				
-				
+
+
 				this.walls = new int[4][2];
 				this.walls[0][0] = 0;
 				this.walls[0][1] = 0;
@@ -203,27 +203,6 @@ public class VisionController implements Runnable {
 		cvtColor(picture, picture, COLOR_GRAY2BGR);
 	}
 
-    private void transform(Mat picture,int [][] rectangle)
-    {
-        int width = picture.size().width() ;
-        int height = picture.size().height();
-        FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
-                rectangle[1][0],rectangle[1][1],
-                rectangle[2][0],rectangle[2][1],
-                rectangle[3][0],rectangle[3][1]);
-
-        FloatPointer dstC= new FloatPointer(0,0,
-                width,0,
-                width,height,
-                0,height);
-
-        Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
-        Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
-
-        perspective = getPerspectiveTransform(src,dst);
-        warpPerspective(picture,picture,perspective,new Size(width,height));
-    }
-
 	// TODO: EVERYTHING BELOW IS IRRELEVANT TO THIS CLASS
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
@@ -277,14 +256,14 @@ public class VisionController implements Runnable {
 		int width = picture.size().width();
 		int height = picture.size().height();
 		FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
-											rectangle[1][0],rectangle[1][1],
-											rectangle[2][0],rectangle[2][1],
-											rectangle[3][0],rectangle[3][1]);
+				rectangle[1][0],rectangle[1][1],
+				rectangle[2][0],rectangle[2][1],
+				rectangle[3][0],rectangle[3][1]);
 
 		FloatPointer dstC= new FloatPointer(0,0,
-											width,0,
-											width,height,
-											0,height);
+				width,0,
+				width,height,
+				0,height);
 
 		Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
 		Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
@@ -292,7 +271,6 @@ public class VisionController implements Runnable {
 		Mat perspective = getPerspectiveTransform(src,dst);
 		warpPerspective(picture,picture,perspective,new Size(width,height));
 	}
-
 
 
 }
