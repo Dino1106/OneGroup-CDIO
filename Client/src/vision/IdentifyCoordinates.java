@@ -218,7 +218,6 @@ public class IdentifyCoordinates {
 			for( int y = lowerLeftBoundary[1]; y <= upperLeftBoundary[1]; y++ )
 				for( int x = upperLeftBoundary[0]; x < upperRightBoundary[0]; x++ ){
 
-					//System.out.print( p.get((y*color_map.arrayWidth())+x));
 					if(p.get((y * picture.arrayWidth())+x) == -1){
 
 						coords[0][1] = y;

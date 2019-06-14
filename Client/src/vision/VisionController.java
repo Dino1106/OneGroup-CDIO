@@ -36,7 +36,9 @@ public class VisionController implements Runnable {
 	private static final int yEndLine = 3;
 
 	private Vec3fVector balls;
+	private int[][] frameCoordinates;
 	private int[][] walls;
+	
 	private int[][] cross;
 	private int[][] robot;
 
@@ -135,21 +137,12 @@ public class VisionController implements Runnable {
 
                 if(calibration){
                     IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
-				this.walls = identifyWalls.getArray();
+				this.frameCoordinates = identifyWalls.getArray();
                 }
-				transform(pictureColor,walls);
-				transform(picturePlain,walls);
-				transform(pictureRobot,walls);
+				transform(pictureColor,frameCoordinates);
+				transform(picturePlain,frameCoordinates);
+				transform(pictureRobot,frameCoordinates);
 
-
-
-				for(int i = 0; i < walls.length; i++) {
-					for(int j = 0; j < walls[0].length; j++) {
-						System.out.println("walls: [" + i + "][" + j + "]: " + walls[i][j]);
-					}
-				}
-
-/*
 				this.walls = new int[4][2];
 				this.walls[0][0] = 0;
 				this.walls[0][1] = 0;
@@ -159,8 +152,6 @@ public class VisionController implements Runnable {
 				this.walls[2][1] = pictureColor.arrayHeight();
 				this.walls[3][0] = pictureColor.arrayWidth();
 				this.walls[3][1] = pictureColor.arrayHeight();
-				*/
-
 
 				// 1 - Identify balls with given parameters and draw circles
                 IdentifyBalls identifyBalls;
@@ -198,7 +189,7 @@ public class VisionController implements Runnable {
 					vidFrameColor.showImage(converter.convert(pictureColor));
 					vidFrameRobot.showImage(converter.convert(pictureUnchanged));
 				}
-				//break;
+				break;
 			} while(vid);} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -290,16 +281,10 @@ public class VisionController implements Runnable {
 		int width = (int) (barrierWidth * delta);
 		int height = (int) barrierWidth;
 		
-		System.out.println("Width " + width + "\nHeight " + height);
-		
-		System.out.println("Delta " + delta);
-		
 		FloatPointer dstC= new FloatPointer(0,0,
 				width,0,
 				width,height,
 				0,height);
-		
-		System.out.println(dstC.toString());
 
 		Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
 		Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);

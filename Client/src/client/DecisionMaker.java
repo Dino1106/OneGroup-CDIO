@@ -33,7 +33,7 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		visionTranslator = new VisionTranslator(true);
+		visionTranslator = new VisionTranslator(false);
 		//System.out.println(visionTranslator.getProcessedMap().toString());
 		
 		///*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
@@ -118,7 +118,7 @@ public class DecisionMaker {
 	private static void updateMap() {
 		mapState = visionTranslator.getProcessedMap();
 		
-		//System.out.println("\n\n" + mapState.toString() + "\n\n");
+		System.out.println("\n\n updateMap():\n" + mapState.toString() + "\n\n");
 		
 		onFieldBallCount = countBallsOnField();
 	}

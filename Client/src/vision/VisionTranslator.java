@@ -24,10 +24,8 @@ public class VisionTranslator {
 	private int cameraX, cameraY;
 
 	private double robotHeight = 20.0;
-	private boolean testMode;
 
 	public VisionTranslator(boolean testMode) {
-		this.testMode = testMode;
 		visionController = new VisionController(testMode, 1);
 
 		Thread th = new Thread(visionController);
@@ -38,7 +36,7 @@ public class VisionTranslator {
 			visionSnapShot = visionController.getSnapShot();
 
 		} catch (InterruptedException e) {
-			System.out.println(e.getMessage());
+			System.out.println(e.getStackTrace());
 		}
 	}
 
@@ -58,7 +56,7 @@ public class VisionTranslator {
 				goals.get(0),
 				goals.get(1),
 				calculateRobotLocation());
-
+		
 		/*
 		 * this.visionScale = getScale(); cameraX = (int)
 		 * (visionController.getPic().cols() * visionScale); cameraY = (int)
@@ -172,20 +170,10 @@ public class VisionTranslator {
 		int recievedArray[][] = visionSnapShot.getRobot();
 		int orientation;
 		
-		for(int i = 0; i < recievedArray.length; i++) {
-			for(int j = 0 ; j < recievedArray[0].length; j++) {
-				System.out.println("Arraystuff [" + i + "][" + j + "] " + recievedArray[i][j]);
-			}
-		}
-		
 		// Calculate orientation via geometry
 		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][0],recievedArray[0][1]);
 		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[1][0],recievedArray[1][1]);
 		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+5, recievedArray[1][1]);
-		
-		System.out.println(smallCircleCoordinate.toString());
-		System.out.println(largeCircleCoordinate.toString());
-		System.out.println(zeroPoint.toString());
 
 		double b = zeroPoint.x - largeCircleCoordinate.x; 
 		double c = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
