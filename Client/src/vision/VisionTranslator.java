@@ -27,24 +27,16 @@ public class VisionTranslator {
 
 	public VisionTranslator(boolean testMode) {
 		visionController = new VisionController(testMode, 1);
-
-		Thread th = new Thread(visionController);
-		th.start();
-
-		try {
-			th.join();
-			visionSnapShot = visionController.getSnapShot();
-
-		} catch (InterruptedException e) {
-			System.out.println(e.getStackTrace());
-		}
+		// Warm-up
+		visionController.getSnapShot();
 	}
 
 	public MapState getProcessedMap() {
-
+		
 		this.visionScale = getScale();
-		cameraX = (int) (visionController.getPic().cols() * visionScale);
-		cameraY = (int) (visionController.getPic().rows() * visionScale);
+		//TODO: This is not possible anyMore...
+		//cameraX = (int) (visionController.getPic().cols() * visionScale);
+		//cameraY = (int) (visionController.getPic().rows() * visionScale);
 
 		ArrayList<Wall> walls = calculateWalls();
 		ArrayList<Goal> goals = calculateGoals(walls);

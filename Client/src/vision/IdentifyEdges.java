@@ -6,7 +6,7 @@ import org.bytedeco.opencv.opencv_core.Scalar;
 
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
-public class IdentifyWalls {
+public class IdentifyEdges {
     public  int[][] boxCoordinates = new int[4][2],
             searchCoordinates  = new int [8][2];
     IdentifyCoordinates identifyCoordinates = new IdentifyCoordinates();
@@ -15,7 +15,7 @@ public class IdentifyWalls {
 
     public  int centerCross[] = new int[2];
 
-    public IdentifyWalls(Mat picture) {
+    public IdentifyEdges(Mat picture) {
 
         identifyCoordinates.extractColor(picture,"red");
         searchCoordinates  = identifyCoordinates.getWallCorners(picture);
