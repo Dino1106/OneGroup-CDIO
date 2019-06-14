@@ -81,23 +81,50 @@ public class IdentifyBalls {
 			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
 				extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 				if (eval(amount_circles))
+				{
+					minDistance = sec1;
+					cannyThreshold = sec2;
+					centerThreshold = sec3;
+					minRad = sec4;
+					maxRad = sec5;
 					break outerloop;
+				}
 				for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
 					extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-					if (eval(amount_circles))
-						break outerloop;
+					if (eval(amount_circles)){
+						minDistance = sec1;
+						cannyThreshold = sec2;
+						centerThreshold = sec3;
+						minRad = sec4;
+						maxRad = sec5;
+						break outerloop;}
 					for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
 						extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-						if (eval(amount_circles))
-							break outerloop;
+						if (eval(amount_circles)){
+							minDistance = sec1;
+							cannyThreshold = sec2;
+							centerThreshold = sec3;
+							minRad = sec4;
+							maxRad = sec5;
+							break outerloop;}
 						for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
 							extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-							if (eval(amount_circles))
-								break outerloop;
+							if (eval(amount_circles)){
+								minDistance = sec1;
+								cannyThreshold = sec2;
+								centerThreshold = sec3;
+								minRad = sec4;
+								maxRad = sec5;
+								break outerloop;}
 							for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
 								extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-								if (eval(amount_circles))
-									break outerloop;
+								if (eval(amount_circles)){
+									minDistance = sec1;
+									cannyThreshold = sec2;
+									centerThreshold = sec3;
+									minRad = sec4;
+									maxRad = sec5;
+									break outerloop;}
 							}
 						}
 					}
@@ -105,6 +132,11 @@ public class IdentifyBalls {
 
 			}
 		} while (!eval(amount_circles--));
+	}
+
+	public int[] getParams(){
+		int[] params = {minDistance,cannyThreshold,centerThreshold,minRad,maxRad};
+		return params;
 	}
 
 	private boolean eval(int amount) {

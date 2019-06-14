@@ -52,13 +52,16 @@ public class VisionController implements Runnable {
 	private Mat perspective = new Mat();
 
 	private int cameraId;
+	private int[] params = new int[5];
 	private boolean vid = false;
 	private boolean testMode = false;
+	private boolean calibration;
 
 	public VisionController(boolean testMode) {
 		this.cameraId = 0;
 		this.vid = true;
 		this.testMode = testMode;
+		this.calibration = true;
 
 		if(testMode) {
 			this.vidFrameColor = new CanvasFrame("pictureColor");
@@ -74,6 +77,7 @@ public class VisionController implements Runnable {
 		this.cameraId = camera;
 		this.vid = true;
 		this.testMode = testMode;
+		this.calibration = true;
 
 		if(testMode) {
 			this.vidFrameColor = new CanvasFrame("pictureColor");
@@ -89,6 +93,7 @@ public class VisionController implements Runnable {
 		this.vid = false;
 		this.pictureGlobal = imread(imgpath);
 		this.testMode = testMode;
+		this.calibration = true;
 
 		if(testMode) {
 			this.vidFrameColor = new CanvasFrame("pictureColor");
@@ -150,8 +155,15 @@ public class VisionController implements Runnable {
 				this.walls[3][1] = pictureColor.arrayHeight();
 
 				// 1 - Identify balls with given parameters and draw circles
-//				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
-//				this.balls = identifyBalls.getCircles();
+                IdentifyBalls identifyBalls;
+                if(calibration) {
+				identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
+				params = identifyBalls.getParams();
+				calibration = false;
+                }else{
+                    identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
+                }
+                this.balls = identifyBalls.getCircles();
 
 
 				// 2 - Identify cross with constant parameters
