@@ -6,7 +6,9 @@ public class Main {
 		
 		boolean testMode = true;
 		
-		VisionController test = new VisionController(testMode, 0);
+		
+		
+		VisionController test = new VisionController(testMode, 1);
 		Thread th = new Thread(test);
 		th.start();
 	}

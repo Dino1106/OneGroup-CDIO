@@ -42,8 +42,8 @@ public class VisionController implements Runnable {
 
 	private Vec4iVector lineSet = new Vec4iVector();
 
-	private CanvasFrame vidFrame;
-	private CanvasFrame vidFrameBlue;
+	private CanvasFrame vidFrameColor;
+	private CanvasFrame vidFrameRobot;
 
 	private Mat pictureGlobal = new Mat();
 	private Mat picturePlain = new Mat(); 
@@ -61,10 +61,10 @@ public class VisionController implements Runnable {
 		this.testMode = testMode;
 
 		if(testMode) {
-			this.vidFrame = new CanvasFrame("frame1");
-			this.vidFrameBlue = new CanvasFrame("blue");
-			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameColor = new CanvasFrame("pictureColor");
+			this.vidFrameRobot = new CanvasFrame("pictureRobot");
+			this.vidFrameColor.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameRobot.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
 	}
 
@@ -76,10 +76,10 @@ public class VisionController implements Runnable {
 		this.testMode = testMode;
 
 		if(testMode) {
-			this.vidFrame = new CanvasFrame("frame1");
-			this.vidFrameBlue = new CanvasFrame("blue");
-			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameColor = new CanvasFrame("pictureColor");
+			this.vidFrameRobot = new CanvasFrame("pictureRobot");
+			this.vidFrameColor.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameRobot.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
 	}
 
@@ -91,10 +91,10 @@ public class VisionController implements Runnable {
 		this.testMode = testMode;
 
 		if(testMode) {
-			this.vidFrame = new CanvasFrame("frame1");
-			this.vidFrameBlue = new CanvasFrame("blue");
-			this.vidFrame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-			this.vidFrameBlue.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameColor = new CanvasFrame("pictureColor");
+			this.vidFrameRobot = new CanvasFrame("pictureRobot");
+			this.vidFrameColor.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameRobot.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		}
 	}
 
@@ -119,7 +119,6 @@ public class VisionController implements Runnable {
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
 				pictureRobot = pictureGlobal.clone();
-
 
 
 				// Set Calibration values for Identify Balls 
@@ -151,13 +150,13 @@ public class VisionController implements Runnable {
 				this.walls[3][1] = pictureColor.arrayHeight();
 
 				// 1 - Identify balls with given parameters and draw circles
-				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
-				this.balls = identifyBalls.getCircles();
+//				IdentifyBalls identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
+//				this.balls = identifyBalls.getCircles();
 
 
 				// 2 - Identify cross with constant parameters
-				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-				this.cross = identifyCross.getArray();
+//				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
+//				this.cross = identifyCross.getArray();
 
 
 				// 4 - Identify robot				
@@ -165,16 +164,18 @@ public class VisionController implements Runnable {
 				this.robot = identifyRobot.getArray();
 
 				if (testMode) {
-					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
-					identifyCross.draw(pictureColor, Scalar.BLUE);
+//					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+//					identifyCross.draw(pictureColor, Scalar.BLUE);
 					//identifyWalls.drawAnchors(pictureColor,Scalar.RED);
-					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
+//					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
+//					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 					identifyRobot.draw(pictureRobot, Scalar.BLUE);
 
+					cvtColor(pictureColor, pictureColor, COLOR_BGR2HSV);
+					
 					// Update window frame with current picture frame
-					vidFrame.showImage(converter.convert(pictureColor));
-					vidFrameBlue.showImage(converter.convert(pictureRobot));
+					vidFrameColor.showImage(converter.convert(pictureColor));
+					vidFrameRobot.showImage(converter.convert(pictureRobot));
 				}
 				//break;
 			} while(vid);} catch (Exception e) {
