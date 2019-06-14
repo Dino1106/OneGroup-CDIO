@@ -154,7 +154,7 @@ public class IdentifyCoordinates {
 
 		int[][] coords = new int[2][2];
 
-		extractColor(picture, "green");
+		extractColor(picture, "purple");
 
 		//BytePointer p = extractedMat.data();
 
@@ -167,7 +167,7 @@ public class IdentifyCoordinates {
 			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.GREEN);
 		}
 		
-		/*
+
 		// Determine small/large circle
 		if((int) circles.get(0).get(2) <= (int) circles.get(1).get(2)) {
 			// Small circle
@@ -188,7 +188,7 @@ public class IdentifyCoordinates {
 			coords[1][1] = (int) circles.get(0).get(1);
 
 		}
-		*/
+
 		return coords;
 
 	}
@@ -304,17 +304,17 @@ public class IdentifyCoordinates {
 			int r_min = 151,	r_max = 255;
 			 */
 
-		} else if(color.contentEquals("green")) {
+		} else if(color.contentEquals("purple")) {
 			// Range of red color of cross
 			
 			
-			//Green paper is: 100/100/100
+			//Purple paper is: 100/100/100
 			
-			h_min = 255/360 * 90; 		
-			h_max = 255/360 * 125;
-			s_min = 255/100 * 20;	
+			h_min = 260/2;
+			h_max = 340/2;
+			s_min = 255/100 * 20;
 			s_max = 255/100 * 100;
-			v_min = 255/100 * 90;
+			v_min = 255/100 * 20;
 			v_max = 255/100 * 100;
 		}
 
@@ -346,7 +346,7 @@ public class IdentifyCoordinates {
 	}
 
 	public void findCircles(Mat picture, Vec3fVector circles) {
-		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 10, 50);
+		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 15, 100);
 	}
 
 }
