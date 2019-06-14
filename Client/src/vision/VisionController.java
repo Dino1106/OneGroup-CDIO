@@ -49,7 +49,7 @@ public class VisionController implements Runnable {
 	private Mat picturePlain = new Mat(); 
 	private Mat pictureColor = new Mat();
 	private Mat pictureRobot = new Mat();
-	private Mat perspective = new Mat();
+	private Mat pictureUnchanged = new Mat();
 
 	private int cameraId;
 	private int[] params = new int[5];
@@ -124,6 +124,7 @@ public class VisionController implements Runnable {
 				// Clone the "global" picture
 				pictureColor = pictureGlobal.clone();
 				pictureRobot = pictureGlobal.clone();
+				pictureUnchanged = pictureGlobal.clone();
 
 
 				// Set Calibration values for Identify Balls 
@@ -131,11 +132,16 @@ public class VisionController implements Runnable {
 				extractLayer(pictureGlobal);
 
 				// 3 - Identify Walls by cross
-				IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
+
+                if(calibration){
+                    IdentifyWalls identifyWalls = new IdentifyWalls(pictureColor.clone());
 				this.walls = identifyWalls.getArray();
+                }
 				transform(pictureColor,walls);
 				transform(picturePlain,walls);
 				transform(pictureRobot,walls);
+
+
 
 				for(int i = 0; i < walls.length; i++) {
 					for(int j = 0; j < walls[0].length; j++) {
@@ -143,7 +149,7 @@ public class VisionController implements Runnable {
 					}
 				}
 
-
+/*
 				this.walls = new int[4][2];
 				this.walls[0][0] = 0;
 				this.walls[0][1] = 0;
@@ -153,11 +159,13 @@ public class VisionController implements Runnable {
 				this.walls[2][1] = pictureColor.arrayHeight();
 				this.walls[3][0] = pictureColor.arrayWidth();
 				this.walls[3][1] = pictureColor.arrayHeight();
+				*/
+
 
 				// 1 - Identify balls with given parameters and draw circles
                 IdentifyBalls identifyBalls;
                 if(calibration) {
-				identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 5, 120, 15, 2, 8, calib);
+				identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 7, 120, 15, 2, 8, calib);
 				params = identifyBalls.getParams();
 				calibration = false;
                 }else{
@@ -166,28 +174,29 @@ public class VisionController implements Runnable {
                 this.balls = identifyBalls.getCircles();
 
 
+
 				// 2 - Identify cross with constant parameters
-//				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
-//				this.cross = identifyCross.getArray();
+				IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
+				this.cross = identifyCross.getArray();
 
 
 				// 4 - Identify robot				
-				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
-				this.robot = identifyRobot.getArray();
+//				IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
+//				this.robot = identifyRobot.getArray();
 
 				if (testMode) {
-//					identifyBalls.draw(pictureColor,Scalar.CYAN,true);
-//					identifyCross.draw(pictureColor, Scalar.BLUE);
+				identifyBalls.draw(pictureColor,Scalar.CYAN,true);
+				identifyCross.draw(pictureColor, Scalar.BLUE);
 					//identifyWalls.drawAnchors(pictureColor,Scalar.RED);
 //					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 //					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-					identifyRobot.draw(pictureRobot, Scalar.BLUE);
+//					identifyRobot.draw(pictureRobot, Scalar.BLUE);
 
-					cvtColor(pictureColor, pictureColor, COLOR_BGR2HSV);
+					//cvtColor(pictureColor, pictureColor, COLOR_BGR2HSV);
 					
 					// Update window frame with current picture frame
 					vidFrameColor.showImage(converter.convert(pictureColor));
-					vidFrameRobot.showImage(converter.convert(pictureRobot));
+					vidFrameRobot.showImage(converter.convert(pictureUnchanged));
 				}
 				//break;
 			} while(vid);} catch (Exception e) {

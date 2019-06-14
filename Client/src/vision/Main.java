@@ -8,7 +8,7 @@ public class Main {
 		
 		
 		
-		VisionController test = new VisionController(testMode, 1);
+		VisionController test = new VisionController(testMode, 0);
 		Thread th = new Thread(test);
 		th.start();
 	}

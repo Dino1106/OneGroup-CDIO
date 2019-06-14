@@ -73,7 +73,7 @@ public class IdentifyBalls {
 
 	private void autoCircle(int param1, int param2, int param3, int param4, int param5) {
 
-		int amount_circles = 10;
+		int amount_circles = 9;
 
 		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
 		outerloop:
@@ -146,7 +146,7 @@ public class IdentifyBalls {
 	}
 
 	public void draw(Mat drawIn, Scalar color, boolean centers) {
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < circle.size(); i++) {
 			circle(drawIn,
 					new Point((int) circle.get(i).get(xCircle),
 							(int) circle.get(i).get(yCircle)),
