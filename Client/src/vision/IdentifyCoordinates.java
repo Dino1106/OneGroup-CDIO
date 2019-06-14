@@ -315,7 +315,7 @@ public class IdentifyCoordinates {
 			h_max = 125;
 			s_min = 90;//120;
 			s_max = 255;
-			v_min = 60;//120;
+			v_min = 90;//120;
 			v_max = 255;
 		}
 
@@ -347,7 +347,7 @@ public class IdentifyCoordinates {
 	}
 
 	public void findCircles(Mat picture, Vec3fVector circles) {
-		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 2, 40);
+		HoughCircles(picture, circles, CV_HOUGH_GRADIENT, 1, 20, 50, 10, 10, 50);
 	}
 
 }

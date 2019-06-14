@@ -130,6 +130,14 @@ public class VisionController implements Runnable {
 				transform(pictureColor,walls);
 				transform(picturePlain,walls);
 				transform(pictureRobot,walls);
+				
+				for(int i = 0; i < walls.length; i++) {
+					for(int j = 0; j < walls[0].length; j++) {
+						System.out.println("walls: [" + i + "][" + j + "]: " + walls[i][j]);
+					}
+				}
+				
+				
 				this.walls = new int[4][2];
 				this.walls[0][0] = 0;
 				this.walls[0][1] = 0;
@@ -266,7 +274,7 @@ public class VisionController implements Runnable {
 
 	private void transform(Mat picture,int [][] rectangle)
 	{
-		int width = picture.size().width() ;
+		int width = picture.size().width();
 		int height = picture.size().height();
 		FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
 											rectangle[1][0],rectangle[1][1],
