@@ -73,6 +73,7 @@ public class VisionController {
 		createNecessaryObjects(testMode);
 	}
 
+
 	/**
 	 * Constructor with a static image (only for testing)
 	 * @param testMode If true = opens window, and refreshes with analysed picture
@@ -82,6 +83,7 @@ public class VisionController {
 		this.imgPath = imgPath;
 		createNecessaryObjects(testMode);
 	}
+
 
 	/**
 	 * Helper for constructor, creates necessary objects.
@@ -99,20 +101,21 @@ public class VisionController {
 				this.vidFrameWarped = new CanvasFrame("Warped picture");
 				this.vidFrameWarped.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 			}
-			
+
 			if (this.usingCamera) {
 				this.grabber = FrameGrabber.createDefault(this.cameraId);
 				this.grabber.setImageHeight(this.imageHeight);
 				this.grabber.setImageWidth(this.imageWidth);
 			}
-			
+
 			edgeDetection();
 
 		} catch (Exception e) {
 			System.out.println("Error in VisionController, createNecessaryObjects():" + e.getMessage());
 		}
 	}
-	
+
+
 	/**
 	 * Returns a snapshot of the current vision picture
 	 * @return VisionSnapShot object, containing all objects for translator.
@@ -123,111 +126,79 @@ public class VisionController {
 		return vs;
 	}
 
+
 	/**
 	 * Runs algorithms in vision to gather snapshot.
 	 * @return VisionSnapShot with all the raw data for the translator.
 	 */
 	private VisionSnapShot calculateSnapShot() {
-		Vec3fVector balls;
-		int[][] walls;
-		int[][] cross;
-		int[][] robot;
+		Vec3fVector balls = null;
+		int[][] walls = null;
+		int[][] cross = null;
+		int[][] robot = null;
 
 		//Take the picture
 		this.pictureOriginal = takePicture(usingCamera);
-		
+
+		//Takes value layer and generates single-layered Mat
+		picturePlain = extractLayer(pictureOriginal.clone());
+
 		//Clone original picture and warp.
 		this.pictureWarped = this.pictureOriginal.clone();
 		transform(pictureWarped,frameCoordinates);
-		
+		transform(picturePlain, frameCoordinates);
+
 		// Clone the "warped" picture
 		this.pictureColor = this.pictureWarped.clone();
 		this.pictureRobot = this.pictureWarped.clone();
-		this.picturePlain = this.pictureWarped.clone();
+
+		//See the pictures first time, to debug.
+		if (this.testMode) {
+			this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
+			this.vidFrameWarped.showImage(converter.convert(pictureColor));
+		}
 
 		// Get coordinates from picture for the walls
 		walls = getWallCoordinatesFromPicture(pictureColor);
 
 		// 1 - Identify balls with given parameters and draw circles
+		System.out.println("Vision - Start identify balls");
 		IdentifyBalls identifyBalls;
-		if (calibration) {
-			// Set Calibration values for Identify Balls 
-			int[] calib = {6, 5, 2, 6, 20};
-			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 7, 120, 15, 5, 8, calib);
-			params = identifyBalls.getParams();
-			calibration = false;
-		}else{
-			identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
-		}
-		balls = identifyBalls.getCircles();
+		int[] calib = {6, 5, 2, 6, 20};
+//        if(calibration) {
+		identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 7, 120, 15, 5, 8, calib);
+//		params = identifyBalls.getParams();
+//		calibration = false;
+//        }else{
+//            identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
+//        }
+        balls = identifyBalls.getCircles();
+        System.out.println("Vision - End identify balls");
 
+        System.out.println("Vision - Start identify cross");
 		// 2 - Identify cross with constant parameters
 		IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
 		cross = identifyCross.getArray();
+		System.out.println("Vision - End identify cross");
 
+		System.out.println("Vision - Start identify robot");
 		// 4 - Identify robot				
 		IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
 		robot = identifyRobot.getArray();
-
+		System.out.println("Vision - End identify robot");
+		
+		
 		if (testMode) {
+			System.out.println("Vision - Insert drawings on live picture");
 			identifyBalls.draw(pictureWarped,Scalar.CYAN,true);
 			identifyCross.draw(pictureWarped, Scalar.BLUE);
-			//identifyWalls.drawAnchors(pictureColor,Scalar.RED);
-			//					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
-			//					line(pictureColor, new Point(0,0), new Point(identifyWalls.centerCross[0],identifyWalls.centerCross[1]),Scalar.RED);
 			identifyRobot.draw(pictureWarped, Scalar.BLUE);
 
-			//cvtColor(pictureColor, pictureColor, COLOR_BGR2HSV);
-
 			// Update window frame with current picture frame
-			this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
 			this.vidFrameWarped.showImage(converter.convert(pictureWarped));
 		}
-		
+
 		return new VisionSnapShot(balls, walls, cross, robot);
-	}
-
-	/**
-	 * Runs the detection of edges (and takes pictures), until the frameCoordinates is not one of the corners of the original picture.
-	 */
-	private void edgeDetection() {
-		System.out.println("VisionController - Running edge detection");
-		
-		do {
-			this.pictureOriginal = takePicture(usingCamera);
-
-			extractLayer(pictureOriginal);
-
-			IdentifyEdges identifyEdges = new IdentifyEdges(pictureOriginal.clone());
-			
-			this.frameCoordinates = identifyEdges.getArray();
-			
-		} while (!isEdgesDetectedCorrect(this.frameCoordinates, this.imageHeight, this.imageWidth));
-		System.out.println("VisionController - edge detection done");
-	}
-
-	/**
-	 * Gets coordinates from a warped picture, 
-	 * @param picture The picture to take reference from.
-	 * @return returns the int array, int[i][j], i = point, j = x and y. (int[4][2])
-	 */
-	private int[][] getWallCoordinatesFromPicture(Mat picture) {
-
-		int[][] wallCoordinates = new int[4][2];
-
-		wallCoordinates[0][0] = 0;
-		wallCoordinates[0][1] = 0;
-
-		wallCoordinates[1][0] = picture.arrayWidth();
-		wallCoordinates[1][1] = 0;
-
-		wallCoordinates[2][0] = 0;
-		wallCoordinates[2][1] = picture.arrayHeight();
-
-		wallCoordinates[3][0] = picture.arrayWidth();
-		wallCoordinates[3][1] = picture.arrayHeight();
-
-		return wallCoordinates;
 	}
 
 
@@ -258,6 +229,27 @@ public class VisionController {
 		}
 	}
 
+
+	/**
+	 * Runs the detection of edges (and takes pictures), until the frameCoordinates is not one of the corners of the original picture.
+	 */
+	private void edgeDetection() {
+		System.out.println("VisionController - Starting edge detection");
+
+		do {
+			System.out.println("VisionController - Running edge detection");
+			this.pictureOriginal = takePicture(usingCamera);
+
+			IdentifyEdges identifyEdges = new IdentifyEdges(pictureOriginal);
+
+			this.frameCoordinates = identifyEdges.getArray();
+
+
+		} while (!isEdgesDetectedCorrect(this.frameCoordinates, this.imageHeight, this.imageWidth));
+		System.out.println("VisionController - Stopping edge detection");
+	}
+
+
 	/**
 	 * Checks if warped coordinates are going to be warped correctly.
 	 * Runs before the picture is warped!
@@ -268,34 +260,35 @@ public class VisionController {
 	 */
 	private boolean isEdgesDetectedCorrect(int[][] coordinateArray, int imageHeight, int imageWidth) {
 
-		boolean warpPicture = false;
-		int coordinate;
+		boolean warpPicture = true;
+		int partCoordinate;
 
 		for (int i = 0; i < coordinateArray.length; i++) {
 			for(int j = 0; j < coordinateArray[i].length; j++) {
-				coordinate = coordinateArray[i][j];
+				partCoordinate = coordinateArray[i][j];
 
-				if (coordinate == imageHeight) {
-					warpPicture = false;
+				if (partCoordinate == imageHeight) {
+					return false;
 				} 
-				else if (coordinate == imageWidth) {
-					warpPicture = false;
+				else if (partCoordinate == imageWidth) {
+					return false;
 				}
-				else if (coordinate == 0) {
-					warpPicture = false;
+				else if (partCoordinate == 0) {
+					return false;
 				} else {
-					warpPicture &= true;
+					// Nothing
 				}
 			}
 		}
 		return warpPicture;
 	}
 
+
 	/**
-	 * Takes Value layer and generates single-layered Mat
+	 * Takes value layer and generates single-layered Mat
 	 * @param picture The mat that needs to be extracted
 	 */
-	private void extractLayer(Mat picture) {
+	private Mat extractLayer(Mat picture) {
 		BytePointer dat;
 
 		cvtColor(picture, picture, COLOR_BGR2HSV);
@@ -307,9 +300,11 @@ public class VisionController {
 		}
 
 		cvtColor(picture, picture, COLOR_BGR2GRAY);
-		picturePlain = picture.clone();
-		cvtColor(picture, picture, COLOR_GRAY2BGR);
+//		picturePlain = picture.clone();
+//		cvtColor(picture, picture, COLOR_GRAY2BGR);
+		return picture;
 	}
+
 
 	/**
 	 * Transforms the picture from 4 points in a rectangle array.
@@ -342,6 +337,35 @@ public class VisionController {
 		Mat perspective = getPerspectiveTransform(src,dst);
 		warpPerspective(picture,picture,perspective,new Size(width,height));
 	}
+
+
+	/**
+	 * Gets coordinates from a warped picture, 
+	 * @param picture The picture to take reference from.
+	 * @return returns the int array, int[i][j], i = point, j = x and y. (int[4][2])
+	 */
+	private int[][] getWallCoordinatesFromPicture(Mat picture) {
+
+		int[][] wallCoordinates = new int[4][2];
+
+		wallCoordinates[0][0] = 0;
+		wallCoordinates[0][1] = 0;
+
+		wallCoordinates[1][0] = picture.arrayWidth();
+		wallCoordinates[1][1] = 0;
+
+		wallCoordinates[2][0] = 0;
+		wallCoordinates[2][1] = picture.arrayHeight();
+
+		wallCoordinates[3][0] = picture.arrayWidth();
+		wallCoordinates[3][1] = picture.arrayHeight();
+
+		return wallCoordinates;
+	}
+
+
+
+
 
 
 

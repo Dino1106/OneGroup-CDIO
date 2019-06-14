@@ -6,7 +6,7 @@ public class TestMain {
 		
 		boolean testMode = true;
 		
-		VisionController test = new VisionController(testMode, "e.jpg");
+		VisionController test = new VisionController(testMode, "a.jpg");
 		test.getSnapShot();
 		
 		//VisionController test1 = new VisionController(testMode, "b.jpg");
