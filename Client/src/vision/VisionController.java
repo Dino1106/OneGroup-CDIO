@@ -5,6 +5,8 @@ import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
+import java.awt.geom.Point2D;
+
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -252,18 +254,30 @@ public class VisionController implements Runnable {
 
 
 	private void transform(Mat picture,int [][] rectangle)
-	{
-		int width = picture.size().width();
-		int height = picture.size().height();
+	{	
 		FloatPointer srcC = new FloatPointer(rectangle[0][0],rectangle[0][1],
 				rectangle[1][0],rectangle[1][1],
 				rectangle[2][0],rectangle[2][1],
 				rectangle[3][0],rectangle[3][1]);
+		
+		double barrierWidth = Point2D.distance(rectangle[0][0], rectangle[0][1], rectangle[1][0], rectangle[1][1]);
+		double barrierHeight = Point2D.distance(rectangle[1][0], rectangle[1][1], rectangle[2][0], rectangle[2][1]);
 
+		double delta = barrierWidth/barrierHeight;
+		
+		int width = (int) (barrierWidth * delta);
+		int height = (int) barrierWidth;
+		
+		System.out.println("Width " + width + "\nHeight " + height);
+		
+		System.out.println("Delta " + delta);
+		
 		FloatPointer dstC= new FloatPointer(0,0,
 				width,0,
 				width,height,
 				0,height);
+		
+		System.out.println(dstC.toString());
 
 		Mat src = new Mat(new Size(2, 4), CV_32F, srcC);
 		Mat dst = new Mat(new Size(2, 4), CV_32F, dstC);
