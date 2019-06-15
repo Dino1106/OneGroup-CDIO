@@ -9,21 +9,18 @@ import static org.bytedeco.opencv.global.opencv_imgproc.line;
 public class IdentifyEdges {
     public  int[][] boxCoordinates = new int[4][2],
             searchCoordinates  = new int [8][2];
-    IdentifyCoordinates identifyCoordinates = new IdentifyCoordinates();
     public int[] test;
 
 
     public  int centerCross[] = new int[2];
 
-    public IdentifyEdges(Mat picture) {
-
+    public IdentifyEdges(Mat picture, IdentifyCoordinates identifyCoordinates) {
         identifyCoordinates.extractColor(picture,"red");
         searchCoordinates  = identifyCoordinates.getWallCorners(picture);
         boxCoordinates[0] = calculate_walls_edges(searchCoordinates[0],searchCoordinates[2],searchCoordinates[1],searchCoordinates[6]);
         boxCoordinates[1] = calculate_walls_edges(searchCoordinates[7],searchCoordinates[4],searchCoordinates[1],searchCoordinates[6]);
         boxCoordinates[2] = calculate_walls_edges(searchCoordinates[7],searchCoordinates[4],searchCoordinates[5],searchCoordinates[3]);
         boxCoordinates[3] = calculate_walls_edges(searchCoordinates[0],searchCoordinates[2],searchCoordinates[5],searchCoordinates[3]);
-
 
     }
 

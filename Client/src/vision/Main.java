@@ -7,9 +7,9 @@ public class Main {
 		boolean testMode = true;
 		VisionController visionController = new VisionController(testMode, 0);
 		
-//		while(true) {
-//			
-//		}
+		while(true) {
+			visionController.getSnapShot();
+		}
 	}
 
 }

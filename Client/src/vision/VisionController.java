@@ -6,6 +6,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 import java.awt.geom.Point2D;
+import java.util.Scanner;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
@@ -60,6 +61,7 @@ public class VisionController {
 	private FrameGrabber grabber;
 	private OpenCVFrameConverter.ToMat converter;
 	private String imgPath;
+	private IdentifyCoordinates identifyCoordinates;
 
 	/**
 	 * Constructor with a camera
@@ -92,6 +94,7 @@ public class VisionController {
 	private void createNecessaryObjects(boolean testMode) {
 
 		try {
+			this.identifyCoordinates = new IdentifyCoordinates();
 			this.testMode = testMode;
 			this.converter = new OpenCVFrameConverter.ToMat();
 
@@ -111,7 +114,7 @@ public class VisionController {
 			edgeDetection();
 
 		} catch (Exception e) {
-			System.out.println("Error in VisionController, createNecessaryObjects():" + e.getMessage());
+			System.out.println("Error in VisionController, createNecessaryObjects():" + e.getStackTrace());
 		}
 	}
 
@@ -121,9 +124,9 @@ public class VisionController {
 	 * @return VisionSnapShot object, containing all objects for translator.
 	 */
 	public VisionSnapShot getSnapShot() {
-		VisionSnapShot vs = calculateSnapShot();
+		VisionSnapShot visionSnapShot = calculateSnapShot();
 		System.out.println("VisionController, getSnapShot - sending snapshot");
-		return vs;
+		return visionSnapShot;
 	}
 
 
@@ -158,36 +161,52 @@ public class VisionController {
 			this.vidFrameWarped.showImage(converter.convert(pictureColor));
 		}
 
+		Scanner in = new Scanner(System.in);
+		while(true) {
+			System.out.println("Calibration done, enter 'yes' to confirm, 'no' to restart");
+			String s = in.nextLine();
+			if (s.equals("yes")) {
+				break;
+			}
+			if (s.equals("no")) {
+				edgeDetection();
+				return calculateSnapShot();
+			}
+		}
+
 		// Get coordinates from picture for the walls
 		walls = getWallCoordinatesFromPicture(pictureColor);
 
 		// 1 - Identify balls with given parameters and draw circles
 		System.out.println("Vision - Start identify balls");
+
+		//TODO: Clear up what this should do...
 		IdentifyBalls identifyBalls;
 		int[] calib = {6, 5, 2, 6, 20};
-//        if(calibration) {
-		identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 7, 120, 15, 5, 8, calib);
-//		params = identifyBalls.getParams();
-//		calibration = false;
-//        }else{
-//            identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
-//        }
-        balls = identifyBalls.getCircles();
-        System.out.println("Vision - End identify balls");
+		if(calibration) {
+			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 7, 120, 15, 5, 8, calib);
+			params = identifyBalls.getParams();
+			calibration = false;
+		}else{
+			identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
+		}
+		balls = identifyBalls.getCircles();
 
-        System.out.println("Vision - Start identify cross");
+		System.out.println("Vision - End identify balls");
+
+		System.out.println("Vision - Start identify cross");
 		// 2 - Identify cross with constant parameters
-		IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone());
+		IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone(), identifyCoordinates);
 		cross = identifyCross.getArray();
 		System.out.println("Vision - End identify cross");
 
 		System.out.println("Vision - Start identify robot");
 		// 4 - Identify robot				
-		IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot);
+		IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot, identifyCoordinates);
 		robot = identifyRobot.getArray();
 		System.out.println("Vision - End identify robot");
-		
-		
+
+
 		if (testMode) {
 			System.out.println("Vision - Insert drawings on live picture");
 			identifyBalls.draw(pictureWarped,Scalar.CYAN,true);
@@ -196,7 +215,7 @@ public class VisionController {
 
 			// Update window frame with current picture frame
 			this.vidFrameWarped.showImage(converter.convert(pictureWarped));
-		}
+		}	
 
 		return new VisionSnapShot(balls, walls, cross, robot);
 	}
@@ -218,10 +237,10 @@ public class VisionController {
 
 				this.grabber.stop();
 
-				return this.converter.convert(frame);	
+				return this.converter.convert(frame);
 
 			} catch (Exception e) {
-				System.out.println("Error in VisionController, takePicture():" + e.getMessage());
+				System.out.println("Error in VisionController, takePicture():" + e.getStackTrace());
 				return null;
 			}
 		} else {
@@ -236,16 +255,30 @@ public class VisionController {
 	private void edgeDetection() {
 		System.out.println("VisionController - Starting edge detection");
 
-		do {
-			System.out.println("VisionController - Running edge detection");
-			this.pictureOriginal = takePicture(usingCamera);
+		Runnable runnable = new Runnable() {
 
-			IdentifyEdges identifyEdges = new IdentifyEdges(pictureOriginal);
+			@Override
+			public void run() {
+				pictureOriginal = takePicture(usingCamera);
+				System.out.println("VisionController - Running edge detection");
 
-			this.frameCoordinates = identifyEdges.getArray();
 
+				IdentifyEdges identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
 
-		} while (!isEdgesDetectedCorrect(this.frameCoordinates, this.imageHeight, this.imageWidth));
+				frameCoordinates = identifyEdges.getArray();
+			}
+
+		};
+
+		Thread th = new Thread(runnable);
+		th.start();
+		try {
+			th.join();
+
+		} catch (InterruptedException e) {
+			System.out.println("Error in VisionController, edgeDetection():" + e.getStackTrace());
+		}
+
 		System.out.println("VisionController - Stopping edge detection");
 	}
 
@@ -300,8 +333,6 @@ public class VisionController {
 		}
 
 		cvtColor(picture, picture, COLOR_BGR2GRAY);
-//		picturePlain = picture.clone();
-//		cvtColor(picture, picture, COLOR_GRAY2BGR);
 		return picture;
 	}
 

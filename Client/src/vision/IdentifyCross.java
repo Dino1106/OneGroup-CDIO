@@ -10,12 +10,10 @@ import org.opencv.core.CvType;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class IdentifyCross {
-
-	IdentifyCoordinates identify = new IdentifyCoordinates();
 	
 	private int coords[][] = new int [4][2];
 
-	public IdentifyCross(Mat picture)	{
+	public IdentifyCross(Mat picture, IdentifyCoordinates identify)	{
 		coords = identify.getEdgesSqaure(picture);
 	}
 
