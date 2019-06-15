@@ -25,8 +25,8 @@ public class VisionTranslator {
 
 	private double robotHeight = 20.0;
 
-	public VisionTranslator(boolean testMode) {
-		visionController = new VisionController(testMode, 1);
+	public VisionTranslator(boolean testMode, int cameraId) {
+		visionController = new VisionController(testMode, cameraId);
 		// Warm-up
 		visionController.getSnapShot();
 	}

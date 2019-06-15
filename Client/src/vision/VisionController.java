@@ -98,12 +98,10 @@ public class VisionController {
 			this.testMode = testMode;
 			this.converter = new OpenCVFrameConverter.ToMat();
 
-			if (testMode) {
-				this.vidFrameOriginal = new CanvasFrame("Original picture");
-				this.vidFrameOriginal.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-				this.vidFrameWarped = new CanvasFrame("Warped picture");
-				this.vidFrameWarped.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-			}
+			this.vidFrameOriginal = new CanvasFrame("Original picture");
+			this.vidFrameOriginal.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+			this.vidFrameWarped = new CanvasFrame("Warped picture");
+			this.vidFrameWarped.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
 			if (this.usingCamera) {
 				this.grabber = FrameGrabber.createDefault(this.cameraId);
@@ -156,14 +154,12 @@ public class VisionController {
 		this.pictureRobot = this.pictureWarped.clone();
 
 		//See the pictures first time, to debug.
-		if (this.testMode) {
-			this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
-			this.vidFrameWarped.showImage(converter.convert(pictureColor));
-		}
+		this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
+		this.vidFrameWarped.showImage(converter.convert(pictureColor));
 
 		Scanner in = new Scanner(System.in);
 		while(true) {
-			System.out.println("Calibration done, enter 'yes' to confirm, 'no' to restart");
+			System.out.println("-------------\n\nCalibration done, enter 'yes' to confirm, 'no' to restart");
 			String s = in.nextLine();
 			if (s.equals("yes")) {
 				break;

@@ -33,7 +33,7 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		visionTranslator = new VisionTranslator(false);
+		visionTranslator = new VisionTranslator(true, 0);
 		System.out.println(visionTranslator.getProcessedMap().toString());
 		
 		/*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
