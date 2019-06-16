@@ -10,7 +10,6 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.Path;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 
@@ -59,8 +58,8 @@ public class RobotMovement {
 		}
 	}
 	
-	public void driveBackwards(int centimeters, int speed) {
-		System.out.println("Driving " + centimeters +" centimeters backwards with " + speed + " speed");
+	public void travel(int centimeters, int speed) {
+		System.out.println("Driving " + centimeters +" centimeters with " + speed + " speed");
 		setMotorSpeed(speed);
 		pilot.travel(centimeters);
 	}
@@ -83,8 +82,8 @@ public class RobotMovement {
 	public boolean pickUpBalls(boolean pickUp) {
 		if(pickUp) {
 			System.out.println("Picking up balls");
-			ballPickerLeft.setPower(30);
-			ballPickerRight.setPower(30);
+			ballPickerLeft.setPower(85);
+			ballPickerRight.setPower(85);
 		    ballPickerLeft.backward();
 		    ballPickerRight.forward();
 		    return true;

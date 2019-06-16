@@ -46,8 +46,8 @@ public class MainServer extends Thread {
 
 	}
 	
-	public void carDriveBackwards(int centimeters, int speed) {
-		robotControls.driveBackwards(centimeters, speed);
+	public void carTravel(int centimeters, int speed) {
+		robotControls.travel(centimeters, speed);
 	}
 	
 	public void setMotorSpeed(int speed) {
@@ -64,7 +64,7 @@ public class MainServer extends Thread {
 		}
 	}
 	
-	public void rotate(int degrees) {
+	public void rotate(double degrees) {
 		robotControls.rotateToOrientation(degrees);
 	}
 	
@@ -107,15 +107,15 @@ public class MainServer extends Thread {
 					break;
 				case 3:
 					int centimeters = Integer.parseInt(splitInputs[1]);
-					int backwardsSpeed = Integer.parseInt(splitInputs[2]);
-					carDriveBackwards(centimeters, backwardsSpeed);
+					int travelSpeed = Integer.parseInt(splitInputs[2]);
+					carTravel(centimeters, travelSpeed);
 					break;
 				case 4:
 					boolean pickUp = Boolean.parseBoolean(splitInputs[1]);
 					carPickUpBalls(pickUp);
 					break;
 				case 5:
-					int degrees = Integer.parseInt(splitInputs[1]);
+					double degrees = Double.parseDouble(splitInputs[1]);
 					rotate(degrees);
 					break;
 				case 6:
@@ -129,7 +129,6 @@ public class MainServer extends Thread {
 				case 8:
 					Coordinate robotLocation = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
 					setRobotLocation(robotLocation);
-					System.out.println("RobotLocation on BRICK " + getRobotlocation().toString());
 					break;
 				default:
 					break;
