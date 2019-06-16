@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import client.PathFinder;
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -27,7 +28,8 @@ public class VisionTranslator {
 
 	public VisionTranslator(int cameraId) {
 		visionController = new VisionController(cameraId);
-		// Warm-up
+		
+		// Warm-up - needs to be here for scale.
 		visionSnapShot = visionController.getSnapShot();
 		this.visionScale = getScale();
 	}
@@ -71,17 +73,6 @@ public class VisionTranslator {
 		ArrayList<Wall> walls = new ArrayList<Wall>();
 		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
 
-		/*
-		Comparator<Coordinate> sortCoord =  new Comparator<Coordinate>() {
-
-			@Override
-			public int compare(Coordinate c1, Coordinate c2) {
-				return -Integer.compare(c1.x,c2.x);
-			}
-		};
-		 */
-
-
 		if (visionSnapShot.getWalls() != null) {
 			for(int i = 0; i < visionSnapShot.getWalls().length; i++) {
 				int x = (int) (visionSnapShot.getWalls()[i][0]/visionScale);
@@ -91,10 +82,6 @@ public class VisionTranslator {
 				coords.add(c);
 
 			}
-
-			//TODO: Uncomment when walls works. 
-
-			//Collections.sort(coords, sortCoord);
 
 			Wall w = new Wall();
 			Wall w2 = new Wall();
@@ -140,6 +127,40 @@ public class VisionTranslator {
 
 		goals.add(goal1);
 		goals.add(goal2);
+		
+		
+		if (goal1.coordinate1.x < walls.get(1).upper.x) {
+			// Then use hardcoded values to construct a robot location.
+			
+			int x1 = goal1.coordinate1.x + (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
+			int y1 = goal1.coordinate1.y;
+			int orientation1 = 180;
+			Coordinate goal1Coordinate = new Coordinate(x1, y1);
+			goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
+
+			int x2 = goal2.coordinate1.x - (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
+			int y2 = goal2.coordinate1.y;
+			int orientation2 = 0;
+
+			Coordinate goal2Coordinate = new Coordinate(x2, y2);
+			goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
+
+		} else {
+
+			int x2 = goal2.coordinate1.x + (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
+			int y2 = goal2.coordinate1.y;
+			int orientation2 = 180;
+
+			Coordinate goal2Coordinate = new Coordinate(x2, y2);
+			goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
+
+			int x1 = goal1.coordinate1.x - (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
+			int y1 = goal1.coordinate1.y;
+			int orientation1 = 0;
+			Coordinate goal1Coordinate = new Coordinate(x1, y1);
+			goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
+
+		}
 
 		return goals;
 	}
@@ -147,12 +168,6 @@ public class VisionTranslator {
 	private RobotLocation calculateRobotLocation() {
 		int recievedArray[][] = visionSnapShot.getRobot();
 		int orientation;
-		
-		// Scale robot location
-//		for(int i = 0; i < recievedArray.length; i++) {
-//			recievedArray[i][0] = (int) (recievedArray[i][0] / visionScale);
-//			recievedArray[i][1] = (int) (recievedArray[i][1] / visionScale);
-//		}
 		
 		// Calculate orientation via geometry
 		Coordinate smallCircleCoordinate = new Coordinate((int) (recievedArray[0][0] / visionScale),(int) (recievedArray[0][1] / visionScale));
@@ -171,7 +186,6 @@ public class VisionTranslator {
 		else orientation = degrees;
 
 		RobotLocation roboloc = new RobotLocation(largeCircleCoordinate, orientation);
-
 
 		return roboloc;
 	}

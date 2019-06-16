@@ -6,12 +6,8 @@ import java.util.List;
 
 import model.Ball;
 import model.Coordinate;
-import model.Cross;
-import model.Goal;
 import model.MapState;
-import model.RobotLocation;
 import model.Route;
-import model.Wall;
 import vision.VisionTranslator;
 
 public class DecisionMaker {
@@ -24,24 +20,17 @@ public class DecisionMaker {
 	private static int onFieldBallCount;
 	private static int pickedUpBallCount;
 	
-	private static ArrayList<Ball> ballList = new ArrayList<>();
-	private static ArrayList<Wall> wallList = new ArrayList<>();
-	private static Cross cross;
-	private static Goal goal1, goal2;
-	private static RobotLocation robotLocation;
-	
 	public static void main(String[] args) {
 		
-		//TODO: Implement visionTranslator implementation.
 		visionTranslator = new VisionTranslator(1);
-		System.out.println(visionTranslator.getProcessedMap().toString());
+		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 		
 		try {
 			MainClient.connect();
 			updateMap();
 			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
-			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
 			pathFinder = new PathFinder(mapState);
+			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
 			mainLoop();
 		} catch (IOException e) {
 			e.printStackTrace();

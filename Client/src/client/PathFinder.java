@@ -36,7 +36,7 @@ public class PathFinder {
 	public PathFinder(MapState mapState) {
 		MainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
-		calculateGoalRobotLocations(mapState);
+		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest + "\nSE: " + southEast + "\nMiddle: " + middleOfMap);
 		generateWalls();
 	}
 
@@ -45,16 +45,16 @@ public class PathFinder {
 		Route route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
 		// First we find out which quadrant is nearest to the ball.
-		Coordinate nearestToBall;
-		nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
+		// Coordinate nearestToBall;
+		//nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
 		// Now we find out which quadrant is nearest to the robot.
-		Coordinate nearestToRobot;
-		nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
+		// Coordinate nearestToRobot;
+		// nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
 		// The first coordinate we go to is the one nearest to the robot.
-		route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
+		// route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
-		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
+		// route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now we need to get an auxiliary coordinate for balls near corners or walls.
 		getCoordinatesForRiskyBalls(ball, route);
 		return route;
@@ -312,47 +312,8 @@ public class PathFinder {
 		upperWall.right = new Coordinate(rightWall.upper.x, rightWall.upper.y);
 		lowerWall.left = new Coordinate(leftWall.lower.x, leftWall.lower.y);
 		lowerWall.right = new Coordinate(rightWall.lower.x, rightWall.lower.y);
-		System.out.println("PathFinder: Pseudowall upper: " + upperWall.left + upperWall.right + " lower: "
+		System.out.println("[PathFinder]: Pseudowall upper: " + upperWall.left + upperWall.right + " lower: "
 				+ lowerWall.left + lowerWall.right);
-	}
-
-	// Creates RobotLocations for each of the two goals.
-	private void calculateGoalRobotLocations(MapState mapState) {
-		// Figure out which wall is left wall.
-
-		if (mapState.goal1.coordinate1.x < mapState.wallList.get(1).upper.x) {
-			// Then use hardcoded values to construct a robot location.
-
-			int x1 = mapState.goal1.coordinate1.x + (robotDiameter / 2 + robotBufferSize);
-			int y1 = mapState.goal1.coordinate1.y;
-			int orientation1 = 180;
-			Coordinate goal1Coordinate = new Coordinate(x1, y1);
-			mapState.goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
-
-			int x2 = mapState.goal2.coordinate1.x - (robotDiameter / 2 + robotBufferSize);
-			int y2 = mapState.goal2.coordinate1.y;
-			int orientation2 = 0;
-
-			Coordinate goal2Coordinate = new Coordinate(x2, y2);
-			mapState.goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
-
-		} else {
-
-			int x2 = mapState.goal2.coordinate1.x + (robotDiameter / 2 + robotBufferSize);
-			int y2 = mapState.goal2.coordinate1.y;
-			int orientation2 = 180;
-
-			Coordinate goal2Coordinate = new Coordinate(x2, y2);
-			mapState.goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
-
-			int x1 = mapState.goal1.coordinate1.x - (robotDiameter / 2 + robotBufferSize);
-			int y1 = mapState.goal1.coordinate1.y;
-			int orientation1 = 0;
-			Coordinate goal1Coordinate = new Coordinate(x1, y1);
-			mapState.goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
-
-		}
-
 	}
 
 	// Set the middle of the map and all quadrant points.
@@ -453,6 +414,8 @@ public class PathFinder {
 		orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)
 				/ (bestBall.x - mapState.robotLocation.coordinate.x));
 
+
+		System.out.println("[PathFinder] Orientation for swallow: robot: " + orientation1 + " orientation to be turned to: " + orientation2);
 		MainClient.rotate(-orientation1);
 		MainClient.rotate(orientation2);
 

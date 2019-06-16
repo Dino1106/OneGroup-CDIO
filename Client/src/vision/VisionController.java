@@ -155,9 +155,9 @@ public class VisionController {
 			String s = in.nextLine();
 			if (s.equals("yes")) {
 				this.calibrationDone  = true;
-			}
-			if (s.equals("no")) {
+			} else {
 				edgeDetection();
+				in.close();
 				return calculateSnapShot();
 			}
 		}
@@ -207,14 +207,14 @@ public class VisionController {
 		
 		String s = in.nextLine();
 		if (s.equals("yes")) {
-			//Nothing
+			in.close();
+			return new VisionSnapShot(balls, walls, cross, robot);
 		}
-		if (s.equals("no")) {
+		else {
 			edgeDetection();
+			in.close();
 			return calculateSnapShot();
 		}
-
-		return new VisionSnapShot(balls, walls, cross, robot);
 	}
 
 
