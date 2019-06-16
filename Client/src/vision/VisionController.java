@@ -30,17 +30,10 @@ import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController {
 
-	private int imageHeight = 480; // where previously 720
-	private int imageWidth = 720; // where previously 1366
-
-	private static final int xStartLine = 0;
-	private static final int yStartLine = 1;
-	private static final int xEndLine = 2;
-	private static final int yEndLine = 3;
+	private int imageHeight = 720;
+	private int imageWidth = 1366;
 
 	private int[][] frameCoordinates;
-
-	private Vec4iVector lineSet = new Vec4iVector();
 
 	private CanvasFrame vidFrameOriginal;
 	private CanvasFrame vidFrameWarped;
@@ -54,7 +47,6 @@ public class VisionController {
 	private int cameraId = 0;
 	private int[] params = new int[5];
 	private boolean usingCamera = false;
-	private boolean testMode = false;
 	private boolean calibration = true;
 
 	// Was previously in run
@@ -62,28 +54,27 @@ public class VisionController {
 	private OpenCVFrameConverter.ToMat converter;
 	private String imgPath;
 	private IdentifyCoordinates identifyCoordinates;
+	private IdentifyEdges identifyEdges;
+	private boolean calibrationDone = false;
 
 	/**
 	 * Constructor with a camera
-	 * @param testMode If true = opens window, and refreshes with analysed picture
 	 * @param cameraId The id of the camera, often either 0 or 1.
 	 */
-	public VisionController(boolean testMode, int cameraId) {
+	public VisionController(int cameraId) {
 		this.cameraId = cameraId;
 		this.usingCamera = true;
-		this.testMode = testMode;
-		createNecessaryObjects(testMode);
+		createNecessaryObjects();
 	}
 
 
 	/**
 	 * Constructor with a static image (only for testing)
-	 * @param testMode If true = opens window, and refreshes with analysed picture
 	 * @param imgpath The path for the static image
 	 */
-	public VisionController(boolean testMode, String imgPath) {
+	public VisionController(String imgPath) {
 		this.imgPath = imgPath;
-		createNecessaryObjects(testMode);
+		createNecessaryObjects();
 	}
 
 
@@ -91,11 +82,10 @@ public class VisionController {
 	 * Helper for constructor, creates necessary objects.
 	 * @param testMode If true = opens window, and refreshes with analysed picture
 	 */
-	private void createNecessaryObjects(boolean testMode) {
+	private void createNecessaryObjects() {
 
 		try {
 			this.identifyCoordinates = new IdentifyCoordinates();
-			this.testMode = testMode;
 			this.converter = new OpenCVFrameConverter.ToMat();
 
 			this.vidFrameOriginal = new CanvasFrame("Original picture");
@@ -123,7 +113,8 @@ public class VisionController {
 	 */
 	public VisionSnapShot getSnapShot() {
 		VisionSnapShot visionSnapShot = calculateSnapShot();
-		System.out.println("VisionController, getSnapShot - sending snapshot");
+		System.out.println("VisionController, getSnapShot - sending snapshot \n\n\n");
+		System.out.println(visionSnapShot.toString());
 		return visionSnapShot;
 	}
 
@@ -154,15 +145,16 @@ public class VisionController {
 		this.pictureRobot = this.pictureWarped.clone();
 
 		//See the pictures first time, to debug.
+		this.identifyEdges.drawAnchors(pictureOriginal, Scalar.BLACK);
 		this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
 		this.vidFrameWarped.showImage(converter.convert(pictureColor));
 
 		Scanner in = new Scanner(System.in);
-		while(true) {
+		if(!calibrationDone) {
 			System.out.println("-------------\n\nCalibration done, enter 'yes' to confirm, 'no' to restart");
 			String s = in.nextLine();
 			if (s.equals("yes")) {
-				break;
+				this.calibrationDone  = true;
 			}
 			if (s.equals("no")) {
 				edgeDetection();
@@ -180,7 +172,7 @@ public class VisionController {
 		IdentifyBalls identifyBalls;
 		int[] calib = {6, 5, 2, 6, 20};
 		if(calibration) {
-			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 7, 120, 15, 5, 8, calib);
+			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 11, 120, 15, 5, 8, calib);
 			params = identifyBalls.getParams();
 			calibration = false;
 		}else{
@@ -203,15 +195,24 @@ public class VisionController {
 		System.out.println("Vision - End identify robot");
 
 
-		if (testMode) {
-			System.out.println("Vision - Insert drawings on live picture");
-			identifyBalls.draw(pictureWarped,Scalar.CYAN,true);
-			identifyCross.draw(pictureWarped, Scalar.BLUE);
-			identifyRobot.draw(pictureWarped, Scalar.BLUE);
+		System.out.println("Vision - Insert drawings on live picture");
+		identifyBalls.draw(pictureWarped,Scalar.CYAN,true);
+		identifyCross.draw(pictureWarped, Scalar.BLUE);
+		identifyRobot.draw(pictureWarped, Scalar.BLUE);
 
-			// Update window frame with current picture frame
-			this.vidFrameWarped.showImage(converter.convert(pictureWarped));
-		}	
+		// Update window frame with current picture frame
+		this.vidFrameWarped.showImage(converter.convert(pictureWarped));	
+
+		System.out.println("-------------\n\nVision Done, confirm with 'yes', 'no' to restart");
+		
+		String s = in.nextLine();
+		if (s.equals("yes")) {
+			//Nothing
+		}
+		if (s.equals("no")) {
+			edgeDetection();
+			return calculateSnapShot();
+		}
 
 		return new VisionSnapShot(balls, walls, cross, robot);
 	}
@@ -259,7 +260,7 @@ public class VisionController {
 				System.out.println("VisionController - Running edge detection");
 
 
-				IdentifyEdges identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
+				identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
 
 				frameCoordinates = identifyEdges.getArray();
 			}
@@ -389,85 +390,5 @@ public class VisionController {
 
 		return wallCoordinates;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// TODO: EVERYTHING BELOW IS IRRELEVANT TO THIS CLASS
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	// TODO: THE METHOD NEEDS TO BE IMPLEMENTED IN LINE DETECTION
-
-	/*
-	private void extractLines(double rho, 
-			double theta,
-			int threshold,
-			int minLineLength,
-			int maxLineGap,
-			Size filterDim,
-			int threshold1,
-			int threshold2) {
-		Vec4iVector lines = new Vec4iVector();
-		Mat blurred = new Mat(), edges = new Mat();
-		blur(getPlain(), blurred, filterDim);
-		Canny(blurred, edges, threshold1, threshold2);
-		HoughLinesP(edges, lines, rho, theta, threshold, minLineLength, maxLineGap);
-		lineSet = lines;
-		drawLines();
-	}
-
-	public synchronized int getLineXyxy(int line_number, int parameter) {
-		return new IntPointer(lineSet.get(line_number)).get(parameter);
-	}
-
-	public synchronized int getLinesAmount() {
-		return (int) lineSet.size();
-	}
-
-	public synchronized Mat getPic() {
-		return pictureOriginal;
-	}
-
-	public synchronized Mat getPlain() {
-		return picturePlain;
-	}
-
-	public synchronized Mat getColor() {
-		return pictureColor;
-	}
-
-	private void drawLines() {
-		for (int i = 0; i < getLinesAmount(); i++) {
-			line(getPic(), new Point(getLineXyxy(i, xStartLine), getLineXyxy(i, yStartLine)),
-					new Point(getLineXyxy(i, xEndLine), getLineXyxy(i, yEndLine)), Scalar.RED);
-		}
-	}
-	 */
-
 
 }

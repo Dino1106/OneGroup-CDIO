@@ -25,15 +25,14 @@ public class VisionTranslator {
 
 	private double robotHeight = 20.0;
 
-	public VisionTranslator(boolean testMode, int cameraId) {
-		visionController = new VisionController(testMode, cameraId);
+	public VisionTranslator(int cameraId) {
+		visionController = new VisionController(cameraId);
 		// Warm-up
-		visionController.getSnapShot();
+		visionSnapShot = visionController.getSnapShot();
+		this.visionScale = getScale();
 	}
 
 	public MapState getProcessedMap() {
-		
-		this.visionScale = getScale();
 		//TODO: This is not possible anyMore...
 		//cameraX = (int) (visionController.getPic().cols() * visionScale);
 		//cameraY = (int) (visionController.getPic().rows() * visionScale);
@@ -48,18 +47,6 @@ public class VisionTranslator {
 				goals.get(0),
 				goals.get(1),
 				calculateRobotLocation());
-		
-		/*
-		 * this.visionScale = getScale(); cameraX = (int)
-		 * (visionController.getPic().cols() * visionScale); cameraY = (int)
-		 * (visionController.getPic().rows() * visionScale);
-		 * 
-		 * ArrayList<Wall> walls = calculateWalls(); ArrayList<Goal> goals =
-		 * calculateGoals(walls);
-		 * 
-		 * return new MapState( calculateBalls(), calculateCross(), walls, goals.get(0),
-		 * goals.get(1), calculateRobotLocation());
-		 */
 	}
 
 	private double getScale() {
@@ -72,8 +59,8 @@ public class VisionTranslator {
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 
 		for(int i = 0; i < visionSnapShot.getBalls().get(0).sizeof(); i++) {
-			int x = (int) (visionSnapShot.getBalls().get(i).get(0)/visionScale);
-			int y = (int) (visionSnapShot.getBalls().get(i).get(1)/visionScale);
+			int x = (int) ((visionSnapShot.getBalls().get(i).get(0))/visionScale);
+			int y = (int) ((visionSnapShot.getBalls().get(i).get(1))/visionScale);
 			Ball b = new Ball(x,y);
 			balls.add(b);
 		}
@@ -127,7 +114,6 @@ public class VisionTranslator {
 
 	private Cross calculateCross() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
-
 		for(int i = 0; i < visionSnapShot.getCross().length; i++) {
 			int x = (int) (visionSnapShot.getCross()[i][0]/visionScale);
 			int y = (int) (visionSnapShot.getCross()[i][1]/visionScale);
@@ -161,6 +147,17 @@ public class VisionTranslator {
 	private RobotLocation calculateRobotLocation() {
 		int recievedArray[][] = visionSnapShot.getRobot();
 		int orientation;
+		
+		// Scale robot location
+		for(int i = 0; i < recievedArray.length; i++) {
+			recievedArray[i][0] = (int) (recievedArray[i][0] / visionScale);
+			recievedArray[i][1] = (int) (recievedArray[i][1] / visionScale);
+		}
+		
+		for(int i = 0; i < recievedArray.length; i++) {
+			System.out.println(recievedArray[i][0]);
+			System.out.println(recievedArray[i][1]);
+		}
 		
 		// Calculate orientation via geometry
 		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][0],recievedArray[0][1]);

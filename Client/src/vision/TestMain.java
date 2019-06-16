@@ -2,11 +2,8 @@ package vision;
 
 public class TestMain {
 
-	public static void main(String[] args) {
-		
-		boolean testMode = true;
-		
-		VisionController test = new VisionController(testMode, "a.jpg");
+	public static void main(String[] args) {		
+		VisionController test = new VisionController("a.jpg");
 		test.getSnapShot();
 		
 		//VisionController test1 = new VisionController(testMode, "b.jpg");

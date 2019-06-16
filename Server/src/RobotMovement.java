@@ -104,6 +104,11 @@ public class RobotMovement {
 		System.out.println("My new location is x = " + coordinate.x + ", y = " + coordinate.y);
 	}
 	
+	public Coordinate getRobotLocation() {
+		Point roboPoint = pose.getLocation();
+		return new Coordinate((int) (roboPoint.x), (int) (roboPoint.y));
+	}
+	
 	public void playSound(int soundToPlay) {
 		File sound = null;
 		

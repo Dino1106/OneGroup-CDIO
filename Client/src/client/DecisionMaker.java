@@ -33,54 +33,19 @@ public class DecisionMaker {
 	public static void main(String[] args) {
 		
 		//TODO: Implement visionTranslator implementation.
-		visionTranslator = new VisionTranslator(true, 0);
+		visionTranslator = new VisionTranslator(1);
 		System.out.println(visionTranslator.getProcessedMap().toString());
 		
-		/*  -- THIS SHOULD WORK WHEN EVERYTHING WORKS.
 		try {
 			MainClient.connect();
 			updateMap();
 			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
+			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
 			pathFinder = new PathFinder(mapState);
 			mainLoop();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		/*
-				
-		/* -------- FOR TEST ONLY ------
-		try {
-			MainClient.connect();
-			ballList.add(new Ball(80, 40));
-			Wall wall1 = new Wall();
-			wall1.upper = new Coordinate(0, 90);
-			wall1.lower = new Coordinate(0, 0);
-			wallList.add(wall1);
-			
-			Wall wall2 = new Wall();
-			wall2.upper = new Coordinate(160, 90);
-			wall2.lower = new Coordinate(160, 0);
-			wallList.add(wall2);
-			
-			cross = new Cross(new Coordinate(80, 65), new Coordinate(80, 25), new Coordinate(60, 45), new Coordinate(100, 45));
-			goal1 = new Goal();
-			goal1.coordinate1 = new Coordinate(0, 0);
-			goal1.coordinate2 = new Coordinate(0, 90);
-			goal1.robotLocation = new RobotLocation(new Coordinate(0, 0), 0);
-			
-			goal2 = new Goal();
-			goal2.coordinate1 = new Coordinate(160, 0);
-			goal2.coordinate2 = new Coordinate(160, 90);
-			goal2.robotLocation = new RobotLocation(new Coordinate(0, 0), 0);
-			robotLocation = new RobotLocation(new Coordinate(10, 10), 0);
-			
-			mapState = new MapState(ballList, cross, wallList, goal1, goal2, robotLocation);
-			pathFinder = new PathFinder(mapState);
-			mainLoop();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
 	}
 	
 	public static void mainLoop() {
@@ -117,6 +82,7 @@ public class DecisionMaker {
 	// Gets new map info, updates data.
 	private static void updateMap() {
 		mapState = visionTranslator.getProcessedMap();
+		MainClient.setRobotLocation(mapState.robotLocation.coordinate);
 		
 		System.out.println("\n\n updateMap():\n" + mapState.toString() + "\n\n");
 		

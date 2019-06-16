@@ -76,6 +76,14 @@ public class MainServer extends Thread {
 		robotControls.playSound(soundToPlay);
 	}
 	
+	public void setRobotLocation(Coordinate coordinate) {
+		robotControls.setRobotLocation(coordinate);
+	}
+	
+	private Coordinate getRobotlocation() {
+		return robotControls.getRobotLocation();
+	}
+	
 	public void run() {
 		System.out.println("CLIENT CONNECTED");
 		try {
@@ -120,7 +128,8 @@ public class MainServer extends Thread {
 					break;
 				case 8:
 					Coordinate robotLocation = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
-					robotControls.setRobotLocation(robotLocation);
+					setRobotLocation(robotLocation);
+					System.out.println("RobotLocation on BRICK " + getRobotlocation().toString());
 					break;
 				default:
 					break;
