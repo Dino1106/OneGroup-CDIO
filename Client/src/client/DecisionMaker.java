@@ -12,7 +12,7 @@ import vision.VisionTranslator;
 
 public class DecisionMaker {
 	
-	static final int maxBalls = 6; // Maximum number of balls in our robot.
+	static final int maxBalls = 10; // Maximum number of balls in our robot.
 	
 	private static VisionTranslator visionTranslator;
 	private static PathFinder pathFinder;
@@ -22,16 +22,18 @@ public class DecisionMaker {
 	
 	public static void main(String[] args) {
 		
-		visionTranslator = new VisionTranslator(1);
-		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
+		//visionTranslator = new VisionTranslator(1);
+		//System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 		
 		try {
 			MainClient.connect();
-			updateMap();
-			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
-			pathFinder = new PathFinder(mapState);
-			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
-			mainLoop();
+			MainClient.sendMotorSpeed(720);
+			MainClient.rotate(1080);
+//			updateMap();
+//			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
+//			pathFinder = new PathFinder(mapState);
+//			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
+//			mainLoop();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -101,8 +103,7 @@ public class DecisionMaker {
 	
 	private static Ball decideBestBall() {
 		Ball bestBall = mapState.ballList.get(0);
-		int bestRisk;
-		bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robotLocation.coordinate);
+		int bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robotLocation.coordinate);
 		// TODO: Risk calculation here should be more advanced than simply distance.
 		for (Ball ball : mapState.ballList) {
 			int ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robotLocation.coordinate);

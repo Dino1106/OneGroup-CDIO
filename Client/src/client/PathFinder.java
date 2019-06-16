@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import model.Ball;
@@ -13,7 +14,7 @@ import model.Wall;
 
 public class PathFinder {
 
-	public static final int robotDiameter = 25; // The "diameter" of the robot - its thickness.
+	public static final int robotDiameter = 35; // The "diameter" of the robot - its thickness.
 	public static final int robotBufferSize = 4; // The buffer distance we want between the robot and an edge.
 	public static final int speedSlow = 10;
 	public static final int speedFast = 500;
@@ -45,18 +46,16 @@ public class PathFinder {
 		Route route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
 		// First we find out which quadrant is nearest to the ball.
-		// Coordinate nearestToBall;
-		//nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
+		Coordinate nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
 		// Now we find out which quadrant is nearest to the robot.
-		// Coordinate nearestToRobot;
-		// nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
+		Coordinate nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
 		// The first coordinate we go to is the one nearest to the robot.
-		// route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
+		route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
-		// route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
+		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now we need to get an auxiliary coordinate for balls near corners or walls.
-		//getCoordinatesForRiskyBalls(ball, route);
+		getCoordinatesForRiskyBalls(ball, route);
 		return route;
 	}
 
@@ -407,29 +406,52 @@ public class PathFinder {
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
 		double robotOrientation = mapState.robotLocation.orientation;
-		// We make use of atan: tan = close cathete over far cathete. Should this really
-		// be cast to an int?
+		double robotX = mapState.robotLocation.coordinate.x; 
+		double robotY = mapState.robotLocation.coordinate.y;
+		double zeroPointX = robotX + 50;
+		double zeroPointY = robotY;
 		
-		System.out.println("Bestball: " +bestBall.x +", "+ bestBall.x);
-		System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +", "+ mapState.robotLocation.coordinate.y);
-		double targetOrientation = Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x));
+//		System.out.println("Bestball: " +bestBall.x +", "+ bestBall.y);
+//		System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +", "+ mapState.robotLocation.coordinate.y);
+//		double targetOrientation = Math.toDegrees(Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x)));
 
-
-		System.out.println("[PathFinder] Orientation for swallow: robot: " + robotOrientation + " orientation to be turned to: " + targetOrientation);
-
-		double oneWay = targetOrientation - robotOrientation;
-		double otherWay = (robotOrientation + 360) - targetOrientation;
+		System.out.println("Robobitch at: " +robotX+ ", " +robotY);
+		System.out.println("Best ball at: " +bestBall.x+ ", " +bestBall.y);
 		
-		if (oneWay < otherWay) {
-			MainClient.rotate(oneWay);
+		double a = Point2D.distance(bestBall.x, bestBall.y, zeroPointX, zeroPointY);
+		double b = zeroPointX - bestBall.x; 
+		double c = Point2D.distance(robotX, robotY, bestBall.x, bestBall.y);
+
+		double cosA = (b*b + c*c - a*a) / (2*b*c);
+		double radA = Math.acos(cosA);
+		double targetOrientation = Math.toDegrees(radA);
+		
+		System.out.println("a: " +a);
+		System.out.println("b: "+b);
+		System.out.println("c: "+c);
+		System.out.println("CosA: "+cosA);
+		System.out.println("radA: "+radA);
+		
+		System.out.println("[PathFinder] Orientation for swallow:\trobot ori: " + robotOrientation + " target ori: " + targetOrientation);
+
+		// Negative because of Ev3's rotation
+		double clockWise 		= -(targetOrientation - robotOrientation);
+		double counterClockWise = (robotOrientation + 360) - targetOrientation;
+		
+		if (clockWise < counterClockWise) {
+			System.out.println("Oneway");
+			MainClient.rotate(clockWise);
 		} else {
-			MainClient.rotate(otherWay);
+			System.out.println("Otherway");
+			MainClient.rotate(counterClockWise);
 		}
 		
 		
 		
 
 		int distance = calculateDistances(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y));
+		System.out.println("Go distance: "+distance);
+		
 		MainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);
 		MainClient.sendTravelDistance(-robotDiameter, speedSlow);
 		MainClient.sendMotorSpeed(speedFast);

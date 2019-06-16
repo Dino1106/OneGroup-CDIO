@@ -57,12 +57,19 @@ public class VisionTranslator {
 	}
 
 	private ArrayList<Ball> calculateBalls() {
+		Ball ball = new Ball();
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 
 		for(int i = 0; i < visionSnapShot.getBalls().get(0).sizeof(); i++) {
-			int x = (int) ((visionSnapShot.getBalls().get(i).get(0))/visionScale);
-			int y = (int) ((visionSnapShot.getBalls().get(i).get(1))/visionScale);
-			Ball b = new Ball(x,y);
+			
+			Coordinate coord = new Coordinate( (int) ((visionSnapShot.getBalls().get(i).get(0)) / visionScale), 
+											   (int) ((visionSnapShot.getBalls().get(i).get(1)) / visionScale));
+			
+			//perspectiveTransform(coord, ball.height);
+//			int x = (int) ((visionSnapShot.getBalls().get(i).get(0))/visionScale);
+//			int y = (int) ((visionSnapShot.getBalls().get(i).get(1))/visionScale);
+			
+			Ball b = new Ball(coord.x,coord.y);
 			balls.add(b);
 		}
 		return balls;
@@ -176,19 +183,17 @@ public class VisionTranslator {
 		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate((int)((recievedArray[1][0]) / visionScale) + 50, (int) (recievedArray[1][1] / visionScale));
 		
-		//perspectiveTransform(smallCircleCoordinate, roboloc.height);
-		//perspectiveTransform(largeCircleCoordinate, roboloc.height);
+//		perspectiveTransform(smallCircleCoordinate, roboloc.height);
+//		perspectiveTransform(largeCircleCoordinate, roboloc.height);
+//		perspectiveTransform(zeroPoint, roboloc.height);
 
 		double a = Point2D.distance(smallCircleCoordinate.x, smallCircleCoordinate.y, zeroPoint.x, zeroPoint.y);
 		double b = zeroPoint.x - largeCircleCoordinate.x; 
 		double c = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 
-		//System.out.println("a: " + a+"\nb: " +b+"\nc: "+c);
-		
-		double indIAkos = (Math.pow(b, 2) + Math.pow(c, 2) - Math.pow(a, 2)) / ( 2*b*c);
-		double akos = Math.acos(indIAkos);
-		//System.out.println("Math.acos af: " + indIAkos + ", er: " + akos);
-		double degrees = Math.toDegrees(akos);
+		double cosA = (b*b + c*c - a*a) / (2*b*c);
+		double radA = Math.acos(cosA);
+		double degrees = Math.toDegrees(radA);
 		
 		//System.out.println("VisionTranslator - hvad er akos: " + akos);
 		//System.out.println("VisionTranslator - degrees: " + degrees);
@@ -209,6 +214,7 @@ public class VisionTranslator {
 	private void perspectiveTransform(Coordinate coord, double height) {
 		// Find height differences and the proportion
 		double heightProportion = (double) (cameraHeight - height)/cameraHeight;
+		System.out.println("Scale: " + heightProportion);
 
 		// Find the scewed distance caused of height differences
 		coord.x = (int) ((1-heightProportion)*coord.x + heightProportion*cameraX);

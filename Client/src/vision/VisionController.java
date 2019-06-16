@@ -156,11 +156,11 @@ public class VisionController {
 		IdentifyBalls identifyBalls;
 		int[] calib = {6, 5, 2, 6, 20};
 		if(calibration) {
-			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 11, 120, 15, 8, 8, calib);
+			identifyBalls = new IdentifyBalls(picturePlain, 1, 11, 120, 15, 8, 8, calib);
 			params = identifyBalls.getParams();
 			calibration = false;
 		}else{
-			identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
+			identifyBalls = new IdentifyBalls(picturePlain,1,params[0],params[1],params[2],params[3],params[4]);
 		}
 		balls = identifyBalls.getCircles();
 
@@ -168,7 +168,7 @@ public class VisionController {
 
 		System.out.println("Vision - Start identify cross");
 		// 2 - Identify cross with constant parameters
-		IdentifyCross identifyCross = new IdentifyCross(pictureColor.clone(), identifyCoordinates);
+		IdentifyCross identifyCross = new IdentifyCross(pictureColor, identifyCoordinates);
 		cross = identifyCross.getArray();
 		System.out.println("Vision - End identify cross");
 
@@ -195,6 +195,12 @@ public class VisionController {
 			this.calibrationDone  = true;
 			in.close();
 		}
+		
+		pictureOriginal.release(); 
+		picturePlain.release(); 
+		pictureWarped.release(); 
+		pictureColor.release(); 
+		pictureRobot.release(); 
 
 		return new VisionSnapShot(balls, walls, cross, robot);
 	}
