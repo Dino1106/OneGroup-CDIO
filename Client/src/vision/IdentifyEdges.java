@@ -9,7 +9,6 @@ import static org.bytedeco.opencv.global.opencv_imgproc.line;
 public class IdentifyEdges {
     public  int[][] boxCoordinates = new int[4][2],
             searchCoordinates  = new int [8][2];
-    public int[] test;
 
 
     public  int centerCross[] = new int[2];

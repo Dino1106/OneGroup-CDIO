@@ -8,11 +8,11 @@ public class MapState {
 	public Cross cross;
 	public ArrayList<Wall> wallList;
 	public Goal goal1, goal2;
-	public RobotLocation robotLocation;
+	public Robot robotLocation;
 	
 
 	public MapState(ArrayList<Ball> ballList, Cross cross, ArrayList<Wall> wallList, Goal goal1, Goal goal2,
-			RobotLocation robotLocation) {
+			Robot robotLocation) {
 		super();
 		this.ballList = ballList;
 		this.cross = cross;

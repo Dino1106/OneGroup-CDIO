@@ -86,10 +86,10 @@ public class MainClient {
 		}
 	}
 	
-	public static void rotate(int degrees) {
-		System.out.println("rotate, degrees: " + degrees);
+	public static void rotate(double orientation1) {
+		System.out.println("rotate, degrees: " + orientation1);
 		try {
-			String rotateString = "5 " + degrees;
+			String rotateString = "5 " + orientation1;
 			dOut.writeUTF(rotateString);
 			dOut.flush();
 		} catch (IOException e) {

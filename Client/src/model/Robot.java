@@ -1,11 +1,16 @@
 package model;
 
-public class RobotLocation {
+public class Robot {
 	
 	public Coordinate coordinate;
-	public int orientation;
+	public double orientation;
+	public double height = 18.5;
 	
-	public RobotLocation(Coordinate coordinate, int orientation) {
+	public Robot() {
+		// Empty constructor
+	}
+	
+	public Robot(Coordinate coordinate, double orientation) {
 		this.coordinate = coordinate;
 		this.orientation = orientation;
 	}

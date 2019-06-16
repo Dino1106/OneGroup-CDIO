@@ -3,6 +3,7 @@ package model;
 public class Ball {
 	
 	public int x, y;
+	public double height = 4;
 	
 	public Ball() {
 		

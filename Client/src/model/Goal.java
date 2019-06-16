@@ -3,7 +3,7 @@ package model;
 public class Goal {
 	
 	public Coordinate coordinate1;
-	public RobotLocation robotLocation;
+	public Robot robotLocation;
 	
 	@Override
 	public String toString() {

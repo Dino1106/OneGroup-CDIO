@@ -7,7 +7,7 @@ import model.Coordinate;
 import model.Goal;
 import model.MapState;
 import model.PseudoWall;
-import model.RobotLocation;
+import model.Robot;
 import model.Route;
 import model.Wall;
 
@@ -153,7 +153,6 @@ public class PathFinder {
 
 	// We want the robot to turn towards the goal, and then spit out balls.
 	public void deliverBalls(MapState mapState) {
-		int orientation1, orientation2;
 		// Find the closest goal.
 		Goal goal = null;
 		if (calculateDistances(mapState.robotLocation.coordinate, mapState.goal1.coordinate1) > calculateDistances(
@@ -162,8 +161,8 @@ public class PathFinder {
 		} else {
 			goal = mapState.goal2;
 		}
-		orientation1 = mapState.robotLocation.orientation;
-		orientation2 = goal.robotLocation.orientation;
+		double orientation1 = mapState.robotLocation.orientation;
+		double orientation2 = goal.robotLocation.orientation;
 		MainClient.rotate(-orientation1);
 		MainClient.rotate(orientation2);
 		MainClient.pickUpBalls(false);
@@ -407,11 +406,10 @@ public class PathFinder {
 	}
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
-		int orientation1, orientation2;
-		orientation1 = mapState.robotLocation.orientation;
+		double orientation1 = mapState.robotLocation.orientation;
 		// We make use of atan: tan = close cathete over far cathete. Should this really
 		// be cast to an int?
-		orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)
+		double orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)
 				/ (bestBall.x - mapState.robotLocation.coordinate.x));
 
 

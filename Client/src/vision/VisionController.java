@@ -203,18 +203,17 @@ public class VisionController {
 		// Update window frame with current picture frame
 		this.vidFrameWarped.showImage(converter.convert(pictureWarped));	
 
-		System.out.println("-------------\n\nVision Done, confirm with 'yes', 'no' to restart");
+		System.out.println("-------------\n\nVision Done, confirm with 'enter'");
+
+		in.nextLine();
 		
-		String s = in.nextLine();
-		if (s.equals("yes")) {
-			in.close();
-			return new VisionSnapShot(balls, walls, cross, robot);
-		}
-		else {
-			edgeDetection();
-			in.close();
-			return calculateSnapShot();
-		}
+		in.close();
+		pictureOriginal.release(); 
+		picturePlain.release(); 
+		pictureWarped.release(); 
+		pictureColor.release(); 
+		pictureRobot.release(); 
+		return new VisionSnapShot(balls, walls, cross, robot);
 	}
 
 

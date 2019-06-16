@@ -85,6 +85,8 @@ public class DecisionMaker {
 		pathFinder.driveRoute(route, mapState);
 		updateMap();
 		pathFinder.swallowAndReverse(mapState, bestBall);
+		updateMap();
+		MainClient.setRobotLocation(mapState.robotLocation.coordinate);
 		pickedUpBallCount++;
 	}
 

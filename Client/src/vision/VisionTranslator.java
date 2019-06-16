@@ -11,7 +11,7 @@ import model.Coordinate;
 import model.Cross;
 import model.Goal;
 import model.MapState;
-import model.RobotLocation;
+import model.Robot;
 import model.VisionSnapShot;
 import model.Wall;
 
@@ -23,8 +23,6 @@ public class VisionTranslator {
 
 	private double cameraHeight = 150.0;
 	private int cameraX, cameraY;
-
-	private double robotHeight = 20.0;
 
 	public VisionTranslator(int cameraId) {
 		visionController = new VisionController(cameraId);
@@ -136,14 +134,14 @@ public class VisionTranslator {
 			int y1 = goal1.coordinate1.y;
 			int orientation1 = 180;
 			Coordinate goal1Coordinate = new Coordinate(x1, y1);
-			goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
+			goal1.robotLocation = new Robot(goal1Coordinate, orientation1);
 
 			int x2 = goal2.coordinate1.x - (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
 			int y2 = goal2.coordinate1.y;
 			int orientation2 = 0;
 
 			Coordinate goal2Coordinate = new Coordinate(x2, y2);
-			goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
+			goal1.robotLocation = new Robot(goal2Coordinate, orientation2);
 
 		} else {
 
@@ -152,47 +150,60 @@ public class VisionTranslator {
 			int orientation2 = 180;
 
 			Coordinate goal2Coordinate = new Coordinate(x2, y2);
-			goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
+			goal1.robotLocation = new Robot(goal2Coordinate, orientation2);
 
 			int x1 = goal1.coordinate1.x - (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
 			int y1 = goal1.coordinate1.y;
 			int orientation1 = 0;
 			Coordinate goal1Coordinate = new Coordinate(x1, y1);
-			goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
+			goal1.robotLocation = new Robot(goal1Coordinate, orientation1);
 
 		}
 
 		return goals;
 	}
 
-	private RobotLocation calculateRobotLocation() {
+	private Robot calculateRobotLocation() {
 		int recievedArray[][] = visionSnapShot.getRobot();
-		int orientation;
+		double orientation = 999999999.0;
+		
+		Robot roboloc = new Robot();
 		
 		// Calculate orientation via geometry
 		Coordinate smallCircleCoordinate = new Coordinate((int) (recievedArray[0][0] / visionScale),(int) (recievedArray[0][1] / visionScale));
 		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
-		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+5, recievedArray[1][1]);
+		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+50, recievedArray[1][1]);
+		
+		perspectiveTransform(smallCircleCoordinate, roboloc.height);
+		perspectiveTransform(largeCircleCoordinate, roboloc.height);
 
 		double b = zeroPoint.x - largeCircleCoordinate.x; 
 		double c = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 		double a = Point2D.distance(smallCircleCoordinate.x, smallCircleCoordinate.y, zeroPoint.x, zeroPoint.y);
 
-		int degrees = (int) Math.toDegrees(Math.acos((b*b+c*c-a*a)/(2*b*c)));
+		double indIAkos = (b*b + c*c - a*a) / ( 2*b*c);
+		System.out.println("Akos er: ((" + b + "*" + b + " + " + c + "*" + c + " - " + a + " * " + a + ") / ( 2 *" + b + "*" + c + ")");
+		double akos = Math.acos(indIAkos);
+		System.out.println("Math.acos af: " + indIAkos + ", er: " + akos);
+		double degrees = Math.toDegrees(akos);
+		
+		System.out.println("VisionTranslator - hvad er akos: " + akos);
+		System.out.println("VisionTranslator - orientation: " + orientation);
 
 		if(largeCircleCoordinate.y > smallCircleCoordinate.y) {
 			orientation = 360 - degrees;
 		}
 		else orientation = degrees;
 
-		RobotLocation roboloc = new RobotLocation(largeCircleCoordinate, orientation);
+		roboloc.coordinate = largeCircleCoordinate;
+		roboloc.orientation = orientation;
 
 		return roboloc;
 	}
 
-	private void perspectiveTransform(Coordinate coord) {
+	private void perspectiveTransform(Coordinate coord, double height) {
 		// Find height differences and the proportion
-		double heightProportion = (double) (cameraHeight - robotHeight)/cameraHeight;
+		double heightProportion = (double) (cameraHeight - height)/cameraHeight;
 
 		// Find the scewed distance caused of height differences
 		coord.x = (int) ((1-heightProportion)*coord.x + heightProportion*cameraX);
