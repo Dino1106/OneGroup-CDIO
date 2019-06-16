@@ -149,19 +149,14 @@ public class VisionTranslator {
 		int orientation;
 		
 		// Scale robot location
-		for(int i = 0; i < recievedArray.length; i++) {
-			recievedArray[i][0] = (int) (recievedArray[i][0] / visionScale);
-			recievedArray[i][1] = (int) (recievedArray[i][1] / visionScale);
-		}
-		
-		for(int i = 0; i < recievedArray.length; i++) {
-			System.out.println(recievedArray[i][0]);
-			System.out.println(recievedArray[i][1]);
-		}
+//		for(int i = 0; i < recievedArray.length; i++) {
+//			recievedArray[i][0] = (int) (recievedArray[i][0] / visionScale);
+//			recievedArray[i][1] = (int) (recievedArray[i][1] / visionScale);
+//		}
 		
 		// Calculate orientation via geometry
-		Coordinate smallCircleCoordinate = new Coordinate(recievedArray[0][0],recievedArray[0][1]);
-		Coordinate largeCircleCoordinate = new Coordinate(recievedArray[1][0],recievedArray[1][1]);
+		Coordinate smallCircleCoordinate = new Coordinate((int) (recievedArray[0][0] / visionScale),(int) (recievedArray[0][1] / visionScale));
+		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+5, recievedArray[1][1]);
 
 		double b = zeroPoint.x - largeCircleCoordinate.x; 

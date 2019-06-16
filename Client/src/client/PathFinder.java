@@ -7,6 +7,7 @@ import model.Coordinate;
 import model.Goal;
 import model.MapState;
 import model.PseudoWall;
+import model.RobotLocation;
 import model.Route;
 import model.Wall;
 
@@ -59,7 +60,7 @@ public class PathFinder {
 		return route;
 	}
 
-	// Now check if ball is near wall. If it isn't, then we end here.
+	// Now check if ball is near wall. If it isn't, then we don't send any auxiliary coordinates.
 	// Let's see if ball is close to a corner. If it is, we disregard the "ball
 	// close to wall" part.
 	private void getCoordinatesForRiskyBalls(Ball ball, Route route) {
@@ -67,57 +68,57 @@ public class PathFinder {
 		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter * 2 + robotBufferSize;
-			newCoordinate.y = upperWall.left.y - robotDiameter * 2 - robotBufferSize;
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter * 2 + robotBufferSize;
-			newCoordinate.y = lowerWall.left.y + robotDiameter * 2 + robotBufferSize;
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, rightWall, upperWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter * 2 - robotBufferSize;
-			newCoordinate.y = upperWall.right.y - robotDiameter * 2 - robotBufferSize;
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+			newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize * 3;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter * 2 - robotBufferSize;
-			newCoordinate.y = lowerWall.right.y + robotDiameter * 2 + robotBufferSize;
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+			newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize * 3;
 			route.coordinates.add(newCoordinate);
 		}
 		if (!ballCloseToCorner) {
 			// Let's see if a ball is close to one of the four walls. If it is, we set up
-			// the route to now stand adjacent to the wall.
+			// the route to now stand opposite the wall.
 			if (isBallCloseToWall(ball, leftWall)) {
 				// TODO: Refine where the robot goes here before approaching a wall-close ball.
 				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = leftWall.upper.x + robotDiameter * 2 + robotBufferSize;
+				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
 				newCoordinate.y = ball.y;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, rightWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = rightWall.upper.x - robotDiameter * 2 - robotBufferSize;
+				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
 				newCoordinate.y = ball.y;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, upperWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = ball.x;
-				newCoordinate.y = upperWall.left.y - robotDiameter * 2 - robotBufferSize;
+				newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, lowerWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = ball.x;
-				newCoordinate.y = lowerWall.left.y + robotDiameter * 2 + robotBufferSize;
+				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
 				route.coordinates.add(newCoordinate);
 			}
 		}
@@ -166,7 +167,7 @@ public class PathFinder {
 		MainClient.rotate(-orientation1);
 		MainClient.rotate(orientation2);
 		MainClient.pickUpBalls(false);
-		// Wait for 5 seconds.
+		// Wait for SLEEPTIME seconds.
 		try {
 			Thread.sleep(sleepTime * 1000); // TODO: Is Thread.sleep the right thing to do?
 		} catch (InterruptedException e) {
@@ -180,20 +181,36 @@ public class PathFinder {
 		return (int) Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
 	}
 
+	// Deprecated. We use another method.
 	// Finds the distance between a coordinate to a line between two coordinates.
-	public int calculateDistancesLine(Coordinate coordinate, Coordinate line1, Coordinate line2) {
-		// First we gotta find the values of the line between line1 and line2.
-		double a = (line2.y - line1.y) / (line2.x - line1.x);
-		double b = line1.y - (a * line1.x);
-		double upper = Math.abs(a * line1.x + b - line1.y);
-		double lower = Math.sqrt(Math.pow(a, 2) + 1);
-		double dist = upper / lower;
-		return (int) dist; // There's a minor loss here in conversion.
+	/*
+	 * public int calculateDistancesLine(Coordinate coordinate, Coordinate line1,
+	 * Coordinate line2) { // First we gotta find the values of the line between
+	 * line1 and line2. System.out.println("Line 1 and 2 x: " + line1.x + " " +
+	 * line2.x); double a = (line2.y - line1.y) / (line2.x - line1.x); double b =
+	 * line1.y - (a * line1.x); double upper = Math.abs(a * line1.x + b - line1.y);
+	 * double lower = Math.sqrt(Math.pow(a, 2) + 1); double dist = upper / lower;
+	 * return (int) dist; // There's a minor loss here in conversion. }
+	 */
+
+	// Calculates the distance from a coordinate to a given wall. Please notice this
+	// assumes walls are only vertical objects.
+	public int calculateDistanceToWall(Coordinate coordinate, Wall wall) {
+		int distance = coordinate.x - (wall.upper.x + wall.lower.x) / 2; // Takes average.
+		distance = Math.abs(distance);
+		return distance;
+	}
+
+	// Overloads parameter to handle pseudowalls. Please notice this assumes
+	// pseudowalls are horizontal objects.
+	public int calculateDistanceToWall(Coordinate coordinate, PseudoWall wall) {
+		int distance = coordinate.y - (wall.left.y + wall.right.y) / 2;
+		distance = Math.abs(distance);
+		return distance;
 	}
 
 	public boolean isBallCloseToWall(Ball ball, Wall wall) {
-		if (calculateDistancesLine(new Coordinate(ball.x, ball.y), wall.upper, wall.lower) < robotDiameter
-				+ robotBufferSize) {
+		if (calculateDistanceToWall(new Coordinate(ball.x, ball.y), wall) < robotDiameter + robotBufferSize) {
 			return true;
 		} else {
 			return false;
@@ -201,8 +218,7 @@ public class PathFinder {
 	}
 
 	public boolean isBallCloseToWall(Ball ball, PseudoWall wall) {
-		if (calculateDistancesLine(new Coordinate(ball.x, ball.y), wall.left, wall.right) < robotDiameter
-				+ robotBufferSize) {
+		if (calculateDistanceToWall(new Coordinate(ball.x, ball.y), wall) < robotDiameter + robotBufferSize) {
 			return true;
 		} else {
 			return false;
@@ -296,6 +312,8 @@ public class PathFinder {
 		upperWall.right = new Coordinate(rightWall.upper.x, rightWall.upper.y);
 		lowerWall.left = new Coordinate(leftWall.lower.x, leftWall.lower.y);
 		lowerWall.right = new Coordinate(rightWall.lower.x, rightWall.lower.y);
+		System.out.println("PathFinder: Pseudowall upper: " + upperWall.left + upperWall.right + " lower: "
+				+ lowerWall.left + lowerWall.right);
 	}
 
 	// Creates RobotLocations for each of the two goals.
@@ -304,23 +322,35 @@ public class PathFinder {
 
 		if (mapState.goal1.coordinate1.x < mapState.wallList.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
-			mapState.goal1.robotLocation.orientation = 180;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x
-					+ (robotDiameter / 2 + robotBufferSize);
-			mapState.goal1.robotLocation.coordinate.y = mapState.goal1.coordinate1.y;
-			mapState.goal2.robotLocation.orientation = 0;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x
-					- (robotDiameter / 2 + robotBufferSize);
-			mapState.goal2.robotLocation.coordinate.y = mapState.goal2.coordinate1.y;
+
+			int x1 = mapState.goal1.coordinate1.x + (robotDiameter / 2 + robotBufferSize);
+			int y1 = mapState.goal1.coordinate1.y;
+			int orientation1 = 180;
+			Coordinate goal1Coordinate = new Coordinate(x1, y1);
+			mapState.goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
+
+			int x2 = mapState.goal2.coordinate1.x - (robotDiameter / 2 + robotBufferSize);
+			int y2 = mapState.goal2.coordinate1.y;
+			int orientation2 = 0;
+
+			Coordinate goal2Coordinate = new Coordinate(x2, y2);
+			mapState.goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
+
 		} else {
-			mapState.goal2.robotLocation.orientation = 180;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x
-					+ (robotDiameter / 2 + robotBufferSize);
-			mapState.goal2.robotLocation.coordinate.y = mapState.goal2.coordinate1.y;
-			mapState.goal1.robotLocation.orientation = 0;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x
-					- (robotDiameter / 2 + robotBufferSize);
-			mapState.goal1.robotLocation.coordinate.y = mapState.goal1.coordinate1.y;
+
+			int x2 = mapState.goal2.coordinate1.x + (robotDiameter / 2 + robotBufferSize);
+			int y2 = mapState.goal2.coordinate1.y;
+			int orientation2 = 180;
+
+			Coordinate goal2Coordinate = new Coordinate(x2, y2);
+			mapState.goal1.robotLocation = new RobotLocation(goal2Coordinate, orientation2);
+
+			int x1 = mapState.goal1.coordinate1.x - (robotDiameter / 2 + robotBufferSize);
+			int y1 = mapState.goal1.coordinate1.y;
+			int orientation1 = 0;
+			Coordinate goal1Coordinate = new Coordinate(x1, y1);
+			mapState.goal1.robotLocation = new RobotLocation(goal1Coordinate, orientation1);
+
 		}
 
 	}
