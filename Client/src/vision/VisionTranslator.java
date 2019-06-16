@@ -128,6 +128,8 @@ public class VisionTranslator {
 		goals.add(goal2);
 		
 		
+		
+		//TODO: Thic code does not work.
 		if (goal1.coordinate1.x < walls.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
 			

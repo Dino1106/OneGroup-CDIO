@@ -409,7 +409,10 @@ public class PathFinder {
 		double robotOrientation = mapState.robotLocation.orientation;
 		// We make use of atan: tan = close cathete over far cathete. Should this really
 		// be cast to an int?
-		double targetOrientation = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x));
+		
+		System.out.println("Bestball: " +bestBall.x +", "+ bestBall.x);
+		System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +", "+ mapState.robotLocation.coordinate.y);
+		double targetOrientation = Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x));
 
 
 		System.out.println("[PathFinder] Orientation for swallow: robot: " + robotOrientation + " orientation to be turned to: " + targetOrientation);

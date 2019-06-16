@@ -109,7 +109,7 @@ public class VisionController {
 	 */
 	public VisionSnapShot getSnapShot() {
 		VisionSnapShot visionSnapShot = calculateSnapShot();
-		System.out.println("VisionController, getSnapShot - sending snapshot \n\n\n");
+		System.out.println("VisionController, Vision done, sending (getSnapShot) \n\n\n");
 		return visionSnapShot;
 	}
 
@@ -119,6 +119,8 @@ public class VisionController {
 	 * @return VisionSnapShot with all the raw data for the translator.
 	 */
 	private VisionSnapShot calculateSnapShot() {
+		System.out.println("Vision - Start identify balls");
+		
 		Vec3fVector balls = null;
 		int[][] walls = null;
 		int[][] cross = null;
@@ -144,14 +146,6 @@ public class VisionController {
 		this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
 		this.vidFrameWarped.showImage(converter.convert(pictureColor));
 
-		Scanner in = new Scanner(System.in);
-		if(!calibrationDone) {
-			System.out.println("-------------\n\nCalibration done, enter 'yes' to confirm, 'no' to restart");
-			String s = in.nextLine();
-			edgeDetection();
-			return calculateSnapShot();
-		}
-
 		// Get coordinates from picture for the walls
 		walls = getWallCoordinatesFromPicture(pictureColor);
 
@@ -160,14 +154,14 @@ public class VisionController {
 
 		//TODO: Clear up what this should do...
 		IdentifyBalls identifyBalls;
-		//		int[] calib = {6, 5, 2, 6, 20};
-		//		if(calibration) {
-		//			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 11, 120, 15, 8, 8, calib);
-		//			params = identifyBalls.getParams();
-		//			calibration = false;
-		//		}else{
-		identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
-		//		}
+		int[] calib = {6, 5, 2, 6, 20};
+		if(calibration) {
+			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 11, 120, 15, 8, 8, calib);
+			params = identifyBalls.getParams();
+			calibration = false;
+		}else{
+			identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
+		}
 		balls = identifyBalls.getCircles();
 
 		System.out.println("Vision - End identify balls");
@@ -191,12 +185,15 @@ public class VisionController {
 		identifyRobot.draw(pictureWarped, Scalar.BLUE);
 
 		// Update window frame with current picture frame
-		this.vidFrameWarped.showImage(converter.convert(pictureWarped));	
+		this.vidFrameWarped.showImage(converter.convert(pictureWarped));
+		this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
 
 		if(!calibrationDone) {
+			Scanner in = new Scanner(System.in);
 			System.out.println("-------------\n\nVision Done, confirm with 'enter'");
 			in.nextLine();
-			this.calibrationDone = true;
+			this.calibrationDone  = true;
+			in.close();
 		}
 
 		return new VisionSnapShot(balls, walls, cross, robot);
@@ -209,7 +206,6 @@ public class VisionController {
 	 * @return The mat from either camera, or static image.
 	 */
 	private Mat takePicture(boolean usingCamera) {		
-		System.out.println("\n\n\n\n*************** Take picture ******** \n\n\n\n");
 		if (usingCamera) {
 			try {
 
@@ -243,7 +239,6 @@ public class VisionController {
 			@Override
 			public void run() {
 				pictureOriginal = takePicture(usingCamera);
-				System.out.println("VisionController - Running edge detection");
 
 				identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
 
