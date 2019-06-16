@@ -56,7 +56,7 @@ public class PathFinder {
 		// created, dedicated to finding a path between quadrants.
 		// route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now we need to get an auxiliary coordinate for balls near corners or walls.
-		getCoordinatesForRiskyBalls(ball, route);
+		//getCoordinatesForRiskyBalls(ball, route);
 		return route;
 	}
 
@@ -406,16 +406,25 @@ public class PathFinder {
 	}
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
-		double orientation1 = mapState.robotLocation.orientation;
+		double robotOrientation = mapState.robotLocation.orientation;
 		// We make use of atan: tan = close cathete over far cathete. Should this really
 		// be cast to an int?
-		double orientation2 = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y)
-				/ (bestBall.x - mapState.robotLocation.coordinate.x));
+		double targetOrientation = (int) Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x));
 
 
-		System.out.println("[PathFinder] Orientation for swallow: robot: " + orientation1 + " orientation to be turned to: " + orientation2);
-		MainClient.rotate(-orientation1);
-		MainClient.rotate(orientation2);
+		System.out.println("[PathFinder] Orientation for swallow: robot: " + robotOrientation + " orientation to be turned to: " + targetOrientation);
+
+		double oneWay = targetOrientation - robotOrientation;
+		double otherWay = (robotOrientation + 360) - targetOrientation;
+		
+		if (oneWay < otherWay) {
+			MainClient.rotate(oneWay);
+		} else {
+			MainClient.rotate(otherWay);
+		}
+		
+		
+		
 
 		int distance = calculateDistances(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y));
 		MainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);

@@ -168,7 +168,7 @@ public class IdentifyCoordinates {
 		}
 		
 		if (!circles.empty()) {
-			// Determine small/large circle
+			// Determine small/large circle based on radius
 			if((int) circles.get(0).get(2) <= (int) circles.get(1).get(2)) {
 				// Small circle
 				coords[0][0] = (int) circles.get(0).get(0);

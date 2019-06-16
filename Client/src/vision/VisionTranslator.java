@@ -21,7 +21,7 @@ public class VisionTranslator {
 	private VisionSnapShot visionSnapShot;
 	private double visionScale = 1;
 
-	private double cameraHeight = 150.0;
+	private double cameraHeight = 175.0;
 	private int cameraX, cameraY;
 
 	public VisionTranslator(int cameraId) {
@@ -33,6 +33,7 @@ public class VisionTranslator {
 	}
 
 	public MapState getProcessedMap() {
+		visionSnapShot = visionController.getSnapShot();
 		//TODO: This is not possible anyMore...
 		//cameraX = (int) (visionController.getPic().cols() * visionScale);
 		//cameraY = (int) (visionController.getPic().rows() * visionScale);
@@ -165,31 +166,33 @@ public class VisionTranslator {
 
 	private Robot calculateRobotLocation() {
 		int recievedArray[][] = visionSnapShot.getRobot();
-		double orientation = 999999999.0;
 		
 		Robot roboloc = new Robot();
 		
 		// Calculate orientation via geometry
 		Coordinate smallCircleCoordinate = new Coordinate((int) (recievedArray[0][0] / visionScale),(int) (recievedArray[0][1] / visionScale));
 		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
-		Coordinate zeroPoint = new Coordinate(recievedArray[1][0]+50, recievedArray[1][1]);
+		Coordinate zeroPoint = new Coordinate((int)((recievedArray[1][0]) / visionScale) + 50, (int) (recievedArray[1][1] / visionScale));
 		
-		perspectiveTransform(smallCircleCoordinate, roboloc.height);
-		perspectiveTransform(largeCircleCoordinate, roboloc.height);
+		//perspectiveTransform(smallCircleCoordinate, roboloc.height);
+		//perspectiveTransform(largeCircleCoordinate, roboloc.height);
 
+		double a = Point2D.distance(smallCircleCoordinate.x, smallCircleCoordinate.y, zeroPoint.x, zeroPoint.y);
 		double b = zeroPoint.x - largeCircleCoordinate.x; 
 		double c = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
-		double a = Point2D.distance(smallCircleCoordinate.x, smallCircleCoordinate.y, zeroPoint.x, zeroPoint.y);
 
-		double indIAkos = (b*b + c*c - a*a) / ( 2*b*c);
-		System.out.println("Akos er: ((" + b + "*" + b + " + " + c + "*" + c + " - " + a + " * " + a + ") / ( 2 *" + b + "*" + c + ")");
+		//System.out.println("a: " + a+"\nb: " +b+"\nc: "+c);
+		
+		double indIAkos = (Math.pow(b, 2) + Math.pow(c, 2) - Math.pow(a, 2)) / ( 2*b*c);
 		double akos = Math.acos(indIAkos);
-		System.out.println("Math.acos af: " + indIAkos + ", er: " + akos);
+		//System.out.println("Math.acos af: " + indIAkos + ", er: " + akos);
 		double degrees = Math.toDegrees(akos);
 		
-		System.out.println("VisionTranslator - hvad er akos: " + akos);
-		System.out.println("VisionTranslator - orientation: " + orientation);
+		//System.out.println("VisionTranslator - hvad er akos: " + akos);
+		//System.out.println("VisionTranslator - degrees: " + degrees);
 
+		double orientation;
+		
 		if(largeCircleCoordinate.y > smallCircleCoordinate.y) {
 			orientation = 360 - degrees;
 		}

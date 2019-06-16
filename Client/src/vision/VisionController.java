@@ -10,18 +10,14 @@ import java.util.Scanner;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
-import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
-import org.bytedeco.opencv.opencv_imgproc.Vec4iVector;
-
 import model.VisionSnapShot;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_core.*;
@@ -114,7 +110,6 @@ public class VisionController {
 	public VisionSnapShot getSnapShot() {
 		VisionSnapShot visionSnapShot = calculateSnapShot();
 		System.out.println("VisionController, getSnapShot - sending snapshot \n\n\n");
-		System.out.println(visionSnapShot.toString());
 		return visionSnapShot;
 	}
 
@@ -153,13 +148,8 @@ public class VisionController {
 		if(!calibrationDone) {
 			System.out.println("-------------\n\nCalibration done, enter 'yes' to confirm, 'no' to restart");
 			String s = in.nextLine();
-			if (s.equals("yes")) {
-				this.calibrationDone  = true;
-			} else {
-				edgeDetection();
-				in.close();
-				return calculateSnapShot();
-			}
+			edgeDetection();
+			return calculateSnapShot();
 		}
 
 		// Get coordinates from picture for the walls
@@ -170,14 +160,14 @@ public class VisionController {
 
 		//TODO: Clear up what this should do...
 		IdentifyBalls identifyBalls;
-		int[] calib = {6, 5, 2, 6, 20};
-		if(calibration) {
-			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 11, 120, 15, 5, 8, calib);
-			params = identifyBalls.getParams();
-			calibration = false;
-		}else{
-			identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
-		}
+		//		int[] calib = {6, 5, 2, 6, 20};
+		//		if(calibration) {
+		//			identifyBalls = new IdentifyBalls(picturePlain.clone(), 1, 11, 120, 15, 8, 8, calib);
+		//			params = identifyBalls.getParams();
+		//			calibration = false;
+		//		}else{
+		identifyBalls = new IdentifyBalls(picturePlain.clone(),1,params[0],params[1],params[2],params[3],params[4]);
+		//		}
 		balls = identifyBalls.getCircles();
 
 		System.out.println("Vision - End identify balls");
@@ -203,16 +193,12 @@ public class VisionController {
 		// Update window frame with current picture frame
 		this.vidFrameWarped.showImage(converter.convert(pictureWarped));	
 
-		System.out.println("-------------\n\nVision Done, confirm with 'enter'");
+		if(!calibrationDone) {
+			System.out.println("-------------\n\nVision Done, confirm with 'enter'");
+			in.nextLine();
+			this.calibrationDone = true;
+		}
 
-		in.nextLine();
-		
-		in.close();
-		pictureOriginal.release(); 
-		picturePlain.release(); 
-		pictureWarped.release(); 
-		pictureColor.release(); 
-		pictureRobot.release(); 
 		return new VisionSnapShot(balls, walls, cross, robot);
 	}
 
@@ -223,6 +209,7 @@ public class VisionController {
 	 * @return The mat from either camera, or static image.
 	 */
 	private Mat takePicture(boolean usingCamera) {		
+		System.out.println("\n\n\n\n*************** Take picture ******** \n\n\n\n");
 		if (usingCamera) {
 			try {
 
@@ -231,7 +218,7 @@ public class VisionController {
 				// Save the frame as a Mat
 				Frame frame = this.grabber.grab();
 
-				this.grabber.stop();
+				//this.grabber.stop();
 
 				return this.converter.convert(frame);
 
@@ -257,7 +244,6 @@ public class VisionController {
 			public void run() {
 				pictureOriginal = takePicture(usingCamera);
 				System.out.println("VisionController - Running edge detection");
-
 
 				identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
 
