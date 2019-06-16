@@ -58,7 +58,7 @@ public class PathFinder {
 		getCoordinatesForRiskyBalls(ball, route);
 		return route;
 	}
-	
+
 	// Now check if ball is near wall. If it isn't, then we end here.
 	// Let's see if ball is close to a corner. If it is, we disregard the "ball
 	// close to wall" part.
@@ -301,32 +301,28 @@ public class PathFinder {
 	// Creates RobotLocations for each of the two goals.
 	private void calculateGoalRobotLocations(MapState mapState) {
 		// Figure out which wall is left wall.
-		/*
+
 		if (mapState.goal1.coordinate1.x < mapState.wallList.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
 			mapState.goal1.robotLocation.orientation = 180;
 			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x
 					+ (robotDiameter / 2 + robotBufferSize);
-			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate1.y + mapState.goal1.coordinate2.y)
-					/ 2;
+			mapState.goal1.robotLocation.coordinate.y = mapState.goal1.coordinate1.y;
 			mapState.goal2.robotLocation.orientation = 0;
-			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate2.x
+			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x
 					- (robotDiameter / 2 + robotBufferSize);
-			mapState.goal2.robotLocation.coordinate.y = (mapState.goal2.coordinate2.y + mapState.goal2.coordinate2.y)
-					/ 2;
+			mapState.goal2.robotLocation.coordinate.y = mapState.goal2.coordinate1.y;
 		} else {
 			mapState.goal2.robotLocation.orientation = 180;
 			mapState.goal2.robotLocation.coordinate.x = mapState.goal2.coordinate1.x
 					+ (robotDiameter / 2 + robotBufferSize);
-			mapState.goal2.robotLocation.coordinate.y = (mapState.goal2.coordinate1.y + mapState.goal2.coordinate2.y)
-					/ 2;
+			mapState.goal2.robotLocation.coordinate.y = mapState.goal2.coordinate1.y;
 			mapState.goal1.robotLocation.orientation = 0;
-			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate2.x
+			mapState.goal1.robotLocation.coordinate.x = mapState.goal1.coordinate1.x
 					- (robotDiameter / 2 + robotBufferSize);
-			mapState.goal1.robotLocation.coordinate.y = (mapState.goal1.coordinate2.y + mapState.goal1.coordinate2.y)
-					/ 2;
+			mapState.goal1.robotLocation.coordinate.y = mapState.goal1.coordinate1.y;
 		}
-		*/
+
 	}
 
 	// Set the middle of the map and all quadrant points.
