@@ -193,16 +193,16 @@ public class PathFinder {
 
 	// Calculates the distance from a coordinate to a given wall. Please notice this
 	// assumes walls are only vertical objects.
-	public int calculateDistanceToWall(Coordinate coordinate, Wall wall) {
-		int distance = coordinate.x - (wall.upper.x + wall.lower.x) / 2; // Takes average.
+	public double calculateDistanceToWall(Coordinate coordinate, Wall wall) {
+		double distance = coordinate.x - (wall.upper.x + wall.lower.x) / 2; // Takes average.
 		distance = Math.abs(distance);
 		return distance;
 	}
 
 	// Overloads parameter to handle pseudowalls. Please notice this assumes
 	// pseudowalls are horizontal objects.
-	public int calculateDistanceToWall(Coordinate coordinate, PseudoWall wall) {
-		int distance = coordinate.y - (wall.left.y + wall.right.y) / 2;
+	public double calculateDistanceToWall(Coordinate coordinate, PseudoWall wall) {
+		double distance = coordinate.y - (wall.left.y + wall.right.y) / 2;
 		distance = Math.abs(distance);
 		return distance;
 	}

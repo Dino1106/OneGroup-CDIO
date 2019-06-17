@@ -28,7 +28,7 @@ public class VisionTranslator {
 	private ArrayList<Wall> walls;
 
 	public VisionTranslator(int cameraId) {
-		visionController = new VisionController(cameraId);
+		visionController = new VisionController("a.jpg");
 		
 		// Warm-up - needs to be here for scale.
 		visionSnapShot = visionController.getSnapShot();
@@ -55,8 +55,8 @@ public class VisionTranslator {
 
 	private double getScale() {
 		ArrayList<Wall> walls = calculateWalls();
-		int difference = walls.get(1).lower.x - walls.get(0).lower.x;
-		return (double) difference / longBarrierLength;
+		double difference = walls.get(1).lower.x - walls.get(0).lower.x;
+		return difference / longBarrierLength;
 	}
 
 	private ArrayList<Ball> calculateBalls() {
@@ -64,8 +64,8 @@ public class VisionTranslator {
 
 		for(int i = 0; i < visionSnapShot.getBalls().size(); i++) {
 			
-			Coordinate coord = new Coordinate( (int) (((visionSnapShot.getBalls().get(i).get(0)) / visionScale)), 
-											   (int) (((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
+			Coordinate coord = new Coordinate( (((visionSnapShot.getBalls().get(i).get(0)) / visionScale)), 
+											   (((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
 			
 			System.out.println("Pre: " +coord.x+", "+coord.y);
 			changeToRobotFormat(coord);

@@ -26,8 +26,8 @@ public class DecisionMaker {
 		visionTranslator = new VisionTranslator(1);
 		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 		
-		try {
-			MainClient.connect();
+		//try {
+			//MainClient.connect();
 			MainClient.pickUpBalls(true);
 			updateMap();
 			
@@ -43,9 +43,9 @@ public class DecisionMaker {
 //			pathFinder = new PathFinder(mapState);
 //			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
 //			mainLoop();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//} catch (IOException e) {
+		//	e.printStackTrace();
+		//}
 	}
 	
 	public static void mainLoop() {

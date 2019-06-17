@@ -2,16 +2,16 @@ package model;
 
 public class Ball {
 	
-	public int x, y;
+	public double x, y;
 	public double height = 4;
 	
 	public Ball() {
-		
+		//Empty
 	}
 	
-	public Ball(int x, int y) {
-		this.x = x;
-		this.y = y;
+	public Ball(double x2, double y2) {
+		this.x = x2;
+		this.y = y2;
 	}
 
 	@Override

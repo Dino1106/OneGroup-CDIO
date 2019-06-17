@@ -41,9 +41,11 @@ public class RobotMovement {
     }
     
 	public boolean drive(Coordinate to, int speed) {
-		System.out.println("I am going to x = " + to.x + ", y = " + to.y);
 		pilot.setLinearSpeed(speed);
-		navigator.goTo(to.x, to.y);
+		float x = (float) to.x;
+		float y = (float) to.y;
+		System.out.println("I am going to x = " + x + ", y = " + y);
+		navigator.goTo( x, y);
 						
 		if(navigator.waitForStop()) {
 			System.out.println("I have stopped");
@@ -95,8 +97,11 @@ public class RobotMovement {
 	
 	public void setRobotLocation(Coordinate coordinate) {
 		this.pose = poseProvider.getPose();
-		pose.setLocation(new Point(coordinate.x, coordinate.y));
-		System.out.println("GETPOSE I SETROBOTLOCATION " + this.pose.getX() + " " + this.pose.getY());
+
+		float x = (float) coordinate.x;
+		float y = (float) coordinate.y;
+		pose.setLocation(new Point(x, y));
+		System.out.println("RobotMovement: getLocation " + this.pose.getLocation().x + " " + this.pose.getLocation().y);
 	}
 	
 	public Coordinate getRobotLocation() {

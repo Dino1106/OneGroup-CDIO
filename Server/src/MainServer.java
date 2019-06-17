@@ -101,7 +101,7 @@ public class MainServer extends Thread {
 					setMotorSpeed(speed);
 					break;
 				case 2:
-					Coordinate coordinateForward = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
+					Coordinate coordinateForward = new Coordinate(Double.parseDouble(splitInputs[1]), Double.parseDouble(splitInputs[2]));
 					int driveToSpeed = Integer.parseInt(splitInputs[3]);
 					carDrive(coordinateForward, driveToSpeed);
 					break;
@@ -127,7 +127,7 @@ public class MainServer extends Thread {
 					playSound(soundToPlay);
 					break;
 				case 8:
-					Coordinate robotLocation = new Coordinate(Integer.parseInt(splitInputs[1]), Integer.parseInt(splitInputs[2]));
+					Coordinate robotLocation = new Coordinate(Double.parseDouble(splitInputs[1]), Double.parseDouble(splitInputs[2]));
 					setRobotLocation(robotLocation);
 					break;
 				default:
