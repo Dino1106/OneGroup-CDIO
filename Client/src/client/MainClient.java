@@ -33,11 +33,10 @@ public class MainClient {
 		}
 	}
 	
-	public static void sendCoordinate(Coordinate coordinate, int speed){
+	public static void sendCoordinate(Coordinate destination, int speed){
 		// Send coordinates to Server: 
-		System.out.println("Going to coordinate: " + coordinate);
 		try {
-			String coordinateString = "2 " + coordinate.x + " " + coordinate.y + " " + speed;
+			String coordinateString = "2 " + (destination.x) + " " + (destination.y) + " " + speed;
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
 			String serverResponse = dIn.readUTF();

@@ -8,6 +8,7 @@ import model.Ball;
 import model.Coordinate;
 import model.MapState;
 import model.Route;
+import vision.Main;
 import vision.VisionTranslator;
 
 public class DecisionMaker {
@@ -22,13 +23,21 @@ public class DecisionMaker {
 	
 	public static void main(String[] args) {
 		
-		//visionTranslator = new VisionTranslator(1);
-		//System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
+		visionTranslator = new VisionTranslator(1);
+		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 		
 		try {
 			MainClient.connect();
-			MainClient.sendMotorSpeed(720);
-			MainClient.rotate(1080);
+			MainClient.pickUpBalls(true);
+			updateMap();
+			
+			for (Ball ball : visionTranslator.getProcessedMap().ballList) {
+				System.out.println("SAIZ: " + visionTranslator.getProcessedMap().ballList.size());
+				MainClient.setRobotLocation(mapState.robotLocation.coordinate);
+				MainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 720);
+			}
+			MainClient.pickUpBalls(false);
+			
 //			updateMap();
 //			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
 //			pathFinder = new PathFinder(mapState);

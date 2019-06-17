@@ -22,7 +22,10 @@ public class VisionTranslator {
 	private double visionScale = 1;
 
 	private double cameraHeight = 175.0;
+	private double robotAxisShift = 7.0/13.5;
 	private int cameraX, cameraY;
+	private int longBarrierLength = 169;
+	private ArrayList<Wall> walls;
 
 	public VisionTranslator(int cameraId) {
 		visionController = new VisionController(cameraId);
@@ -38,7 +41,7 @@ public class VisionTranslator {
 		//cameraX = (int) (visionController.getPic().cols() * visionScale);
 		//cameraY = (int) (visionController.getPic().rows() * visionScale);
 
-		ArrayList<Wall> walls = calculateWalls();
+		this.walls = calculateWalls();
 		ArrayList<Goal> goals = calculateGoals(walls);
 
 		return new MapState(
@@ -51,23 +54,22 @@ public class VisionTranslator {
 	}
 
 	private double getScale() {
-		Cross cross = calculateCross();
-		int difference = cross.coordinate2.x - cross.coordinate1.x;
-		return (double) difference / 20;
+		ArrayList<Wall> walls = calculateWalls();
+		int difference = walls.get(1).lower.x - walls.get(0).lower.x;
+		return (double) difference / longBarrierLength;
 	}
 
 	private ArrayList<Ball> calculateBalls() {
-		Ball ball = new Ball();
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 
-		for(int i = 0; i < visionSnapShot.getBalls().get(0).sizeof(); i++) {
+		for(int i = 0; i < visionSnapShot.getBalls().size(); i++) {
 			
-			Coordinate coord = new Coordinate( (int) ((visionSnapShot.getBalls().get(i).get(0)) / visionScale), 
-											   (int) ((visionSnapShot.getBalls().get(i).get(1)) / visionScale));
+			Coordinate coord = new Coordinate( (int) (((visionSnapShot.getBalls().get(i).get(0)) / visionScale)), 
+											   (int) (((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
 			
-			//perspectiveTransform(coord, ball.height);
-//			int x = (int) ((visionSnapShot.getBalls().get(i).get(0))/visionScale);
-//			int y = (int) ((visionSnapShot.getBalls().get(i).get(1))/visionScale);
+			System.out.println("Pre: " +coord.x+", "+coord.y);
+			changeToRobotFormat(coord);
+			System.out.println("Post: " +coord.x+", "+coord.y);
 			
 			Ball b = new Ball(coord.x,coord.y);
 			balls.add(b);
@@ -86,17 +88,16 @@ public class VisionTranslator {
 
 				Coordinate c = new Coordinate(x,y);
 				coords.add(c);
-
 			}
 
 			Wall w = new Wall();
 			Wall w2 = new Wall();
 
-			w.upper = coords.get(0);
-			w.lower = coords.get(2);
+			w.upper = coords.get(2);
+			w.lower = coords.get(0);
 
-			w2.upper = coords.get(1);
-			w2.lower = coords.get(3);
+			w2.upper = coords.get(3);
+			w2.lower = coords.get(1);
 
 			walls.add(w);
 			walls.add(w2);
@@ -110,13 +111,14 @@ public class VisionTranslator {
 		for(int i = 0; i < visionSnapShot.getCross().length; i++) {
 			int x = (int) (visionSnapShot.getCross()[i][0]/visionScale);
 			int y = (int) (visionSnapShot.getCross()[i][1]/visionScale);
-			obstacle_coord.add(new Coordinate(x, y));
+			Coordinate coord = new Coordinate(x,y);
+			changeToRobotFormat(coord);
+			obstacle_coord.add(coord);
 		}
 
 		Cross obstacle = new Cross(obstacle_coord.get(0),obstacle_coord.get(1),obstacle_coord.get(2),obstacle_coord.get(3));
 
 		return obstacle;
-
 	}
 
 	private ArrayList<Goal> calculateGoals(ArrayList<Wall> walls){
@@ -128,8 +130,14 @@ public class VisionTranslator {
 		Wall wall1 = walls.get(0);
 		Wall wall2 = walls.get(1);
 
-		goal1.coordinate1 = new Coordinate(wall1.upper.x, wall1.lower.y);
-		goal2.coordinate1 = new Coordinate(wall2.upper.x, wall2.lower.y);
+		Coordinate goal1Coord = new Coordinate(wall1.upper.x, wall1.lower.y);
+		Coordinate goal2Coord = new Coordinate(wall2.upper.x, wall2.lower.y);
+		
+		changeToRobotFormat(goal1Coord);
+		changeToRobotFormat(goal2Coord);
+		
+		goal1.coordinate1 = goal1Coord;
+		goal2.coordinate1 = goal2Coord;
 
 		goals.add(goal1);
 		goals.add(goal2);
@@ -137,6 +145,7 @@ public class VisionTranslator {
 		
 		
 		//TODO: Thic code does not work.
+		/*
 		if (goal1.coordinate1.x < walls.get(1).upper.x) {
 			// Then use hardcoded values to construct a robot location.
 			
@@ -169,6 +178,7 @@ public class VisionTranslator {
 			goal1.robotLocation = new Robot(goal1Coordinate, orientation1);
 
 		}
+		*/
 
 		return goals;
 	}
@@ -183,10 +193,21 @@ public class VisionTranslator {
 		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate((int)((recievedArray[1][0]) / visionScale) + 50, (int) (recievedArray[1][1] / visionScale));
 		
+		changeToRobotFormat(smallCircleCoordinate);
+		changeToRobotFormat(largeCircleCoordinate);
+		changeToRobotFormat(zeroPoint);
+		
 //		perspectiveTransform(smallCircleCoordinate, roboloc.height);
 //		perspectiveTransform(largeCircleCoordinate, roboloc.height);
 //		perspectiveTransform(zeroPoint, roboloc.height);
+		
+		double len = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 
+		int x = (int) ((1 - robotAxisShift) * largeCircleCoordinate.x + robotAxisShift * smallCircleCoordinate.x);
+		int y = (int) ((1 - robotAxisShift) * largeCircleCoordinate.y + robotAxisShift * smallCircleCoordinate.y);
+		
+		largeCircleCoordinate = new Coordinate(x, y);
+		
 		double a = Point2D.distance(smallCircleCoordinate.x, smallCircleCoordinate.y, zeroPoint.x, zeroPoint.y);
 		double b = zeroPoint.x - largeCircleCoordinate.x; 
 		double c = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
@@ -204,11 +225,15 @@ public class VisionTranslator {
 			orientation = 360 - degrees;
 		}
 		else orientation = degrees;
-
+		
 		roboloc.coordinate = largeCircleCoordinate;
 		roboloc.orientation = orientation;
 
 		return roboloc;
+	}
+	
+	private void changeToRobotFormat(Coordinate coord) {
+		coord.y = walls.get(0).upper.y - coord.y;
 	}
 
 	private void perspectiveTransform(Coordinate coord, double height) {

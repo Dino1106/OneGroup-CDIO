@@ -10,6 +10,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.Path;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 
@@ -29,7 +30,7 @@ public class RobotMovement {
         
         /* Setup wheels */
     	this.wheelDiameter = 5.05;
-    	this.trackWidth = 17.5;
+    	this.trackWidth = 17.8;
     	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.A);
     	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.B);
  
@@ -37,18 +38,13 @@ public class RobotMovement {
         this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
         this.navigator = new Navigator(pilot);
         this.poseProvider = new OdometryPoseProvider(pilot);
-		this.pose = poseProvider.getPose();  // Gets the 'pose' of robot (position and heading)
     }
     
 	public boolean drive(Coordinate to, int speed) {
-		Point location = pose.getLocation();
-		pose.setLocation(location);				   	 	// Set from coordinate using pose provider
-
-		System.out.println("I think my location is: x = " + location.x + ", y = " + location.y);
 		System.out.println("I am going to x = " + to.x + ", y = " + to.y);
 		pilot.setLinearSpeed(speed);
-		navigator.goTo(new Waypoint(to.x, to.y));
-				
+		navigator.goTo(to.x, to.y);
+						
 		if(navigator.waitForStop()) {
 			System.out.println("I have stopped");
 			return true;
@@ -98,9 +94,9 @@ public class RobotMovement {
 	}
 	
 	public void setRobotLocation(Coordinate coordinate) {
-		Point point = new Point(coordinate.x, coordinate.y);
-		pose.setLocation(point);
-		System.out.println("My new location is x = " + coordinate.x + ", y = " + coordinate.y);
+		this.pose = poseProvider.getPose();
+		pose.setLocation(new Point(coordinate.x, coordinate.y));
+		System.out.println("GETPOSE I SETROBOTLOCATION " + this.pose.getX() + " " + this.pose.getY());
 	}
 	
 	public Coordinate getRobotLocation() {
