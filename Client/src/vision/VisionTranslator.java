@@ -21,9 +21,10 @@ public class VisionTranslator {
 	private VisionSnapShot visionSnapShot;
 	private double visionScale = 1;
 
-	private double cameraHeight = 175.0;
+	private double cameraHeight = 178.0;	// Change this for each run
+	
 	private double robotAxisShift = 7.0/13.5;
-	private int cameraX, cameraY;
+	private double cameraX, cameraY;
 	private int longBarrierLength = 169;
 	private ArrayList<Wall> walls;
 
@@ -37,12 +38,15 @@ public class VisionTranslator {
 
 	public MapState getProcessedMap() {
 		visionSnapShot = visionController.getSnapShot();
-		//TODO: This is not possible anyMore...
-		//cameraX = (int) (visionController.getPic().cols() * visionScale);
-		//cameraY = (int) (visionController.getPic().rows() * visionScale);
 
 		this.walls = calculateWalls();
 		ArrayList<Goal> goals = calculateGoals(walls);
+		
+		// TODO: Kan tages ud så den ikke beregnes hver gang
+		
+		//Calculate center of frame through upper-right wall location
+		cameraX = (walls.get(1).upper.x/2);
+		cameraY = (walls.get(1).upper.y/2);
 
 		return new MapState(
 				calculateBalls(),
@@ -60,13 +64,14 @@ public class VisionTranslator {
 	}
 
 	private ArrayList<Ball> calculateBalls() {
+		Ball ball = new Ball();
 		ArrayList<Ball> balls = new ArrayList<Ball>();
 
 		for(int i = 0; i < visionSnapShot.getBalls().size(); i++) {
 			
 			Coordinate coord = new Coordinate( (((visionSnapShot.getBalls().get(i).get(0)) / visionScale)), 
 											   (((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
-			
+			perspectiveTransform(coord, ball.height);
 			changeToRobotFormat(coord);
 			
 			Ball b = new Ball(coord.x,coord.y);
@@ -122,23 +127,23 @@ public class VisionTranslator {
 	private ArrayList<Goal> calculateGoals(ArrayList<Wall> walls){
 		ArrayList<Goal> goals = new ArrayList<Goal>();
 
-		Goal goal1 = new Goal();
-		Goal goal2 = new Goal();
+		Goal smallGoal = new Goal();
+		Goal largeGoal = new Goal();
 
 		Wall wall1 = walls.get(0);
 		Wall wall2 = walls.get(1);
 
-		Coordinate goal1Coord = new Coordinate(wall1.upper.x, wall1.lower.y);
-		Coordinate goal2Coord = new Coordinate(wall2.upper.x, wall2.lower.y);
+		Coordinate smallGoalCoord = new Coordinate(wall1.lower.x, (double) wall1.upper.y/2);
+		Coordinate largeGoalCoord = new Coordinate(wall2.lower.x, (double) wall2.upper.y/2);
 		
-		changeToRobotFormat(goal1Coord);
-		changeToRobotFormat(goal2Coord);
+		changeToRobotFormat(smallGoalCoord);
+		changeToRobotFormat(largeGoalCoord);
 		
-		goal1.coordinate1 = goal1Coord;
-		goal2.coordinate1 = goal2Coord;
+		smallGoal.coordinate1 = smallGoalCoord;
+		largeGoal.coordinate1 = largeGoalCoord;
 
-		goals.add(goal1);
-		goals.add(goal2);
+		goals.add(smallGoal);
+		goals.add(largeGoal);
 		
 		
 		
@@ -213,9 +218,6 @@ public class VisionTranslator {
 		double cosA = (b*b + c*c - a*a) / (2*b*c);
 		double radA = Math.acos(cosA);
 		double degrees = Math.toDegrees(radA);
-		
-		//System.out.println("VisionTranslator - hvad er akos: " + akos);
-		//System.out.println("VisionTranslator - degrees: " + degrees);
 
 		double orientation;
 		
@@ -237,12 +239,11 @@ public class VisionTranslator {
 	private void perspectiveTransform(Coordinate coord, double height) {
 		// Find height differences and the proportion
 		double heightProportion = (double) (cameraHeight - height)/cameraHeight;
-		System.out.println("Scale: " + heightProportion);
 
 		// Find the scewed distance caused of height differences
-		coord.x = (int) ((1-heightProportion)*coord.x + heightProportion*cameraX);
-		coord.y = (int) ((1-heightProportion)*coord.y + heightProportion*cameraY);
-
+		coord.x = (1-heightProportion)*cameraX + heightProportion*coord.x;
+		coord.y = (1-heightProportion)*cameraY + heightProportion*coord.y;
+		
 	}
 
 }

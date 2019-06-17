@@ -8,7 +8,7 @@ public class MapState {
 	public Cross cross;
 	public ArrayList<Wall> wallList;
 	public Goal goal1, goal2;
-	public Robot robotLocation;
+	public Robot robot;
 	
 
 	public MapState(ArrayList<Ball> ballList, Cross cross, ArrayList<Wall> wallList, Goal goal1, Goal goal2,
@@ -19,14 +19,14 @@ public class MapState {
 		this.wallList = wallList;
 		this.goal1 = goal1;
 		this.goal2 = goal2;
-		this.robotLocation = robotLocation;
+		this.robot = robotLocation;
 	}
 
 
 	@Override
 	public String toString() {
 		return "MapState [\nballList=" + ballList + ",\n cross=" + cross + ",\n wallList=" + wallList + ",\n goal1=" + goal1
-				+ ",\n goal2=" + goal2 + ",\n robotLocation=" + robotLocation + "]";
+				+ ",\n goal2=" + goal2 + ",\n robotLocation=" + robot + "]";
 	}
 	
 }

@@ -45,12 +45,12 @@ public class PathFinder {
 
 	// We want to return route to a given ball.
 	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
-		Route route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
+		Route route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
 		// First we find out which quadrant is nearest to the ball.
 		Coordinate nearestToBall = findNearestQuadrant(new Coordinate(ball.x, ball.y));
 		// Now we find out which quadrant is nearest to the robot.
-		Coordinate nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
+		Coordinate nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		// The first coordinate we go to is the one nearest to the robot.
 		route.coordinates.add(new Coordinate(nearestToRobot.x, nearestToRobot.y));
 		// Now we calculate a route between these two coordinates. A method has been
@@ -130,9 +130,9 @@ public class PathFinder {
 	public ArrayList<Route> getCalculatedRoutesGoals(MapState mapState) {
 		ArrayList<Route> routes = new ArrayList<Route>();
 		Route route;
-		route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
+		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
-		Coordinate nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
+		Coordinate nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		route.coordinates.add(nearestToRobot);
 		Coordinate nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
@@ -140,9 +140,9 @@ public class PathFinder {
 
 		routes.add(route);
 
-		route = new Route(mapState.robotLocation.coordinate, new ArrayList<Coordinate>());
+		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
-		nearestToRobot = findNearestQuadrant(mapState.robotLocation.coordinate);
+		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		route.coordinates.add(nearestToRobot);
 		nearestToGoal = findNearestQuadrant(mapState.goal2.robotLocation.coordinate);
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
@@ -156,13 +156,13 @@ public class PathFinder {
 	public void deliverBalls(MapState mapState) {
 		// Find the closest goal.
 		Goal goal = null;
-		if (calculateDistances(mapState.robotLocation.coordinate, mapState.goal1.coordinate1) > calculateDistances(
-				mapState.robotLocation.coordinate, mapState.goal2.coordinate1)) {
+		if (calculateDistances(mapState.robot.coordinate, mapState.goal1.coordinate1) > calculateDistances(
+				mapState.robot.coordinate, mapState.goal2.coordinate1)) {
 			goal = mapState.goal1;
 		} else {
 			goal = mapState.goal2;
 		}
-		double orientation1 = mapState.robotLocation.orientation;
+		double orientation1 = mapState.robot.orientation;
 		double orientation2 = goal.robotLocation.orientation;
 		mainClient.rotate(-orientation1);
 		mainClient.rotate(orientation2);
@@ -407,9 +407,9 @@ public class PathFinder {
 	}
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
-		double robotOrientation = mapState.robotLocation.orientation;
-		double robotX = mapState.robotLocation.coordinate.x; 
-		double robotY = mapState.robotLocation.coordinate.y;
+		double robotOrientation = mapState.robot.orientation;
+		double robotX = mapState.robot.coordinate.x; 
+		double robotY = mapState.robot.coordinate.y;
 		double zeroPointX = robotX + 50;
 		double zeroPointY = robotY;
 		
@@ -451,7 +451,7 @@ public class PathFinder {
 		
 		
 
-		int distance = calculateDistances(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y));
+		int distance = calculateDistances(mapState.robot.coordinate, new Coordinate(bestBall.x, bestBall.y));
 		System.out.println("Go distance: "+distance);
 		
 		mainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);

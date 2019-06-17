@@ -26,29 +26,39 @@ public class DecisionMaker {
 	
 	public static void main(String[] args) {
 		
-		visionTranslator = new VisionTranslator(1);
+		//visionTranslator = new VisionTranslator(1);
 		mainClient = new MainClient();
-		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
+//		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 		
 		
 		try {
 			mainClient.connect();
-			mainClient.sendSound(1);
-			mainClient.pickUpBalls(true);
-			Scanner sc = new Scanner(System.in);
-			while(ballsCount > 0) {	
-				mapState = visionTranslator.getProcessedMap();
-				ballsCount = mapState.ballList.size();
-				mainClient.setRobotLocation(mapState.robotLocation);
-				System.out.println("Send coordinate " + "(" + mapState.ballList.get(0) + ", " + mapState.ballList.get(0).y + ")?");
-				sc.nextLine();
-				mainClient.sendCoordinate(new Coordinate(mapState.ballList.get(0).x, mapState.ballList.get(0).y), 360);
-				mainClient.sendSound(1);
-			}
-			sc.close();
-			mainClient.sendSound(2);
-			mainClient.pickUpBalls(false);
-			//updateMap();
+			//mapState = visionTranslator.getProcessedMap();
+			//mainClient.setRobotLocation(mapState.robot);
+			
+			mainClient.rotate(1080);
+//			mainClient.sendSound(1);
+//			mainClient.pickUpBalls(true);
+//			Scanner sc = new Scanner(System.in);
+//			while(ballsCount > 0) {	
+//				mapState = visionTranslator.getProcessedMap();
+//				ballsCount = mapState.ballList.size();
+//				
+//				System.out.println("Jeg tror jeg er i:");
+//				mainClient.setRobotLocation(mapState.robotLocation);
+//				System.out.println("Send coordinate " + "(" + mapState.ballList.get(0) + ", " + mapState.ballList.get(0).y + ")?");
+//				sc.nextLine();
+//				System.out.println("Jeg er virkelig i:");
+//				mainClient.setRobotLocation(mapState.robotLocation);
+//				System.out.println("Send coordinate " + "(" + mapState.ballList.get(0) + ", " + mapState.ballList.get(0).y + ")?");
+//				sc.nextLine();
+//				mainClient.sendCoordinate(new Coordinate(mapState.ballList.get(0).x, mapState.ballList.get(0).y), 360);
+//				mainClient.sendSound(1);
+//			}
+//			sc.close();
+//			mainClient.sendSound(2);
+//			mainClient.pickUpBalls(false);
+//			updateMap();
 			
 			/*
 			for (Ball ball : visionTranslator.getProcessedMap().ballList) {
@@ -101,7 +111,7 @@ public class DecisionMaker {
 	// Gets new map info, updates data.
 	private static void updateMap() {
 		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robotLocation);
+		mainClient.setRobotLocation(mapState.robot);
 		
 		System.out.println("\n\n updateMap():\n" + mapState.toString() + "\n\n");
 		
@@ -116,7 +126,7 @@ public class DecisionMaker {
 		updateMap();
 		pathFinder.swallowAndReverse(mapState, bestBall);
 		updateMap();
-		mainClient.setRobotLocation(mapState.robotLocation);
+		mainClient.setRobotLocation(mapState.robot);
 		pickedUpBallCount++;
 	}
 
@@ -131,10 +141,10 @@ public class DecisionMaker {
 	
 	private static Ball decideBestBall() {
 		Ball bestBall = mapState.ballList.get(0);
-		int bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robotLocation.coordinate);
+		int bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robot.coordinate);
 		// TODO: Risk calculation here should be more advanced than simply distance.
 		for (Ball ball : mapState.ballList) {
-			int ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robotLocation.coordinate);
+			int ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robot.coordinate);
 			if (ballRisk < bestRisk) {
 				bestBall = ball;
 				bestRisk = ballRisk;
