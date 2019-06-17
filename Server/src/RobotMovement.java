@@ -27,7 +27,7 @@ public class RobotMovement {
         
         /* Setup wheels */
     	this.wheelDiameter = 5.05;
-    	this.trackWidth = 17.8;
+    	this.trackWidth = 17;
     	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.A);
     	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.B);
  
