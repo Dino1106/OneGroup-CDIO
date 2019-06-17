@@ -9,7 +9,6 @@ import model.Cross;
 import model.Goal;
 import model.MapState;
 import model.PseudoWall;
-import model.Robot;
 import model.Route;
 import model.Wall;
 
@@ -70,13 +69,10 @@ public class PathFinder {
 	// Check if ball is near cross. If it is, get an auxiliary coordinate.
 	private void getCoordinatesForBallNearCross(Ball ball, Route route, Cross cross) {
 		// TODO: Flesh out - if it is needed. Consider two options:
-		// 1: Checking the cross, we see what quadrant the ball truly lies in. Send robot
-		// to this and then proceed.
+		// 1: Checking the cross, we see what quadrant the ball truly lies in. Send
+		// robot to this and then proceed.
 		// 2: Checking the ball near cross, approach to an auxiliary close to either of
 		// the four cross quadrants.
-		
-		// Here's implementation of option 2:
-		
 	}
 
 	// Now check if ball is near wall. If it isn't, then we don't send any auxiliary
@@ -88,29 +84,29 @@ public class PathFinder {
 		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
-			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
+			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
-			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
+			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, rightWall, upperWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-			newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize * 3;
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
+			newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-			newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize * 3;
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
+			newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize;
 			route.coordinates.add(newCoordinate);
 		}
 		if (!ballCloseToCorner) {
@@ -119,26 +115,26 @@ public class PathFinder {
 			if (isBallCloseToWall(ball, leftWall)) {
 				// TODO: Refine where the robot goes here before approaching a wall-close ball.
 				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
 				newCoordinate.y = ball.y;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, rightWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
 				newCoordinate.y = ball.y;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, upperWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = ball.x;
-				newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
+				newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, lowerWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = ball.x;
-				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
+				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
 				route.coordinates.add(newCoordinate);
 			}
 		}
@@ -229,7 +225,7 @@ public class PathFinder {
 	}
 
 	public boolean isBallCloseToWall(Ball ball, Wall wall) {
-		if (calculateDistanceToWall(new Coordinate(ball.x, ball.y), wall) < robotDiameter + robotBufferSize) {
+		if (calculateDistanceToWall(new Coordinate(ball.x, ball.y), wall) < 2 * robotBufferSize) {
 			return true;
 		} else {
 			return false;
@@ -237,7 +233,7 @@ public class PathFinder {
 	}
 
 	public boolean isBallCloseToWall(Ball ball, PseudoWall wall) {
-		if (calculateDistanceToWall(new Coordinate(ball.x, ball.y), wall) < robotDiameter + robotBufferSize) {
+		if (calculateDistanceToWall(new Coordinate(ball.x, ball.y), wall) < 2 * robotBufferSize) {
 			return true;
 		} else {
 			return false;
