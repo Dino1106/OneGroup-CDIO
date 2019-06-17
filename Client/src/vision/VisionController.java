@@ -187,14 +187,14 @@ public class VisionController {
 		// Update window frame with current picture frame
 		this.vidFrameWarped.showImage(converter.convert(pictureWarped));
 		this.vidFrameOriginal.showImage(converter.convert(pictureOriginal));
-
-		if(!calibrationDone) {
-			Scanner in = new Scanner(System.in);
-			System.out.println("-------------\n\nVision Done, confirm with 'enter'");
-			in.nextLine();
-			this.calibrationDone  = true;
-			in.close();
-		}
+//
+//		if(!calibrationDone) {
+//			Scanner in = new Scanner(System.in);
+//			System.out.println("-------------\n\nVision Done, confirm with 'enter'");
+//			in.nextLine();
+//			this.calibrationDone  = true;
+//			in.close();
+//		}
 		
 		pictureOriginal.release(); 
 		picturePlain.release(); 

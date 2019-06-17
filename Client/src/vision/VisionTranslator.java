@@ -28,7 +28,7 @@ public class VisionTranslator {
 	private ArrayList<Wall> walls;
 
 	public VisionTranslator(int cameraId) {
-		visionController = new VisionController("a.jpg");
+		visionController = new VisionController(cameraId);
 		
 		// Warm-up - needs to be here for scale.
 		visionSnapShot = visionController.getSnapShot();
@@ -67,9 +67,7 @@ public class VisionTranslator {
 			Coordinate coord = new Coordinate( (((visionSnapShot.getBalls().get(i).get(0)) / visionScale)), 
 											   (((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
 			
-			System.out.println("Pre: " +coord.x+", "+coord.y);
 			changeToRobotFormat(coord);
-			System.out.println("Post: " +coord.x+", "+coord.y);
 			
 			Ball b = new Ball(coord.x,coord.y);
 			balls.add(b);
@@ -193,13 +191,13 @@ public class VisionTranslator {
 		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate((int)((recievedArray[1][0]) / visionScale) + 50, (int) (recievedArray[1][1] / visionScale));
 		
+		perspectiveTransform(smallCircleCoordinate, roboloc.height);
+		perspectiveTransform(largeCircleCoordinate, roboloc.height);
+		perspectiveTransform(zeroPoint, roboloc.height);
+		
 		changeToRobotFormat(smallCircleCoordinate);
 		changeToRobotFormat(largeCircleCoordinate);
 		changeToRobotFormat(zeroPoint);
-		
-//		perspectiveTransform(smallCircleCoordinate, roboloc.height);
-//		perspectiveTransform(largeCircleCoordinate, roboloc.height);
-//		perspectiveTransform(zeroPoint, roboloc.height);
 		
 		double len = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 

@@ -6,16 +6,17 @@ import java.io.IOException;
 import java.net.Socket;
 
 import model.Coordinate;
+import model.Robot;
  
 public class MainClient { 
 
 	public static final int PORT = 1337;
 	
-	private static Socket socket;
-	private static DataOutputStream dOut;
-	private static DataInputStream dIn;
+	private Socket socket;
+	private DataOutputStream dOut;
+	private DataInputStream dIn;
  
-	public static void connect() throws IOException {
+	public void connect() throws IOException {
 		String ip = "192.168.43.187"; 
 		System.out.println("Starting client");
 		socket = new Socket(ip, PORT);
@@ -23,7 +24,7 @@ public class MainClient {
 		dIn = new DataInputStream(socket.getInputStream());	
 	}
 	
-	public static void sendMotorSpeed(int speed) {
+	public void sendMotorSpeed(int speed) {
 		try {
 			String speedString = "1 " + speed;
 			dOut.writeUTF(speedString);
@@ -33,7 +34,7 @@ public class MainClient {
 		}
 	}
 	
-	public static void sendCoordinate(Coordinate destination, int speed){
+	public void sendCoordinate(Coordinate destination, int speed){
 		// Send coordinates to Server: 
 		try {
 			String coordinateString = "2 " + (destination.x) + " " + (destination.y) + " " + speed;
@@ -54,7 +55,7 @@ public class MainClient {
 		}
 	}
 
-	public static void sendTravelDistance(int centimeters, int speed){
+	public void sendTravelDistance(int centimeters, int speed){
 		System.out.println("SendTravelDistance: " + centimeters + ", " + speed);
 		// Send coordinates to Server: 
 		try {
@@ -74,7 +75,7 @@ public class MainClient {
 		}
 	}
 	
-	public static void pickUpBalls(boolean pickUp) {
+	public void pickUpBalls(boolean pickUp) {
 		System.out.println("pickUpBalls: " + pickUp);
 		try {
 			String pickUpString = "4 " + pickUp;
@@ -85,7 +86,7 @@ public class MainClient {
 		}
 	}
 	
-	public static void rotate(double orientation1) {
+	public void rotate(double orientation1) {
 		System.out.println("rotate, degrees: " + orientation1);
 		try {
 			String rotateString = "5 " + orientation1;
@@ -96,7 +97,7 @@ public class MainClient {
 		}
 	}
 	
-	public static void sendPickUpSpeed(int speed) {
+	public void sendPickUpSpeed(int speed) {
 		System.out.println("sendPickUpSpeed, speed: " + speed);
 		try {
 			String speedString = "6 " + speed;
@@ -108,7 +109,7 @@ public class MainClient {
 		
 	}
 	
-	public static void sendSound(int sound) {
+	public void sendSound(int sound) {
 		System.out.println("sendSound, sound: " + sound);
 		try {
 			String soundString = "7 " + sound;
@@ -120,10 +121,10 @@ public class MainClient {
 		
 	}
 	
-	public static void setRobotLocation(Coordinate coordinate) {
-		System.out.println("setRobotLocation, coordinate: " + coordinate);
+	public void setRobotLocation(Robot robot) {
+		System.out.println("setRobotLocation, coordinate: " + robot.coordinate + ", orientation:" + robot.orientation);
 		try {
-			String coordinateString = "8 " + coordinate.x + " " + coordinate.y;
+			String coordinateString = "8 " + robot.coordinate.x + " " + robot.coordinate.y + " " + robot.orientation;
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
 		} catch (IOException e) {
@@ -131,7 +132,7 @@ public class MainClient {
 		}
 	}
  
-	public static void disconnect() { 
+	public void disconnect() { 
 		try {
 			socket.close();
 			dOut.close();

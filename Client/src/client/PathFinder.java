@@ -20,22 +20,24 @@ public class PathFinder {
 	public static final int speedFast = 500;
 	public static final int sleepTime = 5; // Sleep time in seconds.
 
-	Coordinate northWest;
-	Coordinate northEast;
-	Coordinate southWest;
-	Coordinate southEast;
-	Coordinate middleOfMap;
+	private Coordinate northWest;
+	private Coordinate northEast;
+	private Coordinate southWest;
+	private Coordinate southEast;
+	private Coordinate middleOfMap;
 
-	Wall leftWall;
-	Wall rightWall;
-	PseudoWall upperWall;
-	PseudoWall lowerWall;
+	private Wall leftWall;
+	private Wall rightWall;
+	private PseudoWall upperWall;
+	private PseudoWall lowerWall;
+	private MainClient mainClient;
 
 	// Create this PathFinder which will then find 4 distinct "quadrant
 	// coordinates".
 	// Also starts swallowing balls.
-	public PathFinder(MapState mapState) {
-		MainClient.pickUpBalls(true);
+	public PathFinder(MapState mapState, MainClient mainClient) {
+		this.mainClient = mainClient; 
+		mainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
 		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest + "\nSE: " + southEast + "\nMiddle: " + middleOfMap);
 		generateWalls();
@@ -162,16 +164,16 @@ public class PathFinder {
 		}
 		double orientation1 = mapState.robotLocation.orientation;
 		double orientation2 = goal.robotLocation.orientation;
-		MainClient.rotate(-orientation1);
-		MainClient.rotate(orientation2);
-		MainClient.pickUpBalls(false);
+		mainClient.rotate(-orientation1);
+		mainClient.rotate(orientation2);
+		mainClient.pickUpBalls(false);
 		// Wait for SLEEPTIME seconds.
 		try {
 			Thread.sleep(sleepTime * 1000); // TODO: Is Thread.sleep the right thing to do?
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		MainClient.pickUpBalls(true);
+		mainClient.pickUpBalls(true);
 	}
 
 	// 'Afstandsformlen' to calculate distance between two coordinates.
@@ -381,10 +383,10 @@ public class PathFinder {
 	public void playSound(String sound) {
 		switch (sound) {
 		case "victory":
-			MainClient.sendSound(2);
+			mainClient.sendSound(2);
 			break;
 		case "ball":
-			MainClient.sendSound(1);
+			mainClient.sendSound(1);
 			break;
 		case "goal":
 			break;
@@ -394,13 +396,13 @@ public class PathFinder {
 	}
 
 	public void pickUpMode(boolean swallow) {
-		MainClient.pickUpBalls(swallow);
+		mainClient.pickUpBalls(swallow);
 	}
 
 	// We want the robot to drive a whole route.
 	public void driveRoute(Route route, MapState mapState) {
 		for (Coordinate coordinate : route.coordinates) {
-			MainClient.sendCoordinate(coordinate, speedFast);
+			mainClient.sendCoordinate(coordinate, speedFast);
 		}
 	}
 
@@ -440,10 +442,10 @@ public class PathFinder {
 		
 		if (clockWise < counterClockWise) {
 			System.out.println("Oneway");
-			MainClient.rotate(clockWise);
+			mainClient.rotate(clockWise);
 		} else {
 			System.out.println("Otherway");
-			MainClient.rotate(counterClockWise);
+			mainClient.rotate(counterClockWise);
 		}
 		
 		
@@ -452,9 +454,9 @@ public class PathFinder {
 		int distance = calculateDistances(mapState.robotLocation.coordinate, new Coordinate(bestBall.x, bestBall.y));
 		System.out.println("Go distance: "+distance);
 		
-		MainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);
-		MainClient.sendTravelDistance(-robotDiameter, speedSlow);
-		MainClient.sendMotorSpeed(speedFast);
+		mainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);
+		mainClient.sendTravelDistance(-robotDiameter, speedSlow);
+		mainClient.sendMotorSpeed(speedFast);
 	}
 
 }

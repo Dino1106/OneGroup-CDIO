@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import model.Ball;
 import model.Coordinate;
@@ -14,38 +15,56 @@ import vision.VisionTranslator;
 public class DecisionMaker {
 	
 	static final int maxBalls = 10; // Maximum number of balls in our robot.
+	static int ballsCount = 10;
 	
 	private static VisionTranslator visionTranslator;
 	private static PathFinder pathFinder;
 	private static MapState mapState;
+	private static MainClient mainClient;
 	private static int onFieldBallCount;
 	private static int pickedUpBallCount;
 	
 	public static void main(String[] args) {
 		
 		visionTranslator = new VisionTranslator(1);
+		mainClient = new MainClient();
 		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 		
-		//try {
-			//MainClient.connect();
-			MainClient.pickUpBalls(true);
-			updateMap();
+		
+		try {
+			mainClient.connect();
+			mainClient.sendSound(1);
+			mainClient.pickUpBalls(true);
+			Scanner sc = new Scanner(System.in);
+			while(ballsCount > 0) {	
+				mapState = visionTranslator.getProcessedMap();
+				ballsCount = mapState.ballList.size();
+				mainClient.setRobotLocation(mapState.robotLocation);
+				System.out.println("Send coordinate " + "(" + mapState.ballList.get(0) + ", " + mapState.ballList.get(0).y + ")?");
+				sc.nextLine();
+				mainClient.sendCoordinate(new Coordinate(mapState.ballList.get(0).x, mapState.ballList.get(0).y), 360);
+				mainClient.sendSound(1);
+			}
+			sc.close();
+			mainClient.sendSound(2);
+			mainClient.pickUpBalls(false);
+			//updateMap();
 			
+			/*
 			for (Ball ball : visionTranslator.getProcessedMap().ballList) {
 				System.out.println("SAIZ: " + visionTranslator.getProcessedMap().ballList.size());
-				MainClient.setRobotLocation(mapState.robotLocation.coordinate);
-				MainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 720);
+				mainClient.setRobotLocation(mapState.robotLocation.coordinate);
+				mainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 720);
 			}
-			MainClient.pickUpBalls(false);
-			
+			*/
 //			updateMap();
 //			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
 //			pathFinder = new PathFinder(mapState);
 //			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
 //			mainLoop();
-		//} catch (IOException e) {
-		//	e.printStackTrace();
-		//}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void mainLoop() {
@@ -82,7 +101,7 @@ public class DecisionMaker {
 	// Gets new map info, updates data.
 	private static void updateMap() {
 		mapState = visionTranslator.getProcessedMap();
-		MainClient.setRobotLocation(mapState.robotLocation.coordinate);
+		mainClient.setRobotLocation(mapState.robotLocation);
 		
 		System.out.println("\n\n updateMap():\n" + mapState.toString() + "\n\n");
 		
@@ -97,7 +116,7 @@ public class DecisionMaker {
 		updateMap();
 		pathFinder.swallowAndReverse(mapState, bestBall);
 		updateMap();
-		MainClient.setRobotLocation(mapState.robotLocation.coordinate);
+		mainClient.setRobotLocation(mapState.robotLocation);
 		pickedUpBallCount++;
 	}
 
