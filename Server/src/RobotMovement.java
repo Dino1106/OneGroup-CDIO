@@ -38,7 +38,7 @@ public class RobotMovement {
     }
     
 	public boolean drive(Coordinate to, int speed) {
-		pilot.setLinearSpeed(speed);
+		navigator.getMoveController().setLinearSpeed(speed);
 		float x = (float) to.x;
 		float y = (float) to.y;
 		System.out.println("I am going to x = " + x + ", y = " + y);
@@ -56,12 +56,12 @@ public class RobotMovement {
 	public void travel(int centimeters, int speed) {
 		System.out.println("Driving " + centimeters +" centimeters with " + speed + " speed");
 		setMotorSpeed(speed);
-		pilot.travel(centimeters);
+		navigator.getMoveController().travel(centimeters);
 	}
 	
 	
 	public void setMotorSpeed(int speed) {
-		pilot.setLinearSpeed(speed);
+		navigator.getMoveController().setLinearSpeed(speed);
 	}
 	
 	public void setPickUpSpeed(int speed) {
@@ -69,9 +69,10 @@ public class RobotMovement {
 		ballPickerRight.setPower(speed); 
 	}
 	
-	public void rotateToOrientation(double degrees) {
+	public void rotateOrientation(double degrees) {
 		System.out.println("I am rotating " + degrees + " degrees");
-		pilot.rotate(degrees);
+		navigator.getPoseProvider().getPose().rotateUpdate((float)degrees);
+		//pilot.rotate(degrees);
 	}
 
 	public boolean pickUpBalls(boolean pickUp) {
@@ -95,7 +96,7 @@ public class RobotMovement {
 	public void setRobotLocation(Coordinate coordinate, double heading) {		
 		float x = (float) coordinate.x;
 		float y = (float) coordinate.y;
-		poseProvider.setPose(new Pose(x, y, (float)heading));
+		navigator.getPoseProvider().setPose(new Pose(x, y, (float) heading));
 		System.out.println("Navigator location: x = " + navigator.getPoseProvider().getPose().getLocation().x + ", y = " + navigator.getPoseProvider().getPose().getLocation().y + ", with heading = " + navigator.getPoseProvider().getPose().getHeading());
 	}
 	
