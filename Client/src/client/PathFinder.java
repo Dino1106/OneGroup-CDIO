@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import model.Ball;
 import model.Coordinate;
+import model.Cross;
 import model.Goal;
 import model.MapState;
 import model.PseudoWall;
@@ -36,10 +37,11 @@ public class PathFinder {
 	// coordinates".
 	// Also starts swallowing balls.
 	public PathFinder(MapState mapState, MainClient mainClient) {
-		this.mainClient = mainClient; 
+		this.mainClient = mainClient;
 		mainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
-		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest + "\nSE: " + southEast + "\nMiddle: " + middleOfMap);
+		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest
+				+ "\nSE: " + southEast + "\nMiddle: " + middleOfMap);
 		generateWalls();
 	}
 
@@ -57,76 +59,87 @@ public class PathFinder {
 		// created, dedicated to finding a path between quadrants.
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now we need to get an auxiliary coordinate for balls near corners or walls.
-		getCoordinatesForRiskyBalls(ball, route);
+		getCoordinatesForBallNearWalls(ball, route);
+		// Now we need to get an auxiliary coordinate for balls near cross.
+		// TODO: Is this really neccessary? With current ballpickup and a tip on the
+		// front, the robot should be able to do this without special accounting
+		// getCoordinatesForBallNearCross(ball, route, mapState.cross);
 		return route;
 	}
 
-	// Now check if ball is near wall. If it isn't, then we don't send any auxiliary coordinates.
+	// Check if ball is near cross. If it is, get an auxiliary coordinate.
+	private void getCoordinatesForBallNearCross(Ball ball, Route route, Cross cross) {
+		// TODO: Flesh out - if it is needed. Consider two options:
+		// 1: Checking the cross, we see what quadrant the ball truly lies in. Send robot
+		// to this and then proceed.
+		// 2: Checking the ball near cross, approach to an auxiliary close to either of
+		// the four cross quadrants.
+		
+		// Here's implementation of option 2:
+		
+	}
+
+	// Now check if ball is near wall. If it isn't, then we don't send any auxiliary
+	// coordinates.
 	// Let's see if ball is close to a corner. If it is, we disregard the "ball
 	// close to wall" part.
-	private void getCoordinatesForRiskyBalls(Ball ball, Route route) {
-		boolean ballCloseToCross = false;
-		if (isBallCloseToCross(ball)) {
-			// Where do we trigger this??
+	private void getCoordinatesForBallNearWalls(Ball ball, Route route) {
+		boolean ballCloseToCorner = false;
+		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
+			ballCloseToCorner = true;
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
+			route.coordinates.add(newCoordinate);
 		}
-		if (!ballCloseToCross) {
-			boolean ballCloseToCorner = false;
-			if (isBallCloseToCorner(ball, leftWall, upperWall)) {
-				ballCloseToCorner = true;
+		if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
+			ballCloseToCorner = true;
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
+			route.coordinates.add(newCoordinate);
+		}
+		if (isBallCloseToCorner(ball, rightWall, upperWall)) {
+			ballCloseToCorner = true;
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+			newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize * 3;
+			route.coordinates.add(newCoordinate);
+		}
+		if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
+			ballCloseToCorner = true;
+			Coordinate newCoordinate = new Coordinate(0, 0);
+			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+			newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize * 3;
+			route.coordinates.add(newCoordinate);
+		}
+		if (!ballCloseToCorner) {
+			// Let's see if a ball is close to one of the four walls. If it is, we set up
+			// the route to now stand opposite the wall.
+			if (isBallCloseToWall(ball, leftWall)) {
+				// TODO: Refine where the robot goes here before approaching a wall-close ball.
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+				newCoordinate.y = ball.y;
+				route.coordinates.add(newCoordinate);
+			}
+			if (isBallCloseToWall(ball, rightWall)) {
+				Coordinate newCoordinate = new Coordinate(0, 0);
+				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+				newCoordinate.y = ball.y;
+				route.coordinates.add(newCoordinate);
+			}
+			if (isBallCloseToWall(ball, upperWall)) {
+				Coordinate newCoordinate = new Coordinate(0, 0);
+				newCoordinate.x = ball.x;
 				newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
 				route.coordinates.add(newCoordinate);
 			}
-			if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
-				ballCloseToCorner = true;
+			if (isBallCloseToWall(ball, lowerWall)) {
 				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+				newCoordinate.x = ball.x;
 				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
 				route.coordinates.add(newCoordinate);
-			}
-			if (isBallCloseToCorner(ball, rightWall, upperWall)) {
-				ballCloseToCorner = true;
-				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-				newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize * 3;
-				route.coordinates.add(newCoordinate);
-			}
-			if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
-				ballCloseToCorner = true;
-				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-				newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize * 3;
-				route.coordinates.add(newCoordinate);
-			}
-			if (!ballCloseToCorner) {
-				// Let's see if a ball is close to one of the four walls. If it is, we set up
-				// the route to now stand opposite the wall.
-				if (isBallCloseToWall(ball, leftWall)) {
-					// TODO: Refine where the robot goes here before approaching a wall-close ball.
-					Coordinate newCoordinate = new Coordinate(0, 0);
-					newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
-					newCoordinate.y = ball.y;
-					route.coordinates.add(newCoordinate);
-				}
-				if (isBallCloseToWall(ball, rightWall)) {
-					Coordinate newCoordinate = new Coordinate(0, 0);
-					newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-					newCoordinate.y = ball.y;
-					route.coordinates.add(newCoordinate);
-				}
-				if (isBallCloseToWall(ball, upperWall)) {
-					Coordinate newCoordinate = new Coordinate(0, 0);
-					newCoordinate.x = ball.x;
-					newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
-					route.coordinates.add(newCoordinate);
-				}
-				if (isBallCloseToWall(ball, lowerWall)) {
-					Coordinate newCoordinate = new Coordinate(0, 0);
-					newCoordinate.x = ball.x;
-					newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
-					route.coordinates.add(newCoordinate);
-				}
 			}
 		}
 	}
@@ -414,38 +427,39 @@ public class PathFinder {
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
 		double robotOrientation = mapState.robot.orientation;
-		double robotX = mapState.robot.coordinate.x; 
+		double robotX = mapState.robot.coordinate.x;
 		double robotY = mapState.robot.coordinate.y;
 		double zeroPointX = robotX + 50;
 		double zeroPointY = robotY;
-		
+
 //		System.out.println("Bestball: " +bestBall.x +", "+ bestBall.y);
 //		System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +", "+ mapState.robotLocation.coordinate.y);
 //		double targetOrientation = Math.toDegrees(Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x)));
 
-		System.out.println("Robobitch at: " +robotX+ ", " +robotY);
-		System.out.println("Best ball at: " +bestBall.x+ ", " +bestBall.y);
-		
+		System.out.println("Robobitch at: " + robotX + ", " + robotY);
+		System.out.println("Best ball at: " + bestBall.x + ", " + bestBall.y);
+
 		double a = Point2D.distance(bestBall.x, bestBall.y, zeroPointX, zeroPointY);
-		double b = zeroPointX - bestBall.x; 
+		double b = zeroPointX - bestBall.x;
 		double c = Point2D.distance(robotX, robotY, bestBall.x, bestBall.y);
 
-		double cosA = (b*b + c*c - a*a) / (2*b*c);
+		double cosA = (b * b + c * c - a * a) / (2 * b * c);
 		double radA = Math.acos(cosA);
 		double targetOrientation = Math.toDegrees(radA);
-		
-		System.out.println("a: " +a);
-		System.out.println("b: "+b);
-		System.out.println("c: "+c);
-		System.out.println("CosA: "+cosA);
-		System.out.println("radA: "+radA);
-		
-		System.out.println("[PathFinder] Orientation for swallow:\trobot ori: " + robotOrientation + " target ori: " + targetOrientation);
+
+		System.out.println("a: " + a);
+		System.out.println("b: " + b);
+		System.out.println("c: " + c);
+		System.out.println("CosA: " + cosA);
+		System.out.println("radA: " + radA);
+
+		System.out.println("[PathFinder] Orientation for swallow:\trobot ori: " + robotOrientation + " target ori: "
+				+ targetOrientation);
 
 		// Negative because of Ev3's rotation
-		double clockWise 		= -(targetOrientation - robotOrientation);
+		double clockWise = -(targetOrientation - robotOrientation);
 		double counterClockWise = (robotOrientation + 360) - targetOrientation;
-		
+
 		if (clockWise < counterClockWise) {
 			System.out.println("Oneway");
 			mainClient.rotate(clockWise);
@@ -453,13 +467,10 @@ public class PathFinder {
 			System.out.println("Otherway");
 			mainClient.rotate(counterClockWise);
 		}
-		
-		
-		
 
 		int distance = calculateDistances(mapState.robot.coordinate, new Coordinate(bestBall.x, bestBall.y));
-		System.out.println("Go distance: "+distance);
-		
+		System.out.println("Go distance: " + distance);
+
 		mainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);
 		mainClient.sendTravelDistance(-robotDiameter, speedSlow);
 		mainClient.sendMotorSpeed(speedFast);
