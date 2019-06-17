@@ -65,62 +65,68 @@ public class PathFinder {
 	// Let's see if ball is close to a corner. If it is, we disregard the "ball
 	// close to wall" part.
 	private void getCoordinatesForRiskyBalls(Ball ball, Route route) {
-		boolean ballCloseToCorner = false;
-		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
-			ballCloseToCorner = true;
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
-			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
-			route.coordinates.add(newCoordinate);
+		boolean ballCloseToCross = false;
+		if (isBallCloseToCross(ball)) {
+			// Where do we trigger this??
 		}
-		if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
-			ballCloseToCorner = true;
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
-			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
-			route.coordinates.add(newCoordinate);
-		}
-		if (isBallCloseToCorner(ball, rightWall, upperWall)) {
-			ballCloseToCorner = true;
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-			newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize * 3;
-			route.coordinates.add(newCoordinate);
-		}
-		if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
-			ballCloseToCorner = true;
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-			newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize * 3;
-			route.coordinates.add(newCoordinate);
-		}
-		if (!ballCloseToCorner) {
-			// Let's see if a ball is close to one of the four walls. If it is, we set up
-			// the route to now stand opposite the wall.
-			if (isBallCloseToWall(ball, leftWall)) {
-				// TODO: Refine where the robot goes here before approaching a wall-close ball.
+		if (!ballCloseToCross) {
+			boolean ballCloseToCorner = false;
+			if (isBallCloseToCorner(ball, leftWall, upperWall)) {
+				ballCloseToCorner = true;
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
-				newCoordinate.y = ball.y;
-				route.coordinates.add(newCoordinate);
-			}
-			if (isBallCloseToWall(ball, rightWall)) {
-				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
-				newCoordinate.y = ball.y;
-				route.coordinates.add(newCoordinate);
-			}
-			if (isBallCloseToWall(ball, upperWall)) {
-				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = ball.x;
 				newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
 				route.coordinates.add(newCoordinate);
 			}
-			if (isBallCloseToWall(ball, lowerWall)) {
+			if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
+				ballCloseToCorner = true;
 				Coordinate newCoordinate = new Coordinate(0, 0);
-				newCoordinate.x = ball.x;
+				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
 				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
 				route.coordinates.add(newCoordinate);
+			}
+			if (isBallCloseToCorner(ball, rightWall, upperWall)) {
+				ballCloseToCorner = true;
+				Coordinate newCoordinate = new Coordinate(0, 0);
+				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+				newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize * 3;
+				route.coordinates.add(newCoordinate);
+			}
+			if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
+				ballCloseToCorner = true;
+				Coordinate newCoordinate = new Coordinate(0, 0);
+				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+				newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize * 3;
+				route.coordinates.add(newCoordinate);
+			}
+			if (!ballCloseToCorner) {
+				// Let's see if a ball is close to one of the four walls. If it is, we set up
+				// the route to now stand opposite the wall.
+				if (isBallCloseToWall(ball, leftWall)) {
+					// TODO: Refine where the robot goes here before approaching a wall-close ball.
+					Coordinate newCoordinate = new Coordinate(0, 0);
+					newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize * 3;
+					newCoordinate.y = ball.y;
+					route.coordinates.add(newCoordinate);
+				}
+				if (isBallCloseToWall(ball, rightWall)) {
+					Coordinate newCoordinate = new Coordinate(0, 0);
+					newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize * 3;
+					newCoordinate.y = ball.y;
+					route.coordinates.add(newCoordinate);
+				}
+				if (isBallCloseToWall(ball, upperWall)) {
+					Coordinate newCoordinate = new Coordinate(0, 0);
+					newCoordinate.x = ball.x;
+					newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize * 3;
+					route.coordinates.add(newCoordinate);
+				}
+				if (isBallCloseToWall(ball, lowerWall)) {
+					Coordinate newCoordinate = new Coordinate(0, 0);
+					newCoordinate.x = ball.x;
+					newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize * 3;
+					route.coordinates.add(newCoordinate);
+				}
 			}
 		}
 	}
