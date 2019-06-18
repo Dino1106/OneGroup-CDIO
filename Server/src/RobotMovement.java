@@ -1,3 +1,4 @@
+import lejos.robotics.geometry.Point;
 
 import java.io.File;
 
@@ -9,6 +10,7 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
+import lejos.robotics.pathfinding.Path;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 
@@ -19,7 +21,8 @@ public class RobotMovement {
     private PoseProvider poseProvider;
     private Navigator navigator;
 	private double wheelDiameter, trackWidth;
-	
+	private Pose pose;
+    
     public RobotMovement() {
     	/* Setup ball-picker motors */
     	this.ballPickerLeft = new UnregulatedMotor(MotorPort.C); 
@@ -33,8 +36,8 @@ public class RobotMovement {
  
     	/* Setup navigator with pilot */
         this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
+        this.navigator = new Navigator(pilot);
         this.poseProvider = new OdometryPoseProvider(pilot);
-        this.navigator = new Navigator(pilot, poseProvider);
     }
     
 	public boolean drive(Coordinate to, int speed) {
@@ -42,8 +45,8 @@ public class RobotMovement {
 		float x = (float) to.x;
 		float y = (float) to.y;
 		System.out.println("I am going to x = " + x + ", y = " + y);
-		navigator.goTo(x, y);
-		
+		navigator.goTo( x, y);
+						
 		if(navigator.waitForStop()) {
 			System.out.println("I have stopped");
 			return true;
@@ -74,7 +77,7 @@ public class RobotMovement {
 		navigator.getPoseProvider().getPose().rotateUpdate((float)degrees);
 		//pilot.rotate(degrees);
 	}
-
+	
 	public boolean pickUpBalls(boolean pickUp) {
 		if(pickUp) {
 			System.out.println("Picking up balls");
@@ -93,11 +96,18 @@ public class RobotMovement {
 		}
 	}
 	
-	public void setRobotLocation(Coordinate coordinate, double heading) {		
+	public void setRobotLocation(Coordinate coordinate) {
+		this.pose = poseProvider.getPose();
+
 		float x = (float) coordinate.x;
 		float y = (float) coordinate.y;
-		navigator.getPoseProvider().setPose(new Pose(x, y, (float) heading));
-		System.out.println("Navigator location: x = " + navigator.getPoseProvider().getPose().getLocation().x + ", y = " + navigator.getPoseProvider().getPose().getLocation().y + ", with heading = " + navigator.getPoseProvider().getPose().getHeading());
+		pose.setLocation(new Point(x, y));
+		System.out.println("RobotMovement: getLocation " + this.pose.getLocation().x + " " + this.pose.getLocation().y);
+	}
+	
+	public Coordinate getRobotLocation() {
+		Point roboPoint = pose.getLocation();
+		return new Coordinate((int) (roboPoint.x), (int) (roboPoint.y));
 	}
 	
 	public void playSound(int soundToPlay) {
