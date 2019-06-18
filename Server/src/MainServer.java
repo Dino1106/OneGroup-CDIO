@@ -65,7 +65,7 @@ public class MainServer extends Thread {
 	}
 	
 	public void rotate(double degrees) {
-		robotControls.rotateOrientation(degrees);
+		robotControls.rotateToOrientation(degrees);
 	}
 	
 	public void setPickUpSpeed(int speed) {
