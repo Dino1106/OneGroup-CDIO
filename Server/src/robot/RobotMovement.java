@@ -1,3 +1,4 @@
+package robot;
 import lejos.robotics.geometry.Point;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
 import lejos.robotics.pathfinding.Path;
+import model.Coordinate;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 

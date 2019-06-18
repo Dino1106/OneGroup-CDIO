@@ -1,3 +1,4 @@
+package robot;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,9 +8,11 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import interfaces.IMainServer;
 import lejos.hardware.Sound;
+import model.Coordinate;
 
-public class MainServer extends Thread {
+public class MainServer extends Thread implements IMainServer {
 	
 	public static final int PORT = 1337;
 	private static Socket client;

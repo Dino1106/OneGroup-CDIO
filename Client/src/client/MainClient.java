@@ -5,17 +5,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import interfaces.IMainClient;
 import model.Coordinate;
 import model.Robot;
  
-public class MainClient { 
+public class MainClient implements IMainClient { 
 
-	public static final int PORT = 1337;
-	
 	private Socket socket;
 	private DataOutputStream dOut;
 	private DataInputStream dIn;
  
+	@Override
 	public void connect() throws IOException {
 		String ip = "192.168.43.187"; 
 		System.out.println("Starting client");
@@ -24,6 +24,7 @@ public class MainClient {
 		dIn = new DataInputStream(socket.getInputStream());	
 	}
 	
+	@Override
 	public void sendMotorSpeed(int speed) {
 		try {
 			String speedString = "1 " + speed;
@@ -34,6 +35,7 @@ public class MainClient {
 		}
 	}
 	
+	@Override
 	public void sendCoordinate(Coordinate destination, int speed){
 		// Send coordinates to Server: 
 		try {
@@ -55,6 +57,7 @@ public class MainClient {
 		}
 	}
 
+	@Override
 	public void sendTravelDistance(int centimeters, int speed){
 		System.out.println("SendTravelDistance: " + centimeters + ", " + speed);
 		// Send coordinates to Server: 
@@ -75,6 +78,7 @@ public class MainClient {
 		}
 	}
 	
+	@Override
 	public void pickUpBalls(boolean pickUp) {
 		System.out.println("pickUpBalls: " + pickUp);
 		try {
@@ -86,6 +90,7 @@ public class MainClient {
 		}
 	}
 	
+	@Override
 	public void rotate(double orientation1) {
 		System.out.println("rotate, degrees: " + orientation1);
 		try {
@@ -97,6 +102,7 @@ public class MainClient {
 		}
 	}
 	
+	@Override
 	public void sendPickUpSpeed(int speed) {
 		System.out.println("sendPickUpSpeed, speed: " + speed);
 		try {
@@ -109,6 +115,7 @@ public class MainClient {
 		
 	}
 	
+	@Override
 	public void sendSound(int sound) {
 		System.out.println("sendSound, sound: " + sound);
 		try {
@@ -121,6 +128,7 @@ public class MainClient {
 		
 	}
 	
+	@Override
 	public void setRobotLocation(Robot robot) {
 		System.out.println("setRobotLocation, coordinate: " + robot.coordinate + ", orientation:" + robot.orientation);
 		try {
@@ -132,6 +140,7 @@ public class MainClient {
 		}
 	}
  
+	@Override
 	public void disconnect() { 
 		try {
 			socket.close();

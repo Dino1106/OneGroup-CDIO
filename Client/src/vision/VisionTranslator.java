@@ -112,8 +112,8 @@ public class VisionTranslator {
 	private Cross calculateCross() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
 		for(int i = 0; i < visionSnapShot.getCross().length; i++) {
-			int x = (int) (visionSnapShot.getCross()[i][0]/visionScale);
-			int y = (int) (visionSnapShot.getCross()[i][1]/visionScale);
+			double x = visionSnapShot.getCross()[i][0]/visionScale;
+			double y = visionSnapShot.getCross()[i][1]/visionScale;
 			Coordinate coord = new Coordinate(x,y);
 			changeToRobotFormat(coord);
 			obstacle_coord.add(coord);

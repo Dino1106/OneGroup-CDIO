@@ -3,6 +3,7 @@ package client;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import interfaces.IMainClient;
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -30,12 +31,12 @@ public class PathFinder {
 	private Wall rightWall;
 	private PseudoWall upperWall;
 	private PseudoWall lowerWall;
-	private MainClient mainClient;
+	private IMainClient mainClient;
 
 	// Create this PathFinder which will then find 4 distinct "quadrant
 	// coordinates".
 	// Also starts swallowing balls.
-	public PathFinder(MapState mapState, MainClient mainClient) {
+	public PathFinder(MapState mapState, IMainClient mainClient) {
 		this.mainClient = mainClient;
 		mainClient.pickUpBalls(true);
 		calculateQuadrants(mapState);
@@ -46,6 +47,7 @@ public class PathFinder {
 
 	// We want to return route to a given ball.
 	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
+		System.out.println("----- PathFinder getCalculatedRouteBall"); 
 		Route route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
 		// First we find out which quadrant is nearest to the ball.
@@ -59,6 +61,7 @@ public class PathFinder {
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToBall));
 		// Now we need to get an auxiliary coordinate for balls near corners or walls.
 		getCoordinatesForBallNearWalls(ball, route);
+		System.out.println(route.coordinates.toString());
 		// Now we need to get an auxiliary coordinate for balls near cross.
 		// TODO: Is this really neccessary? With current ballpickup and a tip on the
 		// front, the robot should be able to do this without special accounting
@@ -68,6 +71,7 @@ public class PathFinder {
 
 	// Check if ball is near cross. If it is, get an auxiliary coordinate.
 	private void getCoordinatesForBallNearCross(Ball ball, Route route, Cross cross) {
+		System.out.println("----- PathFinder getCoordinatesForBallNearCross"); 
 		// TODO: Flesh out - if it is needed. Consider two options:
 		// 1: Checking the cross, we see what quadrant the ball truly lies in. Send
 		// robot to this and then proceed.
@@ -80,6 +84,7 @@ public class PathFinder {
 	// Let's see if ball is close to a corner. If it is, we disregard the "ball
 	// close to wall" part.
 	private void getCoordinatesForBallNearWalls(Ball ball, Route route) {
+		System.out.println("----- PathFinder getCoordinatesForBallNearWalls");
 		boolean ballCloseToCorner = false;
 		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
 			ballCloseToCorner = true;
@@ -136,13 +141,14 @@ public class PathFinder {
 				newCoordinate.x = ball.x;
 				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
 				route.coordinates.add(newCoordinate);
-			}
+			} else route.coordinates.add(new Coordinate(ball.x,ball.y));
 		}
 	}
 
 	// We want to return routes to both goals.
 	// TODO: Maybe we want to go to the "best" goal, always?
 	public ArrayList<Route> getCalculatedRoutesGoals(MapState mapState) {
+		System.out.println("----- PathFinder getCalculatedRoutesGoals");
 		ArrayList<Route> routes = new ArrayList<Route>();
 		Route route;
 		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
@@ -169,6 +175,7 @@ public class PathFinder {
 
 	// We want the robot to turn towards the goal, and then spit out balls.
 	public void deliverBalls(MapState mapState) {
+		System.out.println("----- PathFinder deliverBalls");
 		// Find the closest goal.
 		Goal goal = null;
 		if (calculateDistances(mapState.robot.coordinate, mapState.goal1.coordinate1) > calculateDistances(
@@ -250,6 +257,7 @@ public class PathFinder {
 	// Gets a route between two quadrants. Has been created as a mess of if
 	// statements - a manual deduction is the most effective.
 	private ArrayList<Coordinate> getRouteBetweenQuadrants(Coordinate fromCoordinate, Coordinate toCoordinate) {
+		System.out.println("----- PathFinder getRouteBetweenQuadrants");
 		ArrayList<Coordinate> output = new ArrayList<Coordinate>();
 		// For northWest
 		if (fromCoordinate.equals(northWest)) {
@@ -321,6 +329,7 @@ public class PathFinder {
 
 	// Generates pseudowalls.
 	private void generateWalls() {
+		System.out.println("----- PathFinder generateWalls");
 		upperWall = new PseudoWall();
 		lowerWall = new PseudoWall();
 		upperWall.left = new Coordinate(leftWall.upper.x, leftWall.upper.y);
@@ -369,6 +378,7 @@ public class PathFinder {
 
 	// We find out which quadrant is closest to the requested ball.
 	private Coordinate findNearestQuadrant(Coordinate coordinate) {
+		System.out.println("----- PathFinder findNearestQuadrant");
 		Coordinate output = new Coordinate(0, 0);
 		int compare;
 		int minimum = calculateDistances(coordinate, northWest);
@@ -396,6 +406,7 @@ public class PathFinder {
 
 	// Play a sound.
 	public void playSound(String sound) {
+		System.out.println("----- PathFinder playSound");
 		switch (sound) {
 		case "victory":
 			mainClient.sendSound(2);
@@ -411,26 +422,29 @@ public class PathFinder {
 	}
 
 	public void pickUpMode(boolean swallow) {
+		System.out.println("----- PathFinder pickUpMode");
 		mainClient.pickUpBalls(swallow);
 	}
 
 	// We want the robot to drive a whole route.
 	public void driveRoute(Route route, MapState mapState) {
 		for (Coordinate coordinate : route.coordinates) {
+			System.out.println("----- PathFinder driveRoute \nRoute length: " + route.coordinates.size() + ", \nSending coordinate " + coordinate.toString() + " to robot");
 			mainClient.sendCoordinate(coordinate, speedFast);
 		}
 	}
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
+		System.out.println("----- PathFinder swallowAndReverse");
 		double robotOrientation = mapState.robot.orientation;
 		double robotX = mapState.robot.coordinate.x;
 		double robotY = mapState.robot.coordinate.y;
 		double zeroPointX = robotX + 50;
 		double zeroPointY = robotY;
 
-//		System.out.println("Bestball: " +bestBall.x +", "+ bestBall.y);
-//		System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +", "+ mapState.robotLocation.coordinate.y);
-//		double targetOrientation = Math.toDegrees(Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x)));
+		//		System.out.println("Bestball: " +bestBall.x +", "+ bestBall.y);
+		//		System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +", "+ mapState.robotLocation.coordinate.y);
+		//		double targetOrientation = Math.toDegrees(Math.atan((bestBall.y - mapState.robotLocation.coordinate.y) / (bestBall.x - mapState.robotLocation.coordinate.x)));
 
 		System.out.println("Robobitch at: " + robotX + ", " + robotY);
 		System.out.println("Best ball at: " + bestBall.x + ", " + bestBall.y);
