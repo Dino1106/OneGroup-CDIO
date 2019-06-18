@@ -71,34 +71,25 @@ public class IdentifyBalls {
 		return circle;
 	}
 
-	private void autoCircle(int param1, int param2, int param3, int param4, int param5) {
+	private void autoCircle(int paramMinDistance, int paramCannyThreshold, int paramCenterThreshold, int paramMinRad, int paramMaxRad) {
 
 		int amount_circles = 10;
 
-		int sec1, sec2 = param2, sec3 = param3, sec4 = param4, sec5 = param5;
+		int sec1, sec2 = paramCannyThreshold, sec3 = paramCenterThreshold, sec4 = paramMinRad, sec5 = paramMaxRad;
 		outerloop:
-		do {
-			for (sec1 = param1 /* (param1-max_change) */; sec1 <= param1 + calib[0]; sec1++) {
-				extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-				if (eval(amount_circles))
-				{
-					minDistance = sec1;
-					cannyThreshold = sec2;
-					centerThreshold = sec3;
-					minRad = sec4;
-					maxRad = sec5;
-					break outerloop;
-				}
-				for (sec2 = (param2 - calib[1]); sec2 <= param2 + calib[1]; sec2++) {
+			do {
+				for (sec1 = paramMinDistance /* (param1-max_change) */; sec1 <= paramMinDistance + calib[0]; sec1++) {
 					extractCircles(1, sec1, sec2, sec3, sec4, sec5);
-					if (eval(amount_circles)){
+					if (eval(amount_circles))
+					{
 						minDistance = sec1;
 						cannyThreshold = sec2;
 						centerThreshold = sec3;
 						minRad = sec4;
 						maxRad = sec5;
-						break outerloop;}
-					for (sec3 = (param3 - calib[2]); sec3 <= param3 + calib[2]; sec3++) {
+						break outerloop;
+					}
+					for (sec2 = (paramCannyThreshold - calib[1]); sec2 <= paramCannyThreshold + calib[1]; sec2++) {
 						extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 						if (eval(amount_circles)){
 							minDistance = sec1;
@@ -107,7 +98,7 @@ public class IdentifyBalls {
 							minRad = sec4;
 							maxRad = sec5;
 							break outerloop;}
-						for (sec4 = (param4); sec4 <= param4 + calib[3]; sec4++) {
+						for (sec3 = (paramCenterThreshold - calib[2]); sec3 <= paramCenterThreshold + calib[2]; sec3++) {
 							extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 							if (eval(amount_circles)){
 								minDistance = sec1;
@@ -116,7 +107,7 @@ public class IdentifyBalls {
 								minRad = sec4;
 								maxRad = sec5;
 								break outerloop;}
-							for (sec5 = (param5); sec5 <= param5 + calib[4]; sec5++) {
+							for (sec4 = (paramMinRad); sec4 <= paramMinRad + calib[3]; sec4++) {
 								extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 								if (eval(amount_circles)){
 									minDistance = sec1;
@@ -125,13 +116,22 @@ public class IdentifyBalls {
 									minRad = sec4;
 									maxRad = sec5;
 									break outerloop;}
+								for (sec5 = (paramMaxRad); sec5 <= paramMaxRad + calib[4]; sec5++) {
+									extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+									if (eval(amount_circles)){
+										minDistance = sec1;
+										cannyThreshold = sec2;
+										centerThreshold = sec3;
+										minRad = sec4;
+										maxRad = sec5;
+										break outerloop;}
+								}
 							}
 						}
 					}
-				}
 
-			}
-		} while (!eval(amount_circles--));
+				}
+			} while (!eval(amount_circles--));
 	}
 
 	public int[] getParams(){
@@ -182,7 +182,7 @@ public class IdentifyBalls {
 	}
 
 
-/*
+	/*
 	public void moveBalls( Mat pictureGlobal,Mat perspective)
 	{
 
@@ -218,5 +218,5 @@ public class IdentifyBalls {
 }
 
 
-*/
+	 */
 }
