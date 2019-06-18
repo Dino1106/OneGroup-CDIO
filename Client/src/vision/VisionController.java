@@ -93,6 +93,10 @@ public class VisionController {
 				this.grabber = FrameGrabber.createDefault(this.cameraId);
 				this.grabber.setImageHeight(this.imageHeight);
 				this.grabber.setImageWidth(this.imageWidth);
+				this.grabber.start();
+				System.out.println("Gamme: " + this.grabber.getGamma());
+				this.grabber.setGamma(0.0);
+				System.out.println("Gamme: " + this.grabber.getGamma());
 			}
 
 			edgeDetection();
@@ -215,12 +219,8 @@ public class VisionController {
 		if (usingCamera) {
 			try {
 
-				this.grabber.start();
-
 				// Save the frame as a Mat
 				Frame frame = this.grabber.grab();
-
-				//this.grabber.stop();
 
 				return this.converter.convert(frame);
 
