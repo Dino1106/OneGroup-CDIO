@@ -412,7 +412,7 @@ public class PathFinder {
 			mainClient.sendSound(2);
 			break;
 		case "ball":
-			mainClient.sendSound(1);
+			mainClient.sendSound(3);
 			break;
 		case "goal":
 			break;
@@ -430,6 +430,7 @@ public class PathFinder {
 	public void driveRoute(Route route, MapState mapState) {
 		for (Coordinate coordinate : route.coordinates) {
 			System.out.println("----- PathFinder driveRoute \nRoute length: " + route.coordinates.size() + ", \nSending coordinate " + coordinate.toString() + " to robot");
+			mainClient.setRobotLocation(mapState.robot);
 			mainClient.sendCoordinate(coordinate, speedFast);
 		}
 	}
