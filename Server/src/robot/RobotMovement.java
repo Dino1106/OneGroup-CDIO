@@ -121,6 +121,9 @@ public class RobotMovement {
 		case 2:
 			sound = new File("victorySound.wav");
 			break;
+		case 3:
+			sound = new File("yikes.wav");
+			break;
 		default:
 			break;
 		}
