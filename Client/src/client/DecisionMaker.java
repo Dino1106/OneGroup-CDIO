@@ -164,10 +164,10 @@ public class DecisionMaker {
 	
 	private static Ball decideBestBall() {
 		Ball bestBall = mapState.ballList.get(0);
-		int bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robot.coordinate);
+		double bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y), mapState.robot.coordinate);
 		// TODO: Risk calculation here should be more advanced than simply distance.
 		for (Ball ball : mapState.ballList) {
-			int ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robot.coordinate);
+			double ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robot.coordinate);
 			if (ballRisk < bestRisk) {
 				bestBall = ball;
 				bestRisk = ballRisk;

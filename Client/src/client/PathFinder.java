@@ -199,8 +199,8 @@ public class PathFinder {
 	}
 
 	// 'Afstandsformlen' to calculate distance between two coordinates.
-	public int calculateDistances(Coordinate coordinate1, Coordinate coordinate2) {
-		return (int) Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
+	public double calculateDistances(Coordinate coordinate1, Coordinate coordinate2) {
+		return Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
 	}
 
 	// Deprecated. We use another method.
@@ -380,8 +380,8 @@ public class PathFinder {
 	private Coordinate findNearestQuadrant(Coordinate coordinate) {
 		System.out.println("----- PathFinder findNearestQuadrant");
 		Coordinate output = new Coordinate(0, 0);
-		int compare;
-		int minimum = calculateDistances(coordinate, northWest);
+		double compare;
+		double minimum = calculateDistances(coordinate, northWest);
 		output = northWest;
 		// Now we compare against northEast.
 		compare = calculateDistances(coordinate, northEast);
@@ -479,10 +479,10 @@ public class PathFinder {
 			mainClient.rotate(counterClockWise);
 		}
 
-		int distance = calculateDistances(mapState.robot.coordinate, new Coordinate(bestBall.x, bestBall.y));
+		double distance = calculateDistances(mapState.robot.coordinate, new Coordinate(bestBall.x, bestBall.y));
 		System.out.println("Go distance: " + distance);
 
-		mainClient.sendTravelDistance(distance - robotDiameter / 4, speedSlow);
+		mainClient.sendTravelDistance((int) distance - robotDiameter / 4, speedSlow);
 		mainClient.sendTravelDistance(-robotDiameter, speedSlow);
 		mainClient.sendMotorSpeed(speedFast);
 	}
