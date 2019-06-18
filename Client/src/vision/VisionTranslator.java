@@ -192,13 +192,15 @@ public class VisionTranslator {
 		Robot roboloc = new Robot();
 		
 		// Calculate orientation via geometry
-		Coordinate smallCircleCoordinate = new Coordinate((int) (recievedArray[0][0] / visionScale),(int) (recievedArray[0][1] / visionScale));
-		Coordinate largeCircleCoordinate = new Coordinate((int) (recievedArray[1][0] / visionScale),(int) (recievedArray[1][1] / visionScale));
-		Coordinate zeroPoint = new Coordinate((int)((recievedArray[1][0]) / visionScale) + 50, (int) (recievedArray[1][1] / visionScale));
+		Coordinate smallCircleCoordinate = new Coordinate((recievedArray[0][0] / visionScale), (recievedArray[0][1] / visionScale));
+		Coordinate largeCircleCoordinate = new Coordinate((recievedArray[1][0] / visionScale),(recievedArray[1][1] / visionScale));
+		Coordinate zeroPoint = new Coordinate(((recievedArray[1][0]) / visionScale) + 50, (recievedArray[1][1] / visionScale));
 		
+		System.out.println("FØR PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		perspectiveTransform(smallCircleCoordinate, roboloc.height);
 		perspectiveTransform(largeCircleCoordinate, roboloc.height);
 		perspectiveTransform(zeroPoint, roboloc.height);
+		System.out.println("EFTER PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		
 		changeToRobotFormat(smallCircleCoordinate);
 		changeToRobotFormat(largeCircleCoordinate);
@@ -206,8 +208,11 @@ public class VisionTranslator {
 		
 		double len = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 
-		int x = (int) ((1 - robotAxisShift) * largeCircleCoordinate.x + robotAxisShift * smallCircleCoordinate.x);
-		int y = (int) ((1 - robotAxisShift) * largeCircleCoordinate.y + robotAxisShift * smallCircleCoordinate.y);
+		System.out.println("INDEN " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
+		double x = ((1 - robotAxisShift) * largeCircleCoordinate.x + robotAxisShift * smallCircleCoordinate.x);
+		double y = ((1 - robotAxisShift) * largeCircleCoordinate.y + robotAxisShift * smallCircleCoordinate.y);
+		System.out.println("EFTER " + x + " " + y);
+		
 		
 		largeCircleCoordinate = new Coordinate(x, y);
 		

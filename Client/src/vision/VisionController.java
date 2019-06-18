@@ -1,12 +1,12 @@
 package vision;
 
 import static org.bytedeco.opencv.global.opencv_core.CV_32F;
+
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2HSV;
 import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 import java.awt.geom.Point2D;
-import java.util.Scanner;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.FloatPointer;
@@ -148,7 +148,7 @@ public class VisionController {
 
 		// Get coordinates from picture for the walls
 		walls = getWallCoordinatesFromPicture(pictureColor);
-
+		
 		// 1 - Identify balls with given parameters and draw circles
 		System.out.println("Vision - Start identify balls");
 
