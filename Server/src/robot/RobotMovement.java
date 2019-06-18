@@ -82,15 +82,15 @@ public class RobotMovement {
 	public boolean pickUpBalls(boolean pickUp) {
 		if(pickUp) {
 			System.out.println("Picking up balls");
-			ballPickerLeft.setPower(85);
-			ballPickerRight.setPower(85);
+			ballPickerLeft.setPower(95);
+			ballPickerRight.setPower(95);
 		    ballPickerLeft.forward();
 		    ballPickerRight.backward();
 		    return true;
 		} else {
 			System.out.println("Spitting out balls");
-			ballPickerLeft.setPower(85);
-			ballPickerRight.setPower(85); 
+			ballPickerLeft.setPower(95);
+			ballPickerRight.setPower(95); 
 			ballPickerLeft.backward();
 		    ballPickerRight.forward();
 		    return false;
