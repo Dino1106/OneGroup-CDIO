@@ -30,7 +30,7 @@ public class RobotMovement {
         
         /* Setup wheels */
     	this.wheelDiameter = 3;
-    	this.trackWidth = 17.6;
+    	this.trackWidth = 17.8;
     	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.B);
     	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.A);
  
@@ -82,15 +82,15 @@ public class RobotMovement {
 			System.out.println("Picking up balls");
 			ballPickerLeft.setPower(85);
 			ballPickerRight.setPower(85);
-		    ballPickerLeft.backward();
-		    ballPickerRight.forward();
+		    ballPickerLeft.forward();
+		    ballPickerRight.backward();
 		    return true;
 		} else {
 			System.out.println("Spitting out balls");
 			ballPickerLeft.setPower(85);
 			ballPickerRight.setPower(85); 
-			ballPickerLeft.forward();
-		    ballPickerRight.backward();
+			ballPickerLeft.backward();
+		    ballPickerRight.forward();
 		    return false;
 		}
 	}

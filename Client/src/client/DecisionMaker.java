@@ -33,42 +33,57 @@ public class DecisionMaker {
 		try {
 		mainClient.connect();
 		
-		//Venstre nede
 		mapState = visionTranslator.getProcessedMap();
 		System.out.println("new Mapstate: " + mapState.toString());
 		mainClient.setRobotLocation(mapState.robot);
+		Ball ball = mapState.ballList.get(0);
+		mainClient.pickUpBalls(true);
+		mainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 360);
 		mainClient.sendSound(1);
-		Coordinate coord = new Coordinate(40, 40);
-		mainClient.sendCoordinate(coord, 350);
-
-		//Venstre oppe
-		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
-		mainClient.sendSound(1);
-		coord = new Coordinate(40, 82);
-		mainClient.sendCoordinate(coord, 350);
-
-		//Højre oppe
-		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
-		mainClient.sendSound(1);
-		coord = new Coordinate(129, 82);
-		mainClient.sendCoordinate(coord, 350);
-
-		//Højre nede
-		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
-		mainClient.sendSound(1);
-		coord = new Coordinate(129, 40);
-		mainClient.sendCoordinate(coord, 350);
-
-		//Venstre nede
-		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
-		mainClient.sendSound(1);
-		coord = new Coordinate(40, 40);
-		mainClient.sendCoordinate(coord, 350);
-
+		mainClient.pickUpBalls(false);
+	
+		
+//		//Venstre nede
+//		mapState = visionTranslator.getProcessedMap();
+//		System.out.println("new Mapstate: " + mapState.toString());
+//		mainClient.setRobotLocation(mapState.robot);
+//		mainClient.sendSound(1);
+//		Coordinate coord = new Coordinate(20, 20);
+//		//Coordinate coord = new Coordinate(40, 40);
+//		mainClient.sendCoordinate(coord, 350);
+//
+//		//Venstre oppe
+//		mapState = visionTranslator.getProcessedMap();
+//		mainClient.setRobotLocation(mapState.robot);
+//		mainClient.sendSound(1);
+//		//coord = new Coordinate(40, 82);
+//		coord = new Coordinate(20, 102);
+//		mainClient.sendCoordinate(coord, 350);
+//
+//		//Højre oppe
+//		mapState = visionTranslator.getProcessedMap();
+//		mainClient.setRobotLocation(mapState.robot);
+//		mainClient.sendSound(1);
+//		//coord = new Coordinate(129, 82);
+//		coord = new Coordinate(149, 102);
+//		mainClient.sendCoordinate(coord, 350);
+//
+//		//Højre nede
+//		mapState = visionTranslator.getProcessedMap();
+//		mainClient.setRobotLocation(mapState.robot);
+//		mainClient.sendSound(1);
+//		//coord = new Coordinate(129, 40);
+//		coord = new Coordinate(149, 20);
+//		mainClient.sendCoordinate(coord, 350);
+//
+//		//Venstre nede
+//		mapState = visionTranslator.getProcessedMap();
+//		mainClient.setRobotLocation(mapState.robot);
+//		mainClient.sendSound(1);
+//		//coord = new Coordinate(40, 40);
+//		coord = new Coordinate(20, 20);
+//		mainClient.sendCoordinate(coord, 350);
+//
 
 		//Yay
 		mainClient.sendSound(2);
