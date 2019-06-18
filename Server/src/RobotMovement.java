@@ -14,7 +14,7 @@ import lejos.robotics.pathfinding.Path;
 
 @SuppressWarnings("deprecation")
 public class RobotMovement { 
-	 
+	
 	private UnregulatedMotor ballPickerLeft, ballPickerRight;
 	private RegulatedMotor leftWheel, rightWheel;
     private DifferentialPilot pilot;
@@ -29,10 +29,10 @@ public class RobotMovement {
         this.ballPickerRight = new UnregulatedMotor(MotorPort.D);
         
         /* Setup wheels */
-    	this.wheelDiameter = 5.05;
-    	this.trackWidth = 17;
-    	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.A);
-    	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.B);
+    	this.wheelDiameter = 3;
+    	this.trackWidth = 17.6;
+    	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.B);
+    	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.A);
  
     	/* Setup navigator with pilot */
         this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
@@ -95,12 +95,12 @@ public class RobotMovement {
 		}
 	}
 	
-	public void setRobotLocation(Coordinate coordinate) {
+	public void setRobotLocation(Coordinate coordinate, double heading) {
 		this.pose = poseProvider.getPose();
 
 		float x = (float) coordinate.x;
 		float y = (float) coordinate.y;
-		poseProvider.setPose(new Pose(x, y, (float)heading));
+		navigator.getPoseProvider().setPose(new Pose(x, y, (float) heading));
 		System.out.println("Navigator location: x = " + navigator.getPoseProvider().getPose().getLocation().x + ", y = " + navigator.getPoseProvider().getPose().getLocation().y + ", with heading = " + navigator.getPoseProvider().getPose().getHeading());
 	}
 	

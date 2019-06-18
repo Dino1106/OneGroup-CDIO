@@ -23,7 +23,7 @@ public class VisionTranslator {
 
 	private double cameraHeight = 178.0;	// Change this for each run
 	
-	private double robotAxisShift = 7.0/13.5;
+	private double robotAxisShift = 1.5/13.5;
 	private double cameraX, cameraY;
 	private int longBarrierLength = 169;
 	private ArrayList<Wall> walls;

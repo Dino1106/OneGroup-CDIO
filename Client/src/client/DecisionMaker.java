@@ -26,52 +26,59 @@ public class DecisionMaker {
 	
 	public static void main(String[] args) {
 		
-		//visionTranslator = new VisionTranslator(1);
+		visionTranslator = new VisionTranslator(0);
 		mainClient = new MainClient();
-//		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
-		
-		
+		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
+
 		try {
-			mainClient.connect();
-			//mapState = visionTranslator.getProcessedMap();
-			//mainClient.setRobotLocation(mapState.robot);
-			
-			mainClient.rotate(1080);
-//			mainClient.sendSound(1);
-//			mainClient.pickUpBalls(true);
-//			Scanner sc = new Scanner(System.in);
-//			while(ballsCount > 0) {	
-//				mapState = visionTranslator.getProcessedMap();
-//				ballsCount = mapState.ballList.size();
-//				
-//				System.out.println("Jeg tror jeg er i:");
-//				mainClient.setRobotLocation(mapState.robotLocation);
-//				System.out.println("Send coordinate " + "(" + mapState.ballList.get(0) + ", " + mapState.ballList.get(0).y + ")?");
-//				sc.nextLine();
-//				System.out.println("Jeg er virkelig i:");
-//				mainClient.setRobotLocation(mapState.robotLocation);
-//				System.out.println("Send coordinate " + "(" + mapState.ballList.get(0) + ", " + mapState.ballList.get(0).y + ")?");
-//				sc.nextLine();
-//				mainClient.sendCoordinate(new Coordinate(mapState.ballList.get(0).x, mapState.ballList.get(0).y), 360);
-//				mainClient.sendSound(1);
-//			}
-//			sc.close();
-//			mainClient.sendSound(2);
-//			mainClient.pickUpBalls(false);
-//			updateMap();
-			
-			/*
-			for (Ball ball : visionTranslator.getProcessedMap().ballList) {
-				System.out.println("SAIZ: " + visionTranslator.getProcessedMap().ballList.size());
-				mainClient.setRobotLocation(mapState.robotLocation.coordinate);
-				mainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 720);
-			}
-			*/
-//			updateMap();
-//			MainClient.setRobotLocation(mapState.robotLocation.coordinate);
-//			pathFinder = new PathFinder(mapState);
-//			System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
-//			mainLoop();
+		mainClient.connect();
+		
+		//Venstre nede
+		mapState = visionTranslator.getProcessedMap();
+		System.out.println("new Mapstate: " + mapState.toString());
+		mainClient.setRobotLocation(mapState.robot);
+		mainClient.sendSound(1);
+		Coordinate coord = new Coordinate(40, 40);
+		mainClient.sendCoordinate(coord, 350);
+
+		//Venstre oppe
+		mapState = visionTranslator.getProcessedMap();
+		mainClient.setRobotLocation(mapState.robot);
+		mainClient.sendSound(1);
+		coord = new Coordinate(40, 82);
+		mainClient.sendCoordinate(coord, 350);
+
+		//Højre oppe
+		mapState = visionTranslator.getProcessedMap();
+		mainClient.setRobotLocation(mapState.robot);
+		mainClient.sendSound(1);
+		coord = new Coordinate(129, 82);
+		mainClient.sendCoordinate(coord, 350);
+
+		//Højre nede
+		mapState = visionTranslator.getProcessedMap();
+		mainClient.setRobotLocation(mapState.robot);
+		mainClient.sendSound(1);
+		coord = new Coordinate(129, 40);
+		mainClient.sendCoordinate(coord, 350);
+
+		//Venstre nede
+		mapState = visionTranslator.getProcessedMap();
+		mainClient.setRobotLocation(mapState.robot);
+		mainClient.sendSound(1);
+		coord = new Coordinate(40, 40);
+		mainClient.sendCoordinate(coord, 350);
+
+
+		//Yay
+		mainClient.sendSound(2);
+		mainClient.rotate(360);
+
+		//updateMap();
+		//MainClient.setRobotLocation(mapState.robotLocation.coordinate);
+		//pathFinder = new PathFinder(mapState);
+		//System.out.println("RobotLocation efter MainClient Call " + mapState.robotLocation);
+		//mainLoop();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

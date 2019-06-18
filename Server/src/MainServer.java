@@ -76,8 +76,8 @@ public class MainServer extends Thread {
 		robotControls.playSound(soundToPlay);
 	}
 	
-	public void setRobotLocation(Coordinate coordinate) {
-		robotControls.setRobotLocation(coordinate);
+	public void setRobotLocation(Coordinate coordinate, double heading) {
+		robotControls.setRobotLocation(coordinate, heading);
 	}
 	
 	private Coordinate getRobotlocation() {
@@ -128,7 +128,8 @@ public class MainServer extends Thread {
 					break;
 				case 8:
 					Coordinate robotLocation = new Coordinate(Double.parseDouble(splitInputs[1]), Double.parseDouble(splitInputs[2]));
-					setRobotLocation(robotLocation);
+					double heading = Double.parseDouble(splitInputs[3]);
+					setRobotLocation(robotLocation, heading);
 					break;
 				default:
 					break;
