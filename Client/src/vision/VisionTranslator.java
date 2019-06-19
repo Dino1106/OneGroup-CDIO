@@ -38,7 +38,7 @@ public class VisionTranslator {
 		this.walls = calculateWalls();
 		ArrayList<Goal> goals = calculateGoals(walls);
 		
-		// TODO: Kan tages ud så den ikke beregnes hver gang
+		// TODO: Kan tages ud sï¿½ den ikke beregnes hver gang
 		
 		//Calculate center of frame through upper-right wall location
 		cameraX = (walls.get(1).upper.x/2);
@@ -158,7 +158,7 @@ public class VisionTranslator {
 		Coordinate largeCircleCoordinate = new Coordinate((recievedArray[1][0] / visionScale),(recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate(((recievedArray[1][0]) / visionScale) + 50, (recievedArray[1][1] / visionScale));
 		
-		System.out.println("FØR PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
+		System.out.println("Fï¿½R PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		perspectiveTransform(smallCircleCoordinate, roboloc.height);
 		perspectiveTransform(largeCircleCoordinate, roboloc.height);
 		perspectiveTransform(zeroPoint, roboloc.height);

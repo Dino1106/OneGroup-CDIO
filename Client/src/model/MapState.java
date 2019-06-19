@@ -28,7 +28,7 @@ public class MapState {
 	@Override
 	public String toString() {
 		return "MapState [\nballList=" + ballList + ",\n cross=" + cross + ",\n wallList=" + wallList + ",\n goal1=" + goal1
-				+ ",\n goal2=" + goal2 + ",\n robotLocation=" + robot + "]";
+				+ ",\n goal2=" + goal2 + ",\n robotLocation=" + robot + ",\n quadrants= "+ quadrant+"]";
 	}
 	
 }

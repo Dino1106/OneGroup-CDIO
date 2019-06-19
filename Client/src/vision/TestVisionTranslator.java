@@ -1,5 +1,4 @@
 package vision;
-
 import java.util.ArrayList;
 import model.Ball;
 import model.Coordinate;
@@ -16,6 +15,7 @@ public class TestVisionTranslator {
 	private Cross cross;
 	private Robot robot;
 	private ArrayList<Goal> goals;
+	private ArrayList<Coordinate> quadrants;
 
 	public TestVisionTranslator(){
 		this.balls = generateBalls();
@@ -23,11 +23,12 @@ public class TestVisionTranslator {
 		this.cross = generateCross(walls);
 		this.goals = generateGoals(walls);
 		this.robot = generateRobot();
+		this.quadrants = generateQuadrants();
 		
 	}
 
 	public MapState getProcessedMap() {
-		return new MapState(balls, cross, walls, goals.get(0), goals.get(1), robot, null);
+		return new MapState(balls, cross, walls, goals.get(0), goals.get(1), robot, quadrants);
 	}
 
 	/**
@@ -124,6 +125,22 @@ public class TestVisionTranslator {
 
 	private Robot generateRobot() {
 		return new Robot(new Coordinate(50,50), 0);
+	}
+	
+	private ArrayList<Coordinate> generateQuadrants(){
+		ArrayList<Wall> edges = generateWalls();
+		ArrayList<Coordinate> quadrants = new ArrayList<Coordinate>();
+		Coordinate middle = new Coordinate(0,0);
+		
+		middle.x = (edges.get(0).upper.x + edges.get(0).lower.x + edges.get(1).upper.x + edges.get(1).lower.x)/4;
+		middle.y = (edges.get(0).upper.y + edges.get(0).lower.y + edges.get(1).upper.y + edges.get(1).lower.y)/4;
+		
+		quadrants.add(new Coordinate((edges.get(0).upper.x + middle.x)/2, edges.get(0).upper.y + middle.y));
+		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, edges.get(0).lower.y + middle.y));
+		quadrants.add(new Coordinate((edges.get(1).upper.x + middle.x)/2, edges.get(1).upper.y + middle.y));
+		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, edges.get(0).lower.y + middle.y));
+		
+		return quadrants;
 	}
 
 }
