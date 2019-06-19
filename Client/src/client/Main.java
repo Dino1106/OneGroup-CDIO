@@ -5,11 +5,15 @@ public class Main {
 	public static void main(String[] args) {
 		DecisionMaker decisionMaker = new DecisionMaker();
 		
-		//Normal vision + algorithm
+		// Normal vision + algorithm
 //		decisionMaker.run();
 		
-//		decisionMaker.runVisionTest();
+		// Normal vision + robot test
 		decisionMaker.runRobotTest();
+		
+		// Test vision + algorithm
+//		decisionMaker.runVisionTest();
+		
 	}
 
 }
