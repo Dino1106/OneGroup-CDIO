@@ -152,10 +152,10 @@ public class VisionController {
 		// 1 - Identify balls with given parameters and draw circles
 		System.out.println("Vision - Start identify balls");
 		IdentifyBalls identifyBalls;
-		int[] calib = {6, 5, 2, 6, 20};
+		int[] calib = {6, 5, 2, 20, 20};
 		
 		if(calibration) {
-			identifyBalls = new IdentifyBalls(picturePlain, 1, 11, 120, 15, 8, 8, calib);
+			identifyBalls = new IdentifyBalls(picturePlain, 1, 11, 120, 15, 4, 8, calib);
 			params = identifyBalls.getParams();
 			calibration = false;
 		} else {

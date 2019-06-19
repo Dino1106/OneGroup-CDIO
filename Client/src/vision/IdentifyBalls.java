@@ -1,25 +1,14 @@
 package vision;
 
-import static org.bytedeco.opencv.global.opencv_core.CV_32F;
-import static org.bytedeco.opencv.global.opencv_core.CV_8U;
 import static org.bytedeco.opencv.global.opencv_imgproc.CV_HOUGH_GRADIENT;
 import static org.bytedeco.opencv.global.opencv_imgproc.HoughCircles;
 import static org.bytedeco.opencv.global.opencv_imgproc.circle;
 import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
-import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
-
-import static org.bytedeco.opencv.global.opencv_imgproc.*;
-import static org.bytedeco.opencv.global.opencv_imgproc.line;
-
-import static org.bytedeco.opencv.global.opencv_imgproc.*;
-import static org.bytedeco.opencv.global.opencv_imgproc.line;
 
 ///INITIAL CONDITIONS auto_circle(1 ,3, 120, 15, 2, 8);
 /// INITIAL CONDITIONS calib (6 5 2 6 20 )
@@ -79,7 +68,7 @@ public class IdentifyBalls {
 		outerloop:
 			do {
 				for (sec1 = paramMinDistance /* (param1-max_change) */; sec1 <= paramMinDistance + calib[0]; sec1++) {
-					extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+					extractCircles(1, sec1, sec2, sec3, sec4, sec4);
 					if (eval(amount_circles))
 					{
 						minDistance = sec1;
@@ -90,7 +79,7 @@ public class IdentifyBalls {
 						break outerloop;
 					}
 					for (sec2 = (paramCannyThreshold - calib[1]); sec2 <= paramCannyThreshold + calib[1]; sec2++) {
-						extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+						extractCircles(1, sec1, sec2, sec3, sec4, sec4);
 						if (eval(amount_circles)){
 							minDistance = sec1;
 							cannyThreshold = sec2;
@@ -99,7 +88,7 @@ public class IdentifyBalls {
 							maxRad = sec5;
 							break outerloop;}
 						for (sec3 = (paramCenterThreshold - calib[2]); sec3 <= paramCenterThreshold + calib[2]; sec3++) {
-							extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+							extractCircles(1, sec1, sec2, sec3, sec4, sec4);
 							if (eval(amount_circles)){
 								minDistance = sec1;
 								cannyThreshold = sec2;
@@ -108,7 +97,7 @@ public class IdentifyBalls {
 								maxRad = sec5;
 								break outerloop;}
 							for (sec4 = (paramMinRad); sec4 <= paramMinRad + calib[3]; sec4++) {
-								extractCircles(1, sec1, sec2, sec3, sec4, sec5);
+								extractCircles(1, sec1, sec2, sec3, sec4, sec4);
 								if (eval(amount_circles)){
 									minDistance = sec1;
 									cannyThreshold = sec2;
@@ -116,7 +105,7 @@ public class IdentifyBalls {
 									minRad = sec4;
 									maxRad = sec5;
 									break outerloop;}
-								for (sec5 = (paramMaxRad); sec5 <= paramMaxRad + calib[4]; sec5++) {
+								/*for (sec5 = (paramMaxRad); sec5 <= paramMaxRad + calib[4]; sec5++) {
 									extractCircles(1, sec1, sec2, sec3, sec4, sec5);
 									if (eval(amount_circles)){
 										minDistance = sec1;
@@ -125,7 +114,7 @@ public class IdentifyBalls {
 										minRad = sec4;
 										maxRad = sec5;
 										break outerloop;}
-								}
+								}*/
 							}
 						}
 					}
@@ -180,43 +169,4 @@ public class IdentifyBalls {
 	public synchronized int getSize() {
 		return (int) circle.size();
 	}
-
-
-	/*
-	public void moveBalls( Mat pictureGlobal,Mat perspective)
-	{
-
-		//FloatPointer a = new FloatPointer(pictureGlobal.arrayWidth()*pictureGlobal.arrayHeight());
-		Mat template = new Mat(new Size(pictureGlobal.arrayWidth(),pictureGlobal.arrayHeight()),CV_8U);
-		int width =template.arrayWidth();
-		long actualArrayPosition;
-		long x,y;
-		int height = template.arrayHeight();
-		BytePointer p = template.data();
-		int n = 0;
-		for(int i = 0; i < circle.size();i++){
-			y = (long) (width*circle.get(i).get(1));
-			x= (int) (circle.get(i).get(0));
-			actualArrayPosition =  (y+x);
-			p.put(actualArrayPosition,(byte)1);
-		}
-
-
-		warpPerspective(template,template,perspective,new Size(width,height));
-
-		for(int i = 0; i < template.arrayHeight();i++)
-			for(int u = 0; u < template.arrayWidth();u++){
-				if(p.get((i*template.arrayWidth())+u)==1){
-					circle.get(n).put(0,u);
-					circle.get(n++).put(1,i);
-				}
-			}
-
-
-
-	}
-}
-
-
-	 */
 }
