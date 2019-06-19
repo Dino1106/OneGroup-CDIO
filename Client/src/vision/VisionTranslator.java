@@ -25,7 +25,7 @@ public class VisionTranslator {
 	private ArrayList<Wall> walls;
 
 	public VisionTranslator(int cameraId) {
-		visionController = new VisionController("a.jpg");
+		visionController = new VisionController(cameraId);
 		
 		// Warm-up - needs to be here for scale.
 		visionSnapShot = visionController.getSnapShot();
@@ -46,7 +46,8 @@ public class VisionTranslator {
 
 		return new MapState(
 				calculateBalls(),
-				calculateCross(),
+				//calculateCross(),
+				null,
 				walls,
 				goals.get(0),
 				goals.get(1),

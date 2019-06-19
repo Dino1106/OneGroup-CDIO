@@ -49,7 +49,7 @@ public class MainServer extends Thread implements IMainServer {
 
 	}
 	
-	public void carTravel(int centimeters, int speed) {
+	public void carTravel(double centimeters, int speed) {
 		robotControls.travel(centimeters, speed);
 	}
 	
@@ -97,7 +97,7 @@ public class MainServer extends Thread implements IMainServer {
 					carDrive(coordinateForward, driveToSpeed);
 					break;
 				case 3:
-					int centimeters = Integer.parseInt(splitInputs[1]);
+					double centimeters = Double.parseDouble(splitInputs[1]);
 					int travelSpeed = Integer.parseInt(splitInputs[2]);
 					carTravel(centimeters, travelSpeed);
 					break;

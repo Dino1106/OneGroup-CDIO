@@ -8,7 +8,7 @@ public interface IMainServer {
 
 	void carDrive(Coordinate coordinate, int speed);
 
-	void carTravel(int centimeters, int speed);
+	void carTravel(double centimeters, int speed);
 
 	void carPickUpBalls(boolean pickUp);
 

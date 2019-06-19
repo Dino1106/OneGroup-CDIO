@@ -55,7 +55,7 @@ public class RobotMovement {
 		}
 	}
 	
-	public void travel(int centimeters, int speed) {
+	public void travel(double centimeters, int speed) {
 		System.out.println("Driving " + centimeters +" centimeters with " + speed + " speed");
 		navigator.getMoveController().setLinearSpeed(speed);
 		navigator.getMoveController().travel(centimeters);
