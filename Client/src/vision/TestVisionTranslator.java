@@ -138,7 +138,7 @@ public class TestVisionTranslator {
 		quadrants.add(new Coordinate((edges.get(0).upper.x + middle.x)/2, edges.get(0).upper.y + middle.y));
 		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, edges.get(0).lower.y + middle.y));
 		quadrants.add(new Coordinate((edges.get(1).upper.x + middle.x)/2, edges.get(1).upper.y + middle.y));
-		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, edges.get(0).lower.y + middle.y));
+		quadrants.add(new Coordinate((edges.get(1).lower.x + middle.x)/2, edges.get(1).lower.y + middle.y));
 		
 		return quadrants;
 	}

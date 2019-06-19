@@ -3,38 +3,38 @@ package client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import interfaces.IMainClient;
 import model.Ball;
 import model.Coordinate;
 import model.MapState;
 import model.Route;
-import vision.Main;
-import vision.VisionTranslator;
+import vision.TestVisionTranslator;
 
 public class DecisionMaker {
 	
 	static final int maxBalls = 10; // Maximum number of balls in our robot.
 	static int ballsCount = 10;
 	
-	private static VisionTranslator visionTranslator;
+//	private static VisionTranslator visionTranslator;
+	private static TestVisionTranslator visionTranslator;
 	private static PathFinder pathFinder;
 	private static MapState mapState;
-	private static IMainClient mainClient;
+//	private static IMainClient mainClient;
+	private static TestMainClient mainClient;
 	private static int onFieldBallCount;
 	private static int pickedUpBallCount;
 	
 	public static void main(String[] args) throws InterruptedException {
 		
-		visionTranslator = new VisionTranslator(0);
-		//mainClient = new MainClient();
+//		visionTranslator = new VisionTranslator(0);
+		visionTranslator = new TestVisionTranslator();
+		mainClient = new TestMainClient();
 		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 
-//		try {
-//		mainClient.connect();
-//		
+		try {
+		mainClient.connect("10.16.252.175", visionTranslator);
+		
 //		mapState = visionTranslator.getProcessedMap();
 //		while(ballsCount > 0) {
 //			mapState = visionTranslator.getProcessedMap();
@@ -89,14 +89,14 @@ public class DecisionMaker {
 ////		mainClient.sendCoordinate(coord, 350);
 //
 //
-////		updateMap();
-////		mainClient.setRobotLocation(mapState.robot);
-////		pathFinder = new PathFinder(mapState, mainClient);
-////		System.out.println("RobotLocation efter MainClient Call " + mapState.robot);
-////		mainLoop();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		updateMap();
+		mainClient.setRobotLocation(mapState.robot);
+		pathFinder = new PathFinder(mapState, mainClient);
+		System.out.println("RobotLocation efter MainClient Call " + mapState.robot);
+		mainLoop();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void mainLoop() {

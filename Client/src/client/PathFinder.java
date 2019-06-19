@@ -40,12 +40,12 @@ public class PathFinder {
 		mainClient.pickUpBalls(true);
 		northWest = mapState.quadrant.get(0);
 		southWest = mapState.quadrant.get(1);
-		southEast = mapState.quadrant.get(2);
-		southWest = mapState.quadrant.get(3);
+		northEast = mapState.quadrant.get(2);
+		southEast = mapState.quadrant.get(3);
 		
 		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest
 				+ "\nSE: " + southEast);
-		generateWalls();
+		generateWalls(mapState);
 	}
 
 	// We want to return route to a given ball.
@@ -331,8 +331,10 @@ public class PathFinder {
 	}
 
 	// Generates pseudowalls.
-	private void generateWalls() {
+	private void generateWalls(MapState mapState) {
 		System.out.println("----- PathFinder generateWalls");
+		leftWall = mapState.wallList.get(0);
+		rightWall = mapState.wallList.get(1);
 		upperWall = new PseudoWall();
 		lowerWall = new PseudoWall();
 		upperWall.left = new Coordinate(leftWall.upper.x, leftWall.upper.y);
