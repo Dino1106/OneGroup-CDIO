@@ -5,38 +5,48 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import interfaces.IMainClient;
+import constants.ClientConstants;
 import model.Coordinate;
 import model.Robot;
+import vision.TestVisionTranslator;
  
-public class MainClient implements IMainClient { 
+public class Client { 
 
 	private Socket socket;
 	private DataOutputStream dOut;
 	private DataInputStream dIn;
+	private TestVisionTranslator testVisionTranslator = null;
 	private boolean serverResponse;
- 
-	@Override
+	
 	public void connect() throws IOException {
-		String ip = "192.168.43.187"; 
 		System.out.println("Starting client");
-		socket = new Socket(ip, PORT);
+		socket = new Socket(ClientConstants.ip, ClientConstants.port);
 		dOut = new DataOutputStream(socket.getOutputStream());
 		dIn = new DataInputStream(socket.getInputStream());	
 	}
 	
-	@Override
+	/**
+	 * Only for testing purposes
+	 * @param ipToTestMainServer
+	 * @throws IOException
+	 */
+	public void connect(TestVisionTranslator testVisionTranslator) throws IOException {
+		System.out.println("Starting client with testVision");
+		this.testVisionTranslator = testVisionTranslator;
+		socket = new Socket(ClientConstants.ip, ClientConstants.port);
+		dOut = new DataOutputStream(socket.getOutputStream());	
+	}
+	
 	public void sendMotorSpeed(int speed) {
 		try {
 			String speedString = "1 " + speed;
 			dOut.writeUTF(speedString);
 			dOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client error: " + e.getStackTrace());
 		}
 	}
 	
-	@Override
 	public void sendCoordinate(Coordinate destination, int speed){
 		// Send coordinates to Server: 
 		try {
@@ -48,16 +58,17 @@ public class MainClient implements IMainClient {
 			if(convertedResponse) {
 				System.out.println("Path done: " + serverResponse);
 				return;
-			} else {
-				// TODO: Add what to do
 			}
-			*/
+			
+			// Tells the testVision that the 
+			if (testVisionTranslator != null) {
+				testVisionTranslator.gotoCoordinate(destination);
+			}
 		} catch(IOException io) {
-			io.printStackTrace();
+			System.out.println("Client error: " + io.getStackTrace());
 		}
 	}
 
-	@Override
 	public void sendTravelDistance(double centimeters, int speed){
 		System.out.println("SendTravelDistance: " + centimeters + ", " + speed);
 		// Send coordinates to Server: 
@@ -69,16 +80,13 @@ public class MainClient implements IMainClient {
 			
 			if(serverResponse) {
 				System.out.println("Path done: " + serverResponse);
-			} else {
-				// TODO: Add what to do
 			}
 			
 		} catch(IOException io) {
-			io.printStackTrace();
+			System.out.println("Client error: " + io.getStackTrace());
 		}
 	}
 	
-	@Override
 	public void pickUpBalls(boolean pickUp) {
 		System.out.println("pickUpBalls: " + pickUp);
 		try {
@@ -86,11 +94,10 @@ public class MainClient implements IMainClient {
 			dOut.writeUTF(pickUpString);
 			dOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client error: " + e.getStackTrace());
 		}
 	}
 	
-	@Override
 	public void rotate(double orientation1) {
 		System.out.println("rotate, degrees: " + orientation1);
 		try {
@@ -98,11 +105,10 @@ public class MainClient implements IMainClient {
 			dOut.writeUTF(rotateString);
 			dOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client error: " + e.getStackTrace());
 		}
 	}
 	
-	@Override
 	public void sendPickUpSpeed(int speed) {
 		System.out.println("sendPickUpSpeed, speed: " + speed);
 		try {
@@ -110,12 +116,11 @@ public class MainClient implements IMainClient {
 			dOut.writeUTF(speedString);
 			dOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client error: " + e.getStackTrace());
 		}
 		
 	}
 	
-	@Override
 	public void sendSound(int sound) {
 		System.out.println("sendSound, sound: " + sound);
 		try {
@@ -123,12 +128,11 @@ public class MainClient implements IMainClient {
 			dOut.writeUTF(soundString);
 			dOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client error: " + e.getStackTrace());
 		}
 		
 	}
 	
-	@Override
 	public void setRobotLocation(Robot robot) {
 		System.out.println("setRobotLocation, coordinate: " + robot.coordinate + ", orientation:" + robot.orientation);
 		try {
@@ -136,18 +140,17 @@ public class MainClient implements IMainClient {
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client error: " + e.getStackTrace());
 		}
 	}
  
-	@Override
 	public void disconnect() { 
 		try {
 			socket.close();
 			dOut.close();
 			dIn.close();
 		} catch (Exception exc) { 
-			exc.printStackTrace();
+			System.out.println("Client error: " + exc.getStackTrace());
 		} 
 	}
 } 

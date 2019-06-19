@@ -1,6 +1,6 @@
 package vision;
 
-public class TestMain {
+public class VisionTestMain {
 
 	public static void main(String[] args) {		
 		VisionController test = new VisionController("a.jpg");

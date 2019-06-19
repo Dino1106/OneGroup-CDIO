@@ -8,12 +8,12 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import constants.ServerConstants;
 import lejos.hardware.Sound;
 import model.Coordinate;
 
 public class MainServer extends Thread {
 	
-	public static final int PORT = 1337;
 	private static Socket client;
 	private RobotMovement robotControls;
 	private static boolean looping = true;
@@ -27,7 +27,7 @@ public class MainServer extends Thread {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		server = new ServerSocket(PORT);
+		server = new ServerSocket(ServerConstants.port);
 		Sound.playSample(new File("pickUpSound.wav"));
 
 		while(looping) {

@@ -18,6 +18,8 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_imgproc.Vec3fVector;
+
+import constants.ClientConstants;
 import model.VisionSnapShot;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import org.bytedeco.opencv.opencv_core.*;
@@ -25,9 +27,6 @@ import org.bytedeco.opencv.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class VisionController {
-
-	private int imageHeight = 720;
-	private int imageWidth = 1366;
 
 	private int[][] frameCoordinates;
 
@@ -86,8 +85,8 @@ public class VisionController {
 				this.vidFrameWarped = new CanvasFrame("Warped picture");
 				this.vidFrameWarped.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 				this.grabber = FrameGrabber.createDefault(this.cameraId);
-				this.grabber.setImageHeight(this.imageHeight);
-				this.grabber.setImageWidth(this.imageWidth);
+				this.grabber.setImageHeight(ClientConstants.imageHeight);
+				this.grabber.setImageWidth(ClientConstants.imageWidth);
 				this.grabber.start();
 			} else {
 				this.vidFrameOriginal = new CanvasFrame("Original picture - " + imgPath);
@@ -258,40 +257,6 @@ public class VisionController {
 //		}
 
 		System.out.println("VisionController - Stopping edge detection");
-	}
-
-
-	/**
-	 * Checks if warped coordinates are going to be warped correctly.
-	 * Runs before the picture is warped!
-	 * @param coordinateArray The array to be checked
-	 * @param imageHeight The max height of the original picture
-	 * @param imageWidth The max length of the original picture
-	 * @return true if edges are detected correct.
-	 */
-	private boolean isEdgesDetectedCorrect(int[][] coordinateArray, int imageHeight, int imageWidth) {
-
-		boolean warpPicture = true;
-		int partCoordinate;
-
-		for (int i = 0; i < coordinateArray.length; i++) {
-			for(int j = 0; j < coordinateArray[i].length; j++) {
-				partCoordinate = coordinateArray[i][j];
-
-				if (partCoordinate == imageHeight) {
-					return false;
-				} 
-				else if (partCoordinate == imageWidth) {
-					return false;
-				}
-				else if (partCoordinate == 0) {
-					return false;
-				} else {
-					// Nothing
-				}
-			}
-		}
-		return warpPicture;
 	}
 
 

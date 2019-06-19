@@ -2,6 +2,8 @@ package vision;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import constants.ClientConstants;
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -15,13 +17,9 @@ public class VisionTranslator {
 
 	private VisionController visionController;
 	private VisionSnapShot visionSnapShot;
-	private double visionScale = 1;
-
-	private double cameraHeight = 178.0;	// Change this for each run
 	
-	private double robotAxisShift = 1.5/13.5;
+	private double visionScale = 1;
 	private double cameraX, cameraY;
-	private int longBarrierLength = 169;
 	private ArrayList<Wall> walls;
 
 	public VisionTranslator(int cameraId) {
@@ -57,7 +55,7 @@ public class VisionTranslator {
 	private double getScale() {
 		ArrayList<Wall> walls = calculateWalls();
 		double difference = walls.get(1).lower.x - walls.get(0).lower.x;
-		return difference / longBarrierLength;
+		return difference / ClientConstants.longBarrierLength;
 	}
 
 	private ArrayList<Ball> calculateBalls() {
@@ -197,7 +195,7 @@ public class VisionTranslator {
 
 	private void perspectiveTransform(Coordinate coord, double height) {
 		// Find height differences and the proportion
-		double heightProportion = (cameraHeight - height)/cameraHeight;
+		double heightProportion = (ClientConstants.cameraHeight - height) / ClientConstants.cameraHeight;
 
 		// Find the scewed distance caused of height differences
 		coord.x = (1-heightProportion)*cameraX + heightProportion*coord.x;

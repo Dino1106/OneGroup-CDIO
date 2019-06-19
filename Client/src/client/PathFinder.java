@@ -3,7 +3,6 @@ package client;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import interfaces.IMainClient;
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -30,13 +29,13 @@ public class PathFinder {
 	private Wall rightWall;
 	private PseudoWall upperWall;
 	private PseudoWall lowerWall;
-	private IMainClient mainClient;
+	private Client mainClient;
 	public MapState mapState;
 
 	// Create this PathFinder which will then find 4 distinct "quadrant
 	// coordinates".
 	// Also starts swallowing balls.
-	public PathFinder(MapState mapState, IMainClient mainClient) {
+	public PathFinder(MapState mapState, Client mainClient) {
 		this.mapState = mapState;
 		this.mainClient = mainClient;
 		northWest = mapState.quadrants.get(0);

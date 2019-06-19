@@ -2,6 +2,7 @@ package robot;
 
 import java.io.File;
 
+import constants.ServerConstants;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.UnregulatedMotor;
@@ -20,7 +21,6 @@ public class RobotMovement {
     private DifferentialPilot pilot;
     private PoseProvider poseProvider;
     private Navigator navigator;
-	private double wheelDiameter, trackWidth;
     
     public RobotMovement() {
     	/* Setup ball-picker motors */
@@ -28,13 +28,11 @@ public class RobotMovement {
         this.ballPickerRight = new UnregulatedMotor(MotorPort.D);
         
         /* Setup wheels */
-    	this.wheelDiameter = 3;
-    	this.trackWidth = 17.35;
     	this.leftWheel = new EV3LargeRegulatedMotor(MotorPort.B);
     	this.rightWheel = new EV3LargeRegulatedMotor(MotorPort.A);
  
     	/* Setup navigator with pilot */
-        this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
+        this.pilot = new DifferentialPilot(ServerConstants.wheelDiameter, ServerConstants.trackWidth, leftWheel, rightWheel);
         this.poseProvider = new OdometryPoseProvider(pilot);
         this.navigator = new Navigator(pilot, poseProvider);
     }
@@ -100,9 +98,6 @@ public class RobotMovement {
 			break;
 		case 2:
 			sound = new File("victorySound.wav");
-			break;
-		case 3:
-			sound = new File("yikes.wav");
 			break;
 		default:
 			break;
