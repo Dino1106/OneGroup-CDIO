@@ -25,7 +25,6 @@ public class PathFinder {
 	private Coordinate northEast;
 	private Coordinate southWest;
 	private Coordinate southEast;
-	private Coordinate middleOfMap;
 
 	private Wall leftWall;
 	private Wall rightWall;
@@ -39,9 +38,13 @@ public class PathFinder {
 	public PathFinder(MapState mapState, IMainClient mainClient) {
 		this.mainClient = mainClient;
 		mainClient.pickUpBalls(true);
-		calculateQuadrants(mapState);
+		northWest = mapState.quadrant.get(0);
+		southWest = mapState.quadrant.get(1);
+		southEast = mapState.quadrant.get(2);
+		southWest = mapState.quadrant.get(3);
+		
 		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest
-				+ "\nSE: " + southEast + "\nMiddle: " + middleOfMap);
+				+ "\nSE: " + southEast);
 		generateWalls();
 	}
 
@@ -340,41 +343,41 @@ public class PathFinder {
 				+ lowerWall.left + lowerWall.right);
 	}
 
-	// Set the middle of the map and all quadrant points.
-	private void calculateQuadrants(MapState mapState) {
-		middleOfMap = new Coordinate(0, 0);
-		middleOfMap.x = (mapState.cross.coordinate1.x + mapState.cross.coordinate2.x + mapState.cross.coordinate3.x
-				+ mapState.cross.coordinate4.x) / 4;
-		middleOfMap.y = (mapState.cross.coordinate1.y + mapState.cross.coordinate2.y + mapState.cross.coordinate3.y
-				+ mapState.cross.coordinate4.y) / 4;
-		// Before we can find quadrants, we gotta determine which wall is which.
-		// TODO: If walls change, we gotta fix this part.
-		leftWall = new Wall();
-		rightWall = new Wall();
-		// Figure out which wall is left wall.
-		if (mapState.wallList.get(0).upper.x < mapState.wallList.get(1).upper.x) {
-			leftWall = mapState.wallList.get(0);
-			rightWall = mapState.wallList.get(1);
-		} else {
-			rightWall = mapState.wallList.get(0);
-			leftWall = mapState.wallList.get(1);
-		}
-		// Let's set the four quadrant points. First northwest point - the middle of the
-		// northwest quadrant.
-		northWest = new Coordinate(0, 0);
-		northWest.x = (leftWall.upper.x + middleOfMap.x) / 2;
-		northWest.y = (leftWall.upper.y + middleOfMap.y) / 2;
-		// Then the others.
-		northEast = new Coordinate(0, 0);
-		northEast.x = (rightWall.upper.x + middleOfMap.x) / 2;
-		northEast.y = (rightWall.upper.y + middleOfMap.y) / 2;
-		southWest = new Coordinate(0, 0);
-		southWest.x = (leftWall.lower.x + middleOfMap.x) / 2;
-		southWest.y = (leftWall.lower.y + middleOfMap.y) / 2;
-		southEast = new Coordinate(0, 0);
-		southEast.x = (rightWall.lower.x + middleOfMap.x) / 2;
-		southEast.y = (rightWall.lower.y + middleOfMap.y) / 2;
-	}
+//	// Set the middle of the map and all quadrant points.
+//	private void calculateQuadrants(MapState mapState) {
+//		middleOfMap = new Coordinate(0, 0);
+//		middleOfMap.x = (mapState.cross.coordinate1.x + mapState.cross.coordinate2.x + mapState.cross.coordinate3.x
+//				+ mapState.cross.coordinate4.x) / 4;
+//		middleOfMap.y = (mapState.cross.coordinate1.y + mapState.cross.coordinate2.y + mapState.cross.coordinate3.y
+//				+ mapState.cross.coordinate4.y) / 4;
+//		// Before we can find quadrants, we gotta determine which wall is which.
+//		// TODO: If walls change, we gotta fix this part.
+//		leftWall = new Wall();
+//		rightWall = new Wall();
+//		// Figure out which wall is left wall.
+//		if (mapState.wallList.get(0).upper.x < mapState.wallList.get(1).upper.x) {
+//			leftWall = mapState.wallList.get(0);
+//			rightWall = mapState.wallList.get(1);
+//		} else {
+//			rightWall = mapState.wallList.get(0);
+//			leftWall = mapState.wallList.get(1);
+//		}
+//		// Let's set the four quadrant points. First northwest point - the middle of the
+//		// northwest quadrant.
+//		northWest = new Coordinate(0, 0);
+//		northWest.x = (leftWall.upper.x + middleOfMap.x) / 2;
+//		northWest.y = (leftWall.upper.y + middleOfMap.y) / 2;
+//		// Then the others.
+//		northEast = new Coordinate(0, 0);
+//		northEast.x = (rightWall.upper.x + middleOfMap.x) / 2;
+//		northEast.y = (rightWall.upper.y + middleOfMap.y) / 2;
+//		southWest = new Coordinate(0, 0);
+//		southWest.x = (leftWall.lower.x + middleOfMap.x) / 2;
+//		southWest.y = (leftWall.lower.y + middleOfMap.y) / 2;
+//		southEast = new Coordinate(0, 0);
+//		southEast.x = (rightWall.lower.x + middleOfMap.x) / 2;
+//		southEast.y = (rightWall.lower.y + middleOfMap.y) / 2;
+//	}
 
 	// We find out which quadrant is closest to the requested ball.
 	private Coordinate findNearestQuadrant(Coordinate coordinate) {
