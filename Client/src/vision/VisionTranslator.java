@@ -163,8 +163,8 @@ public class VisionTranslator {
 		
 		double len = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 
-		double x = ((1 - robotAxisShift) * largeCircleCoordinate.x + robotAxisShift * smallCircleCoordinate.x);
-		double y = ((1 - robotAxisShift) * largeCircleCoordinate.y + robotAxisShift * smallCircleCoordinate.y);
+		double x = ((1 - ClientConstants.robotAxisShift) * largeCircleCoordinate.x + ClientConstants.robotAxisShift * smallCircleCoordinate.x);
+		double y = ((1 - ClientConstants.robotAxisShift) * largeCircleCoordinate.y + ClientConstants.robotAxisShift * smallCircleCoordinate.y);
 		
 		largeCircleCoordinate = new Coordinate(x, y);
 		

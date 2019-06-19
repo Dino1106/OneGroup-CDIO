@@ -25,8 +25,8 @@ public class DecisionMaker {
 	public void run() {
 		visionTranslator = new VisionTranslator(0);
 		mapState = visionTranslator.getProcessedMap();
-		pathFinder = new PathFinder(mapState, mainClient);
 		mainClient = new Client();
+		pathFinder = new PathFinder(mapState, mainClient);
 
 		try {
 
