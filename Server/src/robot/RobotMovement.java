@@ -1,5 +1,4 @@
 package robot;
-import lejos.robotics.geometry.Point;
 
 import java.io.File;
 
@@ -11,7 +10,6 @@ import lejos.robotics.RegulatedMotor;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.localization.PoseProvider;
 import lejos.robotics.navigation.*;
-import lejos.robotics.pathfinding.Path;
 import model.Coordinate;
 
 @SuppressWarnings("deprecation")
@@ -23,7 +21,6 @@ public class RobotMovement {
     private PoseProvider poseProvider;
     private Navigator navigator;
 	private double wheelDiameter, trackWidth;
-	private Pose pose;
     
     public RobotMovement() {
     	/* Setup ball-picker motors */
@@ -38,12 +35,12 @@ public class RobotMovement {
  
     	/* Setup navigator with pilot */
         this.pilot = new DifferentialPilot(wheelDiameter, trackWidth, leftWheel, rightWheel);
-        this.navigator = new Navigator(pilot);
         this.poseProvider = new OdometryPoseProvider(pilot);
+        this.navigator = new Navigator(pilot, poseProvider);
     }
     
 	public boolean drive(Coordinate to, int speed) {
-		pilot.setLinearSpeed(speed);
+		navigator.getMoveController().setLinearSpeed(speed);
 		float x = (float) to.x;
 		float y = (float) to.y;
 		System.out.println("I am going to x = " + x + ", y = " + y);
@@ -60,13 +57,8 @@ public class RobotMovement {
 	
 	public void travel(int centimeters, int speed) {
 		System.out.println("Driving " + centimeters +" centimeters with " + speed + " speed");
-		setMotorSpeed(speed);
-		pilot.travel(centimeters);
-	}
-	
-	
-	public void setMotorSpeed(int speed) {
-		pilot.setLinearSpeed(speed);
+		navigator.getMoveController().setLinearSpeed(speed);
+		navigator.getMoveController().travel(centimeters);
 	}
 	
 	public void setPickUpSpeed(int speed) {
@@ -82,15 +74,15 @@ public class RobotMovement {
 	public boolean pickUpBalls(boolean pickUp) {
 		if(pickUp) {
 			System.out.println("Picking up balls");
-			ballPickerLeft.setPower(95);
-			ballPickerRight.setPower(95);
+			ballPickerLeft.setPower(100);
+			ballPickerRight.setPower(100);
 		    ballPickerLeft.forward();
 		    ballPickerRight.backward();
 		    return true;
 		} else {
 			System.out.println("Spitting out balls");
-			ballPickerLeft.setPower(95);
-			ballPickerRight.setPower(95); 
+			ballPickerLeft.setPower(100);
+			ballPickerRight.setPower(100); 
 			ballPickerLeft.backward();
 		    ballPickerRight.forward();
 		    return false;
@@ -98,17 +90,10 @@ public class RobotMovement {
 	}
 	
 	public void setRobotLocation(Coordinate coordinate, double heading) {
-		this.pose = poseProvider.getPose();
-
 		float x = (float) coordinate.x;
 		float y = (float) coordinate.y;
 		navigator.getPoseProvider().setPose(new Pose(x, y, (float) heading));
 		System.out.println("Navigator location: x = " + navigator.getPoseProvider().getPose().getLocation().x + ", y = " + navigator.getPoseProvider().getPose().getLocation().y + ", with heading = " + navigator.getPoseProvider().getPose().getHeading());
-	}
-	
-	public Coordinate getRobotLocation() {
-		Point roboPoint = pose.getLocation();
-		return new Coordinate((int) (roboPoint.x), (int) (roboPoint.y));
 	}
 	
 	public void playSound(int soundToPlay) {

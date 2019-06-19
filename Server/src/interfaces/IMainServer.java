@@ -10,8 +10,6 @@ public interface IMainServer {
 
 	void carTravel(int centimeters, int speed);
 
-	void setMotorSpeed(int speed);
-
 	void carPickUpBalls(boolean pickUp);
 
 	void rotate(double degrees);

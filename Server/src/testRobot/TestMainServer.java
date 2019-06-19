@@ -66,13 +66,6 @@ public class TestMainServer extends Thread implements IMainServer{
 	}
 
 	@Override
-	public void setMotorSpeed(int speed) {
-		System.out.println("--------- ROBOT - setMotorSpeed(int speed) ---------");
-		System.out.println("Set motorspeed to: " + speed);
-		System.out.println("\n\n");
-	}
-
-	@Override
 	public void carPickUpBalls(boolean pickUp) {
 		System.out.println("--------- ROBOT - carPickUpBalls(boolean pickUp) ---------");
 		System.out.println("Pickupmode: " + pickUp);
@@ -133,10 +126,6 @@ public class TestMainServer extends Thread implements IMainServer{
 				int typeOfCommand = Integer.parseInt(splitInputs[0]);
 
 				switch (typeOfCommand) {
-				case 1:
-					int speed = Integer.parseInt(splitInputs[1]);
-					setMotorSpeed(speed);
-					break;
 				case 2:
 					Coordinate coordinateForward = new Coordinate(Double.parseDouble(splitInputs[1]), Double.parseDouble(splitInputs[2]));
 					int driveToSpeed = Integer.parseInt(splitInputs[3]);

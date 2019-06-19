@@ -53,10 +53,6 @@ public class MainServer extends Thread implements IMainServer {
 		robotControls.travel(centimeters, speed);
 	}
 	
-	public void setMotorSpeed(int speed) {
-		robotControls.setMotorSpeed(speed);
-	}
-	
 	public void carPickUpBalls(boolean pickUp) {
 		try {
 			boolean response = robotControls.pickUpBalls(pickUp);
@@ -83,10 +79,6 @@ public class MainServer extends Thread implements IMainServer {
 		robotControls.setRobotLocation(coordinate, heading);
 	}
 	
-	private Coordinate getRobotlocation() {
-		return robotControls.getRobotLocation();
-	}
-	
 	public void run() {
 		System.out.println("CLIENT CONNECTED");
 		try {
@@ -99,10 +91,6 @@ public class MainServer extends Thread implements IMainServer {
 				int typeOfCommand = Integer.parseInt(splitInputs[0]);
 				
 				switch (typeOfCommand) {
-				case 1:
-					int speed = Integer.parseInt(splitInputs[1]);
-					setMotorSpeed(speed);
-					break;
 				case 2:
 					Coordinate coordinateForward = new Coordinate(Double.parseDouble(splitInputs[1]), Double.parseDouble(splitInputs[2]));
 					int driveToSpeed = Integer.parseInt(splitInputs[3]);
