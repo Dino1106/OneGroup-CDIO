@@ -208,6 +208,7 @@ public class VisionController {
 		if (usingCamera) {
 			try {
 				// Save the frame as a Mat
+				this.grabber.restart();
 				Frame frame = this.grabber.grab();
 
 				return this.converter.convert(frame);
