@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import interfaces.IMainClient;
 import model.Ball;
@@ -30,7 +31,7 @@ public class DecisionMaker {
 		visionTranslator = new VisionTranslator(0);
 		mapState = visionTranslator.getProcessedMap();
 		mainClient = new MainClient();
-		pathFinder = new PathFinder(mapState, mainClient);
+//		pathFinder = new PathFinder(mapState, mainClient);
 		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 
 		try {
@@ -48,12 +49,12 @@ public class DecisionMaker {
 //		}
 		
 		// Be able to drive around 40 cm in the field.
-//		testAroundInASquare();
+		testAroundInASquare();
 
 		
-		updateMap();
-		System.out.println("RobotLocation efter MainClient Call " + mapState.robot);
-		mainLoop();
+//		updateMap();
+//		System.out.println("RobotLocation efter MainClient Call " + mapState.robot);
+//		mainLoop();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -96,23 +97,23 @@ public class DecisionMaker {
 		//Venstre nede
 		mapState = visionTranslator.getProcessedMap();
 		System.out.println("new Mapstate: " + mapState.toString());
-		mainClient.setRobotLocation(mapState.robot);
+		mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
 		mainClient.sendSound(1);
 		//Coordinate coord = new Coordinate(20, 20);
 		Coordinate coord = new Coordinate(40, 40);
 		mainClient.sendCoordinate(coord, 350);
-
+		
 		//Venstre oppe
 		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
+		mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
 		mainClient.sendSound(1);
 		coord = new Coordinate(40, 82);
 		//coord = new Coordinate(20, 102);
 		mainClient.sendCoordinate(coord, 350);
-
+		
 		//Højre oppe
 		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
+		mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
 		mainClient.sendSound(1);
 		coord = new Coordinate(129, 82);
 		//coord = new Coordinate(149, 102);
@@ -120,15 +121,15 @@ public class DecisionMaker {
 
 		//Højre nede
 		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
+		mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
 		mainClient.sendSound(1);
 		coord = new Coordinate(129, 40);
 		//coord = new Coordinate(149, 20);
 		mainClient.sendCoordinate(coord, 350);
-
+		
 		//Venstre nede
 		mapState = visionTranslator.getProcessedMap();
-		mainClient.setRobotLocation(mapState.robot);
+		mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
 		mainClient.sendSound(1);
 		coord = new Coordinate(40, 40);
 		//coord = new Coordinate(20, 20);

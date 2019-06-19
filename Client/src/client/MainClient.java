@@ -14,6 +14,7 @@ public class MainClient implements IMainClient {
 	private Socket socket;
 	private DataOutputStream dOut;
 	private DataInputStream dIn;
+	private boolean serverResponse;
  
 	@Override
 	public void connect() throws IOException {
@@ -42,12 +43,11 @@ public class MainClient implements IMainClient {
 			String coordinateString = "2 " + (destination.x) + " " + (destination.y) + " " + speed;
 			dOut.writeUTF(coordinateString);
 			dOut.flush();
-			String serverResponse = dIn.readUTF();
-			String[] splitResponse = serverResponse.split(" ");
-			boolean convertedResponse = Boolean.parseBoolean(splitResponse[1]);
+			boolean convertedResponse = dIn.readBoolean();
 			
 			if(convertedResponse) {
 				System.out.println("Path done: " + serverResponse);
+				return;
 			} else {
 				// TODO: Add what to do
 			}

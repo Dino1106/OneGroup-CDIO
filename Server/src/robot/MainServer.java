@@ -1,6 +1,7 @@
 package robot;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +18,11 @@ public class MainServer extends Thread {
 	private RobotMovement robotControls;
 	private static boolean looping = true;
 	private static ServerSocket server;
+	private static DataOutputStream dOut;
 
-	public MainServer(Socket client) {
+	public MainServer(Socket client) throws IOException {
 		MainServer.client = client;
+		dOut = new DataOutputStream(client.getOutputStream());
 		this.robotControls = new RobotMovement();
 	}
 	
@@ -33,6 +36,17 @@ public class MainServer extends Thread {
 			new MainServer(client).start();
 		}
     }
+	
+	public void carDrive(Coordinate coordinate, int speed) {
+		try {
+			// Write response to client
+			boolean response = robotControls.drive(coordinate, speed);
+			dOut.writeBoolean(response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
 	
 	public void run() {
 		System.out.println("CLIENT CONNECTED");
@@ -49,7 +63,7 @@ public class MainServer extends Thread {
 				case 2:
 					Coordinate coordinateForward = new Coordinate(Double.parseDouble(splitInputs[1]), Double.parseDouble(splitInputs[2]));
 					int driveToSpeed = Integer.parseInt(splitInputs[3]);
-					robotControls.drive(coordinateForward, driveToSpeed);
+					carDrive(coordinateForward, driveToSpeed);
 					break;
 				case 3:
 					double centimeters = Double.parseDouble(splitInputs[1]);
