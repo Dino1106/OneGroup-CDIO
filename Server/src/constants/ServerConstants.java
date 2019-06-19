@@ -7,5 +7,8 @@ public class ServerConstants {
 	
 	//Robot
 	public static final double wheelDiameter = 3;
-	public static final double trackWidth = 17.50;
+	
+	/* if undershoot --> increase value
+	 * if undershoot --> decrease value */
+	public static final double trackWidth = 17.8;
 }
