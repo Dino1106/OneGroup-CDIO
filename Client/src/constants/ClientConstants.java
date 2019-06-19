@@ -11,6 +11,7 @@ public class ClientConstants {
 	public static final double cameraHeight = 177.5;
 	public static final int imageHeight = 720;
 	public static final int imageWidth = 1280;
+	public static final int cameraId = 0;
 	
 	//Connection
 	public static final String ip = "192.168.43.187";

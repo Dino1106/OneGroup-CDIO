@@ -23,7 +23,7 @@ public class DecisionMaker {
 	private int pickedUpBallCount;
 
 	public void run() {
-		visionTranslator = new VisionTranslator(0);
+		visionTranslator = new VisionTranslator(ClientConstants.cameraId);
 		mapState = visionTranslator.getProcessedMap();
 		mainClient = new Client();
 		pathFinder = new PathFinder(mapState, mainClient);
