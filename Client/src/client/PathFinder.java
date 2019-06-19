@@ -487,13 +487,6 @@ public class PathFinder {
 		double zeroPointX = robotX + 50;
 		double zeroPointY = robotY;
 
-		// System.out.println("Bestball: " +bestBall.x +", "+ bestBall.y);
-		// System.out.println("Robobitch at: " +mapState.robotLocation.coordinate.x +",
-		// "+ mapState.robotLocation.coordinate.y);
-		// double targetOrientation = Math.toDegrees(Math.atan((bestBall.y -
-		// mapState.robotLocation.coordinate.y) / (bestBall.x -
-		// mapState.robotLocation.coordinate.x)));
-
 		System.out.println("Robobitch at: " + robotX + ", " + robotY);
 		System.out.println("Best ball at: " + bestBall.x + ", " + bestBall.y);
 
@@ -501,15 +494,16 @@ public class PathFinder {
 		double b = zeroPointX - bestBall.x;
 		double c = Point2D.distance(robotX, robotY, bestBall.x, bestBall.y);
 
-		double cosA = (b * b + c * c - a * a) / (2 * b * c);
+		double cosA = (b*b + c*c - a*a) / (2*b*c);
 		double radA = Math.acos(cosA);
-		double targetOrientation = Math.toDegrees(radA);
-
-		System.out.println("a: " + a);
-		System.out.println("b: " + b);
-		System.out.println("c: " + c);
-		System.out.println("CosA: " + cosA);
-		System.out.println("radA: " + radA);
+		double targetDegrees = Math.toDegrees(radA);
+		
+		double targetOrientation;
+		
+		if(robotY > bestBall.y){
+			targetOrientation = 360 - targetDegrees;
+		}
+		else targetOrientation = targetDegrees;
 
 		System.out.println("[PathFinder] Orientation for swallow:\trobot ori: " + robotOrientation + " target ori: "
 				+ targetOrientation);

@@ -155,11 +155,9 @@ public class VisionTranslator {
 		Coordinate largeCircleCoordinate = new Coordinate((recievedArray[1][0] / visionScale),(recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate(((recievedArray[1][0]) / visionScale) + 50, (recievedArray[1][1] / visionScale));
 		
-		System.out.println("F�R PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		perspectiveTransform(smallCircleCoordinate, roboloc.height);
 		perspectiveTransform(largeCircleCoordinate, roboloc.height);
 		perspectiveTransform(zeroPoint, roboloc.height);
-		System.out.println("EFTER PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		
 		changeToRobotFormat(smallCircleCoordinate);
 		changeToRobotFormat(largeCircleCoordinate);
@@ -167,11 +165,8 @@ public class VisionTranslator {
 		
 		double len = Point2D.distance(largeCircleCoordinate.x, largeCircleCoordinate.y, smallCircleCoordinate.x, smallCircleCoordinate.y);
 
-		System.out.println("INDEN " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		double x = ((1 - robotAxisShift) * largeCircleCoordinate.x + robotAxisShift * smallCircleCoordinate.x);
 		double y = ((1 - robotAxisShift) * largeCircleCoordinate.y + robotAxisShift * smallCircleCoordinate.y);
-		System.out.println("EFTER " + x + " " + y);
-		
 		
 		largeCircleCoordinate = new Coordinate(x, y);
 		
