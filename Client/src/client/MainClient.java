@@ -51,7 +51,7 @@ public class MainClient implements IMainClient {
 			} else {
 				// TODO: Add what to do
 			}
-			
+			*/
 		} catch(IOException io) {
 			io.printStackTrace();
 		}

@@ -15,7 +15,7 @@ import vision.VisionTranslator;
 
 public class DecisionMaker {
 	
-	static final int maxBalls = 10; // Maximum number of balls in our robot.
+	static final int maxBalls = 8; // Maximum number of balls in our robot.
 	static int ballsCount = 10;
 	
 	private static VisionTranslator visionTranslator;
@@ -28,7 +28,7 @@ public class DecisionMaker {
 	
 	public static void main(String[] args) throws InterruptedException {
 		
-		visionTranslator = new VisionTranslator(0);
+		visionTranslator = new VisionTranslator(1);
 		mapState = visionTranslator.getProcessedMap();
 		mainClient = new MainClient();
 //		pathFinder = new PathFinder(mapState, mainClient);
@@ -57,6 +57,19 @@ public class DecisionMaker {
 //		mainLoop();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void testPickUpBallsRecklessly() {
+		while(ballsCount > 0) {
+			mapState = visionTranslator.getProcessedMap();
+			mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
+			Ball ball = visionTranslator.getProcessedMap().ballList.get(0);
+			ballsCount = visionTranslator.getProcessedMap().ballList.size();
+			mainClient.pickUpBalls(true);
+			mainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 50);
+			mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
+			mainClient.sendSound(1);
 		}
 	}
 	
@@ -150,7 +163,7 @@ public class DecisionMaker {
 	// Let's pick up a ball.
 	private static void pickupBall() {
 		Ball bestBall = decideBestBall();
-		Route route = choosePathBall(bestBall);
+		Route route = pathFinder.getCalculatedRouteBall(mapState, bestBall);
 		pathFinder.driveRoute(route, mapState);
 		updateMap();
 		pathFinder.swallowAndReverse(mapState, bestBall);
@@ -178,12 +191,8 @@ public class DecisionMaker {
 				bestRisk = ballRisk;
 			}
 		}
+		System.out.println("---DecideBestBall. Best Ball decided is: \n" + bestBall);
 		return bestBall;
-	}
-	
-	public static Route choosePathBall(Ball ball) {
-		Route route = pathFinder.getCalculatedRouteBall(mapState, ball);
-		return route;
 	}
 	
 	// Let's find the routes to what we're searching for.

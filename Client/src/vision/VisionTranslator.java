@@ -211,7 +211,6 @@ public class VisionTranslator {
 	}
 	
 	private ArrayList<Coordinate> calculateQuadrants(){
-		ArrayList<Wall> edges = calculateWalls();
 		ArrayList<Coordinate> quadrants = new ArrayList<Coordinate>();
 		Coordinate middle = new Coordinate(0,0);
 		
@@ -219,11 +218,26 @@ public class VisionTranslator {
 		middle.x = visionSnapShot.getCross()[0];
 		middle.y = visionSnapShot.getCross()[1];
 		
-		quadrants.add(new Coordinate((edges.get(0).upper.x + middle.x)/2, (edges.get(0).upper.y + middle.y)/2));
-		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, (edges.get(0).lower.y + middle.y)/2));
-		quadrants.add(new Coordinate((edges.get(1).upper.x + middle.x)/2, (edges.get(1).upper.y + middle.y)/2));
-		quadrants.add(new Coordinate((edges.get(1).lower.x + middle.x)/2, (edges.get(1).lower.y + middle.y)/2));
+		getQuadrantsEvenSplit(quadrants, middle);
 		
 		return quadrants;
+	}
+	
+	// Gets cross based on map size.
+	private void getQuadrantsEvenSplit(ArrayList<Coordinate> quadrants, Coordinate middle) {
+		middle.x = (walls.get(0).upper.x + walls.get(0).lower.x + walls.get(1).upper.x + walls.get(1).lower.x)/4;
+		middle.y = (walls.get(0).upper.y + walls.get(0).lower.y + walls.get(1).upper.y + walls.get(1).lower.y)/4;
+		
+		quadrants.add(new Coordinate((walls.get(0).upper.x + middle.x)/2, (walls.get(0).upper.y + middle.y)/2));
+		quadrants.add(new Coordinate((walls.get(0).lower.x + middle.x)/2, (walls.get(0).lower.y + middle.y)/2));
+		quadrants.add(new Coordinate((walls.get(1).upper.x + middle.x)/2, (walls.get(1).upper.y + middle.y)/2));
+		quadrants.add(new Coordinate((walls.get(1).lower.x + middle.x)/2, (walls.get(1).lower.y + middle.y)/2));	}
+
+	// Unused. Gets quadrants based on where cross is.
+	private void getQuadrantsCrossSplit(ArrayList<Coordinate> quadrants, Coordinate middle) {
+		quadrants.add(new Coordinate(((walls.get(0).upper.x + middle.x)/2)/visionScale, ((walls.get(0).upper.y + middle.y)/2)/visionScale));
+		quadrants.add(new Coordinate(((walls.get(0).lower.x + middle.x)/2)/visionScale, ((walls.get(0).lower.y + middle.y)/2)/visionScale));
+		quadrants.add(new Coordinate(((walls.get(1).upper.x + middle.x)/2)/visionScale, ((walls.get(1).upper.y + middle.y)/2)/visionScale));
+		quadrants.add(new Coordinate(((walls.get(1).lower.x + middle.x)/2)/visionScale, ((walls.get(1).lower.y + middle.y)/2)/visionScale));
 	}
 }

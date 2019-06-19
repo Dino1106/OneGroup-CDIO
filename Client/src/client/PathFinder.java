@@ -18,7 +18,7 @@ public class PathFinder {
 	public static final double robotDiameter = 35.0; // The "diameter" of the robot - its thickness.
 	public static final double robotBufferSize = 4.0; // The buffer distance we want between the robot and an edge.
 	public static final int speedSlow = 10;
-	public static final int speedFast = 500;
+	public static final int speedFast = 50;
 	public static final int sleepTime = 5; // Sleep time in seconds.
 
 	private Coordinate northWest;
@@ -60,9 +60,11 @@ public class PathFinder {
 		boolean closeToCross = isBallCloseToCross(ball, mapState);
 		// If it is, we go to the quadrant for the auxiliary point - NOT to the quadrant for the ball.
 		if (closeToCross) {
+			System.out.println("\t\t Ball is close to cross!");
 			auxiliaryForCross = findCoordinateOnLine(new Coordinate(ball.x, ball.y), new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y), robotDiameter + robotBufferSize);
 			nearestToTarget = findNearestQuadrant(auxiliaryForCross);
 		} else {
+			System.out.println("\t\t Ball is not close to cross");
 			// Else we find out which quadrant is nearest to the ball.
 			nearestToTarget = findNearestQuadrant(new Coordinate(ball.x, ball.y));
 		}
@@ -80,7 +82,7 @@ public class PathFinder {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
 			getCoordinatesForBallNearWalls(ball, route);
 		}
-		System.out.println(route.coordinates.toString());
+		System.out.println("Calculated Route is: " + route.coordinates.toString());
 		return route;
 	}
 
@@ -101,6 +103,7 @@ public class PathFinder {
 		System.out.println("----- PathFinder getCoordinatesForBallNearWalls");
 		boolean ballCloseToCorner = false;
 		if (isBallCloseToCorner(ball, leftWall, upperWall)) {
+			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
@@ -108,6 +111,7 @@ public class PathFinder {
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
+			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
@@ -115,6 +119,7 @@ public class PathFinder {
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, rightWall, upperWall)) {
+			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
@@ -122,6 +127,7 @@ public class PathFinder {
 			route.coordinates.add(newCoordinate);
 		}
 		if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
+			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			Coordinate newCoordinate = new Coordinate(0, 0);
 			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
@@ -132,6 +138,7 @@ public class PathFinder {
 			// Let's see if a ball is close to one of the four walls. If it is, we set up
 			// the route to now stand opposite the wall.
 			if (isBallCloseToWall(ball, leftWall)) {
+				System.out.println("\t\t Ball is close to a wall!");
 				// TODO: Refine where the robot goes here before approaching a wall-close ball.
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
@@ -139,24 +146,26 @@ public class PathFinder {
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, rightWall)) {
+				System.out.println("\t\t Ball is close to a wall!");
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
 				newCoordinate.y = ball.y;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, upperWall)) {
+				System.out.println("\t\t Ball is close to a wall!");
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = ball.x;
 				newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize;
 				route.coordinates.add(newCoordinate);
 			}
 			if (isBallCloseToWall(ball, lowerWall)) {
+				System.out.println("\t\t Ball is close to a wall!");
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = ball.x;
 				newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
 				route.coordinates.add(newCoordinate);
-			} else
-				route.coordinates.add(new Coordinate(ball.x, ball.y));
+			}
 		}
 	}
 
@@ -432,6 +441,7 @@ public class PathFinder {
 			minimum = compare;
 			output = southEast;
 		}
+		System.out.println("\t\t\tFor nearest quadrant, found: " + output);
 		return output;
 	}
 
@@ -443,7 +453,8 @@ public class PathFinder {
 			mainClient.sendSound(2);
 			break;
 		case "ball":
-			mainClient.sendSound(3);
+			mainClient.sendSound(1); // TODO: Fix sounds.
+//			mainClient.sendSound(3);
 			break;
 		case "goal":
 			break;
@@ -462,8 +473,9 @@ public class PathFinder {
 		for (Coordinate coordinate : route.coordinates) {
 			System.out.println("----- PathFinder driveRoute \nRoute length: " + route.coordinates.size()
 					+ ", \nSending coordinate " + coordinate.toString() + " to robot");
-			mainClient.setRobotLocation(mapState.robot);
+//			mainClient.setRobotLocation(mapState.robot);
 			mainClient.sendCoordinate(coordinate, speedFast);
+			System.out.println("DO WE EVER GET HERE?");
 		}
 	}
 
@@ -502,16 +514,20 @@ public class PathFinder {
 		System.out.println("[PathFinder] Orientation for swallow:\trobot ori: " + robotOrientation + " target ori: "
 				+ targetOrientation);
 
-		// Negative because of Ev3's rotation
-		double clockWise = -(targetOrientation - robotOrientation);
-		double counterClockWise = (robotOrientation + 360) - targetOrientation;
+		
+		double counterClockWise = robotOrientation - targetOrientation;
+		double clockWise = (360 - robotOrientation) + targetOrientation;
+		
+		System.out.println("CounterClockwise: " + counterClockWise);
+		System.out.println("Clockwise: " + clockWise);
 
 		if (clockWise < counterClockWise) {
-			System.out.println("Oneway");
+			System.out.println("Turn ClockWise");
 			mainClient.rotate(clockWise);
 		} else {
-			System.out.println("Otherway");
-			mainClient.rotate(counterClockWise);
+			System.out.println("Turn CounterClockWise");
+			// Negative because of Ev3's rotation
+			mainClient.rotate(-counterClockWise);
 		}
 
 		double distance = calculateDistances(mapState.robot.coordinate, new Coordinate(bestBall.x, bestBall.y));
