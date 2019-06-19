@@ -37,17 +37,6 @@ public class DecisionMaker {
 		try {
 		mainClient.connect();
 		
-//		while(ballsCount > 0) {
-//			mapState = visionTranslator.getProcessedMap();
-//			mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
-//			Ball ball = visionTranslator.getProcessedMap().ballList.get(0);
-//			ballsCount = visionTranslator.getProcessedMap().ballList.size();
-//			mainClient.pickUpBalls(true);
-//			mainClient.sendCoordinate(new Coordinate(ball.x, ball.y), 50);
-//			mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
-//			mainClient.sendSound(1);
-//		}
-		
 		// Be able to drive around 40 cm in the field.
 		testAroundInASquare();
 
