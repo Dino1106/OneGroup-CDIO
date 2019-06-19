@@ -46,8 +46,7 @@ public class VisionTranslator {
 
 		return new MapState(
 				calculateBalls(),
-				//calculateCross(),
-				null,
+				calculateCross(),
 				walls,
 				goals.get(0),
 				goals.get(1),

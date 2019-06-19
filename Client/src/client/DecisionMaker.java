@@ -28,13 +28,14 @@ public class DecisionMaker {
 	public static void main(String[] args) throws InterruptedException {
 		
 		visionTranslator = new VisionTranslator(0);
+		mapState = visionTranslator.getProcessedMap();
 		mainClient = new MainClient();
+		pathFinder = new PathFinder(mapState, mainClient);
 		System.out.println("DecisionMaker first Map: " + visionTranslator.getProcessedMap().toString());
 
 		try {
 		mainClient.connect();
 		
-//		mapState = visionTranslator.getProcessedMap();
 //		while(ballsCount > 0) {
 //			mapState = visionTranslator.getProcessedMap();
 //			mainClient.setRobotLocation(visionTranslator.getProcessedMap().robot);
@@ -49,10 +50,8 @@ public class DecisionMaker {
 		// Be able to drive around 40 cm in the field.
 //		testAroundInASquare();
 
-
+		
 		updateMap();
-		mainClient.setRobotLocation(mapState.robot);
-		pathFinder = new PathFinder(mapState, mainClient);
 		System.out.println("RobotLocation efter MainClient Call " + mapState.robot);
 		mainLoop();
 		} catch (IOException e) {
@@ -61,6 +60,7 @@ public class DecisionMaker {
 	}
 	
 	public static void mainLoop() {
+		mainClient.pickUpBalls(true);
 		boolean keepRunning = true;
 		while (keepRunning) {
 			updateMap();
@@ -139,6 +139,7 @@ public class DecisionMaker {
 	private static void updateMap() {
 		mapState = visionTranslator.getProcessedMap();
 		mainClient.setRobotLocation(mapState.robot);
+		pathFinder.mapState = mapState;
 		
 		System.out.println("\n\n updateMap():\n" + mapState.toString() + "\n\n");
 		
@@ -151,10 +152,8 @@ public class DecisionMaker {
 		Route route = choosePathBall(bestBall);
 		pathFinder.driveRoute(route, mapState);
 		updateMap();
-		mainClient.setRobotLocation(mapState.robot);
 		pathFinder.swallowAndReverse(mapState, bestBall);
 		updateMap();
-		mainClient.setRobotLocation(mapState.robot);
 		pickedUpBallCount++;
 	}
 

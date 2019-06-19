@@ -229,27 +229,33 @@ public class VisionController {
 	private void edgeDetection() {
 		System.out.println("VisionController - Starting edge detection");
 
-		Runnable runnable = new Runnable() {
+		pictureOriginal = takePicture(usingCamera);
 
-			@Override
-			public void run() {
-				pictureOriginal = takePicture(usingCamera);
+		identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
 
-				identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
-
-				frameCoordinates = identifyEdges.getArray();
-			}
-
-		};
-
-		Thread th = new Thread(runnable);
-		th.start();
-		try {
-			th.join();
-
-		} catch (InterruptedException e) {
-			System.out.println("Error in VisionController, edgeDetection():" + e.getStackTrace());
-		}
+		frameCoordinates = identifyEdges.getArray();
+		
+//		Runnable runnable = new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				pictureOriginal = takePicture(usingCamera);
+//
+//				identifyEdges = new IdentifyEdges(pictureOriginal, identifyCoordinates);
+//
+//				frameCoordinates = identifyEdges.getArray();
+//			}
+//
+//		};
+//
+//		Thread th = new Thread(runnable);
+//		th.start();
+//		try {
+//			th.join();
+//
+//		} catch (InterruptedException e) {
+//			System.out.println("Error in VisionController, edgeDetection():" + e.getStackTrace());
+//		}
 
 		System.out.println("VisionController - Stopping edge detection");
 	}

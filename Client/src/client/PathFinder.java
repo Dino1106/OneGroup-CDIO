@@ -31,13 +31,14 @@ public class PathFinder {
 	private PseudoWall upperWall;
 	private PseudoWall lowerWall;
 	private IMainClient mainClient;
+	public MapState mapState;
 
 	// Create this PathFinder which will then find 4 distinct "quadrant
 	// coordinates".
 	// Also starts swallowing balls.
 	public PathFinder(MapState mapState, IMainClient mainClient) {
+		this.mapState = mapState;
 		this.mainClient = mainClient;
-		mainClient.pickUpBalls(true);
 		northWest = mapState.quadrants.get(0);
 		southWest = mapState.quadrants.get(1);
 		northEast = mapState.quadrants.get(2);
