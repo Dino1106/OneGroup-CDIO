@@ -38,10 +38,10 @@ public class PathFinder {
 	public PathFinder(MapState mapState, IMainClient mainClient) {
 		this.mainClient = mainClient;
 		mainClient.pickUpBalls(true);
-		northWest = mapState.quadrant.get(0);
-		southWest = mapState.quadrant.get(1);
-		northEast = mapState.quadrant.get(2);
-		southEast = mapState.quadrant.get(3);
+		northWest = mapState.quadrants.get(0);
+		southWest = mapState.quadrants.get(1);
+		northEast = mapState.quadrants.get(2);
+		southEast = mapState.quadrants.get(3);
 
 		System.out.println("[PathFinder] Quadrant print: NW: " + northWest + "\nNE: " + northEast + "\nSW: " + southWest
 				+ "\nSE: " + southEast);
@@ -55,11 +55,11 @@ public class PathFinder {
 		// This is where the magic happens.
 		// First we see if the ball is close to a cross.
 		Coordinate nearestToTarget;
-		Coordinate auxiliaryForCross;
+		Coordinate auxiliaryForCross = null;
 		boolean closeToCross = isBallCloseToCross(ball, mapState);
 		// If it is, we go to the quadrant for the auxiliary point - NOT to the quadrant for the ball.
 		if (closeToCross) {
-			auxiliaryForCross = findCoordinateOnLine(new Coordinate(ball.x, ball.y), new Coordinate(mapState.cross.x, mapState.cross.y), robotDiameter + robotBufferSize);
+			auxiliaryForCross = findCoordinateOnLine(new Coordinate(ball.x, ball.y), new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y), robotDiameter + robotBufferSize);
 			nearestToTarget = findNearestQuadrant(auxiliaryForCross);
 		} else {
 			// Else we find out which quadrant is nearest to the ball.
@@ -84,7 +84,7 @@ public class PathFinder {
 	}
 
 	private boolean isBallCloseToCross(Ball ball, MapState mapState) {
-		double distanceBetween = calculateDistances(new Coordinate(ball.x, ball.y), new Coordinate(mapState.cross.x, mapState.cross.y));
+		double distanceBetween = calculateDistances(new Coordinate(ball.x, ball.y), new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y));
 		if (distanceBetween < mapState.cross.radius) {
 			return true;
 		} else {

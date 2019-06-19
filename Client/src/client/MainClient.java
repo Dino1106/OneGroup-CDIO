@@ -58,7 +58,7 @@ public class MainClient implements IMainClient {
 	}
 
 	@Override
-	public void sendTravelDistance(int centimeters, int speed){
+	public void sendTravelDistance(double centimeters, int speed){
 		System.out.println("SendTravelDistance: " + centimeters + ", " + speed);
 		// Send coordinates to Server: 
 		try {

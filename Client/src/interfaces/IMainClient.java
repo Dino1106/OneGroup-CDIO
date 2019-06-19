@@ -15,7 +15,7 @@ public interface IMainClient {
 
 	void sendCoordinate(Coordinate destination, int speed);
 
-	void sendTravelDistance(int centimeters, int speed);
+	void sendTravelDistance(double centimeters, int speed);
 
 	void pickUpBalls(boolean pickUp);
 

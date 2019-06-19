@@ -12,8 +12,9 @@ import java.net.Socket;
 import interfaces.IMainServer;
 import model.Coordinate;
 
-public class TestMainServer extends Thread implements IMainServer{
-
+public class TestMainServer extends Thread {
+	
+	public static final int PORT = 1337;
 	private static Socket client;
 	private static boolean looping = true;
 	private static ServerSocket server;
@@ -41,7 +42,6 @@ public class TestMainServer extends Thread implements IMainServer{
 		}
 	}
 
-	@Override
 	public void carDrive(Coordinate coordinate, int speed) {
 		System.out.println("--------- ROBOT - carDrive(Coordinate coordinate, int speed) ---------");
 		System.out.println("My Location: " + this.robotLocation.toString());
@@ -56,7 +56,6 @@ public class TestMainServer extends Thread implements IMainServer{
 		}
 	}
 
-	@Override
 	public void carTravel(double centimeters, int speed) {
 		System.out.println("--------- ROBOT - carTravel(int centimeters, int speed) ---------");
 		System.out.println("My Location: " + this.robotLocation.toString());
@@ -65,14 +64,12 @@ public class TestMainServer extends Thread implements IMainServer{
 		System.out.println("\n\n");
 	}
 
-	@Override
 	public void carPickUpBalls(boolean pickUp) {
 		System.out.println("--------- ROBOT - carPickUpBalls(boolean pickUp) ---------");
 		System.out.println("Pickupmode: " + pickUp);
 		System.out.println("\n\n");
 	}
 
-	@Override
 	public void rotate(double degrees) {
 		System.out.println("--------- ROBOT - rotate(double degrees) ---------");
 		System.out.println("Rotate " + degrees + " degrees");
@@ -85,21 +82,18 @@ public class TestMainServer extends Thread implements IMainServer{
 		}
 	}
 
-	@Override
 	public void setPickUpSpeed(int speed) {
 		System.out.println("--------- ROBOT - setPickUpSpeed(int speed) ---------");
 		System.out.println("Pickup speed set to: " + speed);
 		System.out.println("\n\n");
 	}
 
-	@Override
 	public void playSound(int soundToPlay) {
 		System.out.println("--------- ROBOT - playSound(int soundToPlay) ---------");
 		System.out.println("Playing sound nr.: " + soundToPlay);
 		System.out.println("\n\n");
 	}
 
-	@Override
 	public void setRobotLocation(Coordinate coordinate, double heading) {
 		System.out.println("--------- ROBOT - setRobotLocation(Coordinate coordinate, double heading) ---------");
 		System.out.println("My current location: " + this.robotLocation.toString());

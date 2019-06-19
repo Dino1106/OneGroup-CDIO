@@ -141,7 +141,7 @@ public class TestMainClient implements IMainClient{
 	}
 
 	@Override
-	public void sendTravelDistance(int centimeters, int speed) {
+	public void sendTravelDistance(double centimeters, int speed) {
 		// TODO Auto-generated method stub
 		
 	}

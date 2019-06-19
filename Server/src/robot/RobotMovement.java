@@ -61,12 +61,7 @@ public class RobotMovement {
 		navigator.getMoveController().travel(centimeters);
 	}
 	
-	public void setPickUpSpeed(int speed) {
-		ballPickerLeft.setPower(speed);
-		ballPickerRight.setPower(speed); 
-	}
-	
-	public void rotateToOrientation(double degrees) {
+	public void rotate(double degrees) {
 		System.out.println("I am rotating " + degrees + " degrees");
 		pilot.rotate(degrees);
 	}

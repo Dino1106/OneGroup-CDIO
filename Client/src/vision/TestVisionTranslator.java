@@ -88,17 +88,8 @@ public class TestVisionTranslator {
 		
 		double halfWall_x = wall2.upper.x - wall1.upper.x;
 		double halfWall_y = wall1.upper.y - wall1.lower.y;
-		double outer = 5;
 		
-		Coordinate coord1 = new Coordinate(halfWall_x - outer, halfWall_y + outer);
-		Coordinate coord2 = new Coordinate(halfWall_x + outer, halfWall_y + outer);
-		Coordinate coord3 = new Coordinate(halfWall_x ,halfWall_y );
-		Coordinate coord4 = new Coordinate(halfWall_x ,halfWall_y );
-		
-		
-		Cross cross = new Cross(coord1, coord2, coord3, coord4);
-		
-		return cross;
+		return new Cross(new Coordinate(halfWall_x, halfWall_y), 10);
 	}
 
 	private ArrayList<Goal> generateGoals(ArrayList<Wall> walls){

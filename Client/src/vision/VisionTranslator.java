@@ -108,18 +108,15 @@ public class VisionTranslator {
 	}
 
 	private Cross calculateCross() {
-		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
 		
 		double x = visionSnapShot.getCross()[0] / visionScale;
 		double y = visionSnapShot.getCross()[1] / visionScale;
 		
 		Coordinate coord = new Coordinate(x,y);
 		changeToRobotFormat(coord);
-		obstacle_coord.add(coord);
 
-		Cross obstacle = new Cross(obstacle_coord.get(0),obstacle_coord.get(1),obstacle_coord.get(2),obstacle_coord.get(3));
-
-		return obstacle;
+		//TODO: Radius is maybe not 10 always
+		return new Cross(coord, 10);
 	}
 
 	private ArrayList<Goal> calculateGoals(ArrayList<Wall> walls){
