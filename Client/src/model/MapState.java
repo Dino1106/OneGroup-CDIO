@@ -9,17 +9,19 @@ public class MapState {
 	public ArrayList<Wall> wallList;
 	public Goal goal1, goal2;
 	public Robot robot;
+	public ArrayList<Coordinate> quandrants;
 	
 
 	public MapState(ArrayList<Ball> ballList, Cross cross, ArrayList<Wall> wallList, Goal goal1, Goal goal2,
-			Robot robotLocation) {
+			Robot robotLocation, ArrayList<Coordinate> quandrants) {
 		super();
 		this.ballList = ballList;
-		this.cross = cross;
+		this.cross    = cross;
 		this.wallList = wallList;
 		this.goal1 = goal1;
 		this.goal2 = goal2;
 		this.robot = robotLocation;
+		this.quandrants = quandrants;
 	}
 
 

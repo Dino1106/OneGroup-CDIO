@@ -2,10 +2,6 @@ package vision;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-import client.PathFinder;
 import model.Ball;
 import model.Coordinate;
 import model.Cross;
@@ -29,7 +25,7 @@ public class VisionTranslator {
 	private ArrayList<Wall> walls;
 
 	public VisionTranslator(int cameraId) {
-		visionController = new VisionController(cameraId);
+		visionController = new VisionController("a.jpg");
 		
 		// Warm-up - needs to be here for scale.
 		visionSnapShot = visionController.getSnapShot();
@@ -42,7 +38,7 @@ public class VisionTranslator {
 		this.walls = calculateWalls();
 		ArrayList<Goal> goals = calculateGoals(walls);
 		
-		// TODO: Kan tages ud sÃ¥ den ikke beregnes hver gang
+		// TODO: Kan tages ud så den ikke beregnes hver gang
 		
 		//Calculate center of frame through upper-right wall location
 		cameraX = (walls.get(1).upper.x/2);
@@ -54,7 +50,8 @@ public class VisionTranslator {
 				walls,
 				goals.get(0),
 				goals.get(1),
-				calculateRobotLocation());
+				calculateRobotLocation(),
+				calculateQuadrants());
 	}
 
 	private double getScale() {
@@ -111,13 +108,13 @@ public class VisionTranslator {
 
 	private Cross calculateCross() {
 		ArrayList<Coordinate> obstacle_coord = new ArrayList<Coordinate>();
-		for(int i = 0; i < visionSnapShot.getCross().length; i++) {
-			double x = visionSnapShot.getCross()[i][0]/visionScale;
-			double y = visionSnapShot.getCross()[i][1]/visionScale;
-			Coordinate coord = new Coordinate(x,y);
-			changeToRobotFormat(coord);
-			obstacle_coord.add(coord);
-		}
+		
+		double x = visionSnapShot.getCross()[0] / visionScale;
+		double y = visionSnapShot.getCross()[1] / visionScale;
+		
+		Coordinate coord = new Coordinate(x,y);
+		changeToRobotFormat(coord);
+		obstacle_coord.add(coord);
 
 		Cross obstacle = new Cross(obstacle_coord.get(0),obstacle_coord.get(1),obstacle_coord.get(2),obstacle_coord.get(3));
 
@@ -141,48 +138,13 @@ public class VisionTranslator {
 		
 		smallGoal.coordinate1 = smallGoalCoord;
 		largeGoal.coordinate1 = largeGoalCoord;
+		
+		smallGoal.robotLocation = new Robot(new Coordinate(smallGoal.coordinate1.x + 20, smallGoal.coordinate1.y), 180.0);
+		largeGoal.robotLocation = new Robot( new Coordinate(largeGoal.coordinate1.x - 20, largeGoal.coordinate1.y),0.0);
 
 		goals.add(smallGoal);
 		goals.add(largeGoal);
 		
-		
-		
-		//TODO: Thic code does not work.
-		/*
-		if (goal1.coordinate1.x < walls.get(1).upper.x) {
-			// Then use hardcoded values to construct a robot location.
-			
-			int x1 = goal1.coordinate1.x + (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
-			int y1 = goal1.coordinate1.y;
-			int orientation1 = 180;
-			Coordinate goal1Coordinate = new Coordinate(x1, y1);
-			goal1.robotLocation = new Robot(goal1Coordinate, orientation1);
-
-			int x2 = goal2.coordinate1.x - (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
-			int y2 = goal2.coordinate1.y;
-			int orientation2 = 0;
-
-			Coordinate goal2Coordinate = new Coordinate(x2, y2);
-			goal1.robotLocation = new Robot(goal2Coordinate, orientation2);
-
-		} else {
-
-			int x2 = goal2.coordinate1.x + (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
-			int y2 = goal2.coordinate1.y;
-			int orientation2 = 180;
-
-			Coordinate goal2Coordinate = new Coordinate(x2, y2);
-			goal1.robotLocation = new Robot(goal2Coordinate, orientation2);
-
-			int x1 = goal1.coordinate1.x - (PathFinder.robotDiameter/ 2 + PathFinder.robotBufferSize);
-			int y1 = goal1.coordinate1.y;
-			int orientation1 = 0;
-			Coordinate goal1Coordinate = new Coordinate(x1, y1);
-			goal1.robotLocation = new Robot(goal1Coordinate, orientation1);
-
-		}
-		*/
-
 		return goals;
 	}
 
@@ -196,7 +158,7 @@ public class VisionTranslator {
 		Coordinate largeCircleCoordinate = new Coordinate((recievedArray[1][0] / visionScale),(recievedArray[1][1] / visionScale));
 		Coordinate zeroPoint = new Coordinate(((recievedArray[1][0]) / visionScale) + 50, (recievedArray[1][1] / visionScale));
 		
-		System.out.println("FÃ˜R PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
+		System.out.println("FØR PERSP " + largeCircleCoordinate.x + " " + largeCircleCoordinate.y);
 		perspectiveTransform(smallCircleCoordinate, roboloc.height);
 		perspectiveTransform(largeCircleCoordinate, roboloc.height);
 		perspectiveTransform(zeroPoint, roboloc.height);
@@ -243,12 +205,27 @@ public class VisionTranslator {
 
 	private void perspectiveTransform(Coordinate coord, double height) {
 		// Find height differences and the proportion
-		double heightProportion = (double) (cameraHeight - height)/cameraHeight;
+		double heightProportion = (cameraHeight - height)/cameraHeight;
 
 		// Find the scewed distance caused of height differences
 		coord.x = (1-heightProportion)*cameraX + heightProportion*coord.x;
 		coord.y = (1-heightProportion)*cameraY + heightProportion*coord.y;
 		
 	}
-
+	
+	private ArrayList<Coordinate> calculateQuadrants(){
+		ArrayList<Wall> edges = calculateWalls();
+		ArrayList<Coordinate> quadrants = new ArrayList<Coordinate>();
+		Coordinate middle = new Coordinate(0,0);
+		
+		middle.x = (edges.get(0).upper.x + edges.get(0).lower.x + edges.get(1).upper.x + edges.get(1).lower.x)/4;
+		middle.y = (edges.get(0).upper.y + edges.get(0).lower.y + edges.get(1).upper.y + edges.get(1).lower.y)/4;
+		
+		quadrants.add(new Coordinate((edges.get(0).upper.x + middle.x)/2, (edges.get(0).upper.y + middle.y)/2));
+		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, (edges.get(0).lower.y + middle.y)/2));
+		quadrants.add(new Coordinate((edges.get(1).upper.x + middle.x)/2, (edges.get(1).upper.y + middle.y)/2));
+		quadrants.add(new Coordinate((edges.get(1).lower.x + middle.x)/2, (edges.get(1).lower.y + middle.y)/2));
+		
+		return quadrants;
+	}
 }

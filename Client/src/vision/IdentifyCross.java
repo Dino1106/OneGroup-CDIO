@@ -1,22 +1,12 @@
 package vision;
 
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
-import org.opencv.core.CvType;
-
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class IdentifyCross {
 	
-	private int coords[][] = new int [4][2];
-
-	public IdentifyCross(Mat picture, IdentifyCoordinates identify)	{
-		coords = identify.getEdgesSqaure(picture);
-	}
-
 	/**
 	 *
 	 * Returns xy Coordinates of a square around the cross
@@ -28,34 +18,46 @@ public class IdentifyCross {
 	 *  position = 3 <--- low-left corner
 	 *
 	 */
-	int get_coords(int x_y,int position)
-	{
-		return coords[x_y][position];
+	
+	private int coords[][] = new int [4][2];
+	private double circle[] = new double[3];
+	
+
+	public IdentifyCross(Mat picture, IdentifyCoordinates identify)	{
+		coords = identify.getEdgesSqaure(picture);
+		
+		// Calculate center of Cross
+		circle[0] = (double) ((coords[1][0] + coords[0][0]) / 2);
+		circle[1] = (double) ((coords[1][1] + coords[2][1]) / 2);
+		
+		calcRadius();
+		
 	}
 
-	public int[][] getArray(){
-		return coords;
+//	int get_coords(int x_y,int position)
+//	{
+//		return coords[x_y][position];
+//	}
+
+	public double[] getArray(){
+		return circle;
 	}
 
-	public void draw(Mat color_map, Scalar BoxColor)
+	public void draw(Mat picture, Scalar BoxColor)
 	{
-		line(color_map,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
-		line(color_map,new Point(coords[1][0],coords[1][1]),new Point(coords[2][0],coords[2][1]),BoxColor);
-		line(color_map,new Point(coords[2][0],coords[2][1]),new Point(coords[3][0],coords[3][1]),BoxColor);
-		line(color_map,new Point(coords[3][0],coords[3][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
+		circle(picture, new Point((int) circle[0], (int) circle[1]), (int) circle[2], BoxColor);
 		
 	}
 	
-	
-	/*
-	public  void draw_render_space(Mat color_map, Scalar BoxColor)
-	{
-		line(color_map,new Point(upperLeftBoundary[0], upperLeftBoundary[1]),new Point(lowerLeftBoundary[0],lowerLeftBoundary[1]),Scalar.RED);
-		line(color_map,new Point(lowerLeftBoundary[0], lowerLeftBoundary[1]),new Point(lowerRightBoundary[0],lowerRightBoundary[1]),Scalar.RED);
-		line(color_map,new Point(lowerRightBoundary[0], lowerRightBoundary[1]),new Point(upperRightBoundary[0], upperRightBoundary[1]),Scalar.RED);
-		line(color_map,new Point(upperRightBoundary[0], upperRightBoundary[1]),new Point(upperLeftBoundary[0], upperLeftBoundary[1]),Scalar.RED);
-	}
-	*/
+	public void calcRadius() {
+		// Find average distances to each edge
+		double distLeft  = circle[0] - coords[0][0];
+		double distRight = coords[1][0] - circle[0];
+		double distUpper = circle[1] - coords[1][1];
+		double distLower = coords[2][1] - circle[1];
 
+		// Find average of each distance
+		circle[2] = (double) ((distLeft + distRight + distUpper + distLower) / 4);
+	}
 }
 

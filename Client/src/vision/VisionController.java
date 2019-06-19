@@ -122,7 +122,7 @@ public class VisionController {
 
 		Vec3fVector balls = null;
 		int[][] walls = null;
-		int[][] cross = null;
+		double[] cross = null;
 		int[][] robot = null;
 
 		//Take the picture
