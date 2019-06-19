@@ -218,8 +218,9 @@ public class VisionTranslator {
 		ArrayList<Coordinate> quadrants = new ArrayList<Coordinate>();
 		Coordinate middle = new Coordinate(0,0);
 		
-		middle.x = (edges.get(0).upper.x + edges.get(0).lower.x + edges.get(1).upper.x + edges.get(1).lower.x)/4;
-		middle.y = (edges.get(0).upper.y + edges.get(0).lower.y + edges.get(1).upper.y + edges.get(1).lower.y)/4;
+		
+		middle.x = visionSnapShot.getCross()[0];
+		middle.y = visionSnapShot.getCross()[1];
 		
 		quadrants.add(new Coordinate((edges.get(0).upper.x + middle.x)/2, (edges.get(0).upper.y + middle.y)/2));
 		quadrants.add(new Coordinate((edges.get(0).lower.x + middle.x)/2, (edges.get(0).lower.y + middle.y)/2));
