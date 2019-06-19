@@ -57,7 +57,7 @@ public class TestMainServer extends Thread implements IMainServer{
 	}
 
 	@Override
-	public void carTravel(int centimeters, int speed) {
+	public void carTravel(double centimeters, int speed) {
 		System.out.println("--------- ROBOT - carTravel(int centimeters, int speed) ---------");
 		System.out.println("My Location: " + this.robotLocation.toString());
 		System.out.println("My Orientation: " + this.robotOrientation + " degrees");
