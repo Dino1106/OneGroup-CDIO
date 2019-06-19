@@ -104,6 +104,7 @@ public class DecisionMaker {
 		while (keepRunning) {
 			updateMap();
 			
+			// TODO: Reimplement delivering balls.
 //			if (pickedUpBallCount >= maxBalls) {
 //				pathFinder.playSound("goal");
 //				deliverBalls();
@@ -122,7 +123,7 @@ public class DecisionMaker {
 				pathFinder.playSound("victory");
 			}
 			
-			// Let's go pick up some balls.
+//			 Let's go pick up some balls.
 			if (onFieldBallCount > 0 && pickedUpBallCount < maxBalls) {
 				pathFinder.playSound("ball");
 				pickupBall();
