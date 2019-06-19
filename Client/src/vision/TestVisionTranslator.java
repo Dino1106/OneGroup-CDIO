@@ -27,7 +27,7 @@ public class TestVisionTranslator {
 	}
 
 	public MapState getProcessedMap() {
-		return new MapState(balls, cross, walls, goals.get(0), goals.get(1), robot);
+		return new MapState(balls, cross, walls, goals.get(0), goals.get(1), robot, null);
 	}
 
 	/**
