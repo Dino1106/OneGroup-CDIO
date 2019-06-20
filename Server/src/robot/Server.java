@@ -12,7 +12,7 @@ import constants.ServerConstants;
 import lejos.hardware.Sound;
 import model.Coordinate;
 
-public class MainServer extends Thread {
+public class Server extends Thread {
 	
 	private static Socket client;
 	private RobotMovement robotControls;
@@ -20,8 +20,8 @@ public class MainServer extends Thread {
 	private static ServerSocket server;
 	private static DataOutputStream dOut;
 
-	public MainServer(Socket client) throws IOException {
-		MainServer.client = client;
+	public Server(Socket client) throws IOException {
+		Server.client = client;
 		dOut = new DataOutputStream(client.getOutputStream());
 		this.robotControls = new RobotMovement();
 	}
@@ -33,7 +33,7 @@ public class MainServer extends Thread {
 		while(looping) {
 			System.out.println("Awaiting client...");
 			client = server.accept();
-			new MainServer(client).start();
+			new Server(client).start();
 		}
     }
 	
