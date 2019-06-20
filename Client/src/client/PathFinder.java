@@ -18,6 +18,8 @@ public class PathFinder {
 	public static final double robotBufferSize = 8.0; // The distance to define a ball near a wall.
 	public static final double robotGrabBuffer = 12.5; // The buffer distance we want between the robot and the edge
 
+	public static double crossRadius;
+	
 	public static final int speedSlow = 20;
 	public static final int speedFast = 40;
 	public static final int sleepTime = 8000; // Sleep time in milliseconds.
@@ -38,6 +40,7 @@ public class PathFinder {
 	// coordinates".
 	// Also starts swallowing balls.
 	public PathFinder(MapState mapState, Client mainClient) {
+		crossRadius = mapState.cross.radius + 11;
 		this.mapState = mapState;
 		this.mainClient = mainClient;
 		northWest = mapState.quadrants.get(0);
@@ -52,6 +55,7 @@ public class PathFinder {
 
 	// We want to return route to a given ball.
 	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
+		crossRadius = mapState.cross.radius + 11;
 		System.out.println("----- PathFinder getCalculatedRouteBall for ball: " + ball);
 		Route route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
@@ -65,7 +69,7 @@ public class PathFinder {
 			System.out.println("\t\t Ball is close to cross!");
 			auxiliaryForCross = findCoordinateOnLine(new Coordinate(ball.x, ball.y),
 					new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y),
-					robotDiameter + robotBufferSize);
+					crossRadius + robotDiameter);
 			nearestToTarget = findNearestQuadrant(auxiliaryForCross);
 		} else {
 			System.out.println("\t\t Ball is not close to cross");
@@ -79,10 +83,9 @@ public class PathFinder {
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
-		// TODO: Comment back in auxiliary positions
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
-			// route.coordinates.add(auxiliaryForCross);
+			 route.coordinates.add(auxiliaryForCross);
 		} else {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
 			getCoordinatesForBallNearWalls(ball, route);
@@ -159,7 +162,6 @@ public class PathFinder {
 			// the route to now stand opposite the wall.
 			if (isBallCloseToWall(ball, leftWall)) {
 				System.out.println("\t\t Ball is close to a wall!");
-				// TODO: Refine where the robot goes here before approaching a wall-close ball.
 				Coordinate newCoordinate = new Coordinate(0, 0);
 				newCoordinate.x = quadrant.x;
 				newCoordinate.y = ball.y;
@@ -580,6 +582,10 @@ public class PathFinder {
 	public void emergencyBack() {
 		mainClient.sendTravelDistance(-robotDiameter, speedFast);
 		playSound("emergency");
+	}
+
+	public void stopMotors() {
+		mainClient.stopAllMotors();
 	}
 
 }

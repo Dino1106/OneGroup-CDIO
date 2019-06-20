@@ -120,6 +120,7 @@ public class DecisionMaker {
 				continue;
 			}
 		}
+		pathFinder.stopMotors();
 		long endTime = System.nanoTime();
 		long timeElapsed = endTime - startTime;
 		System.out.println("The robot program ran for: " + timeElapsed * Math.pow(10, -9));
