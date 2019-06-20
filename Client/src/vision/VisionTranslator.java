@@ -60,7 +60,7 @@ public class VisionTranslator {
 
 			Coordinate coord = new Coordinate((((visionSnapShot.getBalls().get(i).get(0)) / visionScale)),
 					(((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
-			//perspectiveTransform(coord, ball.height);
+			// perspectiveTransform(coord, ball.height);
 			changeToRobotFormat(coord);
 
 			Ball b = new Ball(coord.x, coord.y);
@@ -127,9 +127,9 @@ public class VisionTranslator {
 
 		smallGoal.coordinate1 = smallGoalCoord;
 		largeGoal.coordinate1 = largeGoalCoord;
-		smallGoal.robotLocation = new Robot(new Coordinate(smallGoal.coordinate1.x + 20, smallGoal.coordinate1.y),
-				0.0);
-		largeGoal.robotLocation = new Robot(new Coordinate(largeGoal.coordinate1.x - 20, largeGoal.coordinate1.y), 180.0);
+		smallGoal.robotLocation = new Robot(new Coordinate(smallGoal.coordinate1.x + 20, smallGoal.coordinate1.y), 0.0);
+		largeGoal.robotLocation = new Robot(new Coordinate(largeGoal.coordinate1.x - 20, largeGoal.coordinate1.y),
+				180.0);
 
 		goals.add(smallGoal);
 		goals.add(largeGoal);
@@ -188,9 +188,8 @@ public class VisionTranslator {
 
 			roboloc.coordinate = largeCircleCoordinate;
 			roboloc.orientation = orientation;
-		}
-		else {
-			roboloc.coordinate = new Coordinate(0.0,0.0);
+		} else {
+			roboloc.coordinate = new Coordinate(0.0, 0.0);
 			roboloc.orientation = 0.0;
 		}
 
@@ -236,13 +235,13 @@ public class VisionTranslator {
 
 	// Unused. Gets quadrants based on where cross is.
 	private void getQuadrantsCrossSplit(ArrayList<Coordinate> quadrants, Coordinate middle) {
-		quadrants.add(new Coordinate(((walls.get(0).upper.x + middle.x) / 2) / visionScale,
+		quadrants.add(new Coordinate(((walls.get(0).upper.x + middle.x) / 2),
 				((walls.get(0).upper.y + middle.y) / 2) / visionScale));
-		quadrants.add(new Coordinate(((walls.get(0).lower.x + middle.x) / 2) / visionScale,
+		quadrants.add(new Coordinate(((walls.get(0).lower.x + middle.x) / 2),
 				((walls.get(0).lower.y + middle.y) / 2) / visionScale));
-		quadrants.add(new Coordinate(((walls.get(1).upper.x + middle.x) / 2) / visionScale,
+		quadrants.add(new Coordinate(((walls.get(1).upper.x + middle.x) / 2),
 				((walls.get(1).upper.y + middle.y) / 2) / visionScale));
-		quadrants.add(new Coordinate(((walls.get(1).lower.x + middle.x) / 2) / visionScale,
+		quadrants.add(new Coordinate(((walls.get(1).lower.x + middle.x) / 2),
 				((walls.get(1).lower.y + middle.y) / 2) / visionScale));
 	}
 }

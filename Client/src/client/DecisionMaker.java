@@ -89,11 +89,17 @@ public class DecisionMaker {
 			updateMap();
 			System.out.println("----DecisionMaker\n\tOnFieldBallCount: " + onFieldBallCount + "\n\tPickedUpBallCount: "
 					+ pickedUpBallCount);
+			
 			if (mapState.robot.coordinate.x == 0.0 && mapState.robot.coordinate.y == 0.0) {
 				emergencyBack();
 				continue;
 			}
 			
+			if (pathFinder.calculateDistances(mapState.robot.coordinate, mapState.cross.centerCoordinate) < pathFinder.robotDiameter) {
+				emergencyBack();
+				continue;
+			}
+		
 			if (pickedUpBallCount >= ClientConstants.maxBalls) {
 				pathFinder.playSound("goal");
 				deliverBalls();

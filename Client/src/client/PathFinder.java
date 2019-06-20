@@ -67,6 +67,8 @@ public class PathFinder {
 		// for the ball.
 		if (closeToCross) {
 			System.out.println("\t\t Ball is close to cross!");
+			nearestToTarget = findNearestQuadrant(new Coordinate(ball.x, ball.y));
+			/*
 			auxiliaryForCross = findCoordinateOnLineErick(new Coordinate(ball.x, ball.y),
 					new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y),
 					robotDiameter);
@@ -79,6 +81,7 @@ public class PathFinder {
 				System.out.println("--We can approach from same quadrant.");
 				nearestToTarget = initiallyClosest;
 			}
+			*/
 		} else {
 			System.out.println("\t\t Ball is not close to cross");
 			// Else we find out which quadrant is nearest to the ball.
@@ -93,7 +96,8 @@ public class PathFinder {
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
-			route.coordinates.add(auxiliaryForCross);
+			// TODO: Reimplement this if it is ever needed again.
+//			route.coordinates.add(auxiliaryForCross);
 		} else {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
 			getCoordinatesForBallNearWalls(ball, route);
