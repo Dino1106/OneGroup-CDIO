@@ -80,6 +80,7 @@ public class Client {
 			
 			if(serverResponse) {
 				System.out.println("Path done: " + serverResponse);
+				return;
 			}
 			
 		} catch(IOException io) {

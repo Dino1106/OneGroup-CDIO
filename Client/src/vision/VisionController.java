@@ -98,7 +98,7 @@ public class VisionController {
 			edgeDetection();
 
 		} catch (Exception e) {
-			System.out.println("Error in VisionController, createNecessaryObjects():" + e.getStackTrace());
+			//("Error in VisionController, createNecessaryObjects():" + e.getStackTrace());
 		}
 	}
 
@@ -108,7 +108,6 @@ public class VisionController {
 	 */
 	public VisionSnapShot getSnapShot() {
 		VisionSnapShot visionSnapShot = calculateSnapShot();
-		System.out.println("VisionController, Vision done, sending (getSnapShot) \n\n\n");
 		return visionSnapShot;
 	}
 
@@ -117,7 +116,6 @@ public class VisionController {
 	 * @return VisionSnapShot with all the raw data for the translator.
 	 */
 	private VisionSnapShot calculateSnapShot() {
-		System.out.println("Vision - Start identify balls");
 
 		Vec3fVector balls = null;
 		int[][] walls = null;
@@ -149,7 +147,6 @@ public class VisionController {
 
 		
 		// 1 - Identify balls with given parameters and draw circles
-		System.out.println("Vision - Start identify balls");
 		IdentifyBalls identifyBalls;
 		int[] calib = {6, 5, 2, 20, 20};
 		
@@ -161,25 +158,25 @@ public class VisionController {
 			identifyBalls = new IdentifyBalls(picturePlain,1,params[0],params[1],params[2],params[3],params[4]);
 		}
 		balls = identifyBalls.getCircles();
-		System.out.println("Vision - End identify balls");
+		//("Vision - End identify balls");
 
 		
 		// 2 - Identify cross with constant parameters
-		System.out.println("Vision - Start identify cross");
+		//("Vision - Start identify cross");
 		IdentifyCross identifyCross = new IdentifyCross(pictureColor, identifyCoordinates);
 		cross = identifyCross.getArray();
-		System.out.println("Vision - End identify cross");
+		//("Vision - End identify cross");
 
 		
 		// 4 - Identify robot			
-		System.out.println("Vision - Start identify robot");	
+		//("Vision - Start identify robot");	
 		IdentifyRobot identifyRobot = new IdentifyRobot(pictureRobot, identifyCoordinates);
 		robot = identifyRobot.getArray();
-		System.out.println("Vision - End identify robot");
+		//("Vision - End identify robot");
 
 		
 		// 5 - Draw lines on picture
-		System.out.println("Vision - Insert drawings on live picture");
+		//("Vision - Insert drawings on live picture");
 		identifyBalls.draw(pictureWarped,Scalar.CYAN,true);
 		identifyCross.draw(pictureWarped, Scalar.BLUE);
 		identifyRobot.draw(pictureWarped, Scalar.BLUE);
@@ -213,7 +210,7 @@ public class VisionController {
 				return this.converter.convert(frame);
 
 			} catch (Exception e) {
-				System.out.println("Error in VisionController, takePicture():" + e.getStackTrace());
+				//("Error in VisionController, takePicture():" + e.getStackTrace());
 				return null;
 			}
 		} else {
@@ -226,7 +223,7 @@ public class VisionController {
 	 * Runs the detection of edges (and takes pictures), until the frameCoordinates is not one of the corners of the original picture.
 	 */
 	private void edgeDetection() {
-		System.out.println("VisionController - Starting edge detection");
+		//("VisionController - Starting edge detection");
 
 		pictureOriginal = takePicture(usingCamera);
 
@@ -253,10 +250,10 @@ public class VisionController {
 //			th.join();
 //
 //		} catch (InterruptedException e) {
-//			System.out.println("Error in VisionController, edgeDetection():" + e.getStackTrace());
+//			//("Error in VisionController, edgeDetection():" + e.getStackTrace());
 //		}
 
-		System.out.println("VisionController - Stopping edge detection");
+		//("VisionController - Stopping edge detection");
 	}
 
 
