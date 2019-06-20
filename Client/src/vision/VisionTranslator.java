@@ -60,7 +60,7 @@ public class VisionTranslator {
 
 			Coordinate coord = new Coordinate((((visionSnapShot.getBalls().get(i).get(0)) / visionScale)),
 					(((visionSnapShot.getBalls().get(i).get(1)) / visionScale)));
-			perspectiveTransform(coord, ball.height);
+			//perspectiveTransform(coord, ball.height);
 			changeToRobotFormat(coord);
 
 			Ball b = new Ball(coord.x, coord.y);
@@ -128,8 +128,8 @@ public class VisionTranslator {
 		smallGoal.coordinate1 = smallGoalCoord;
 		largeGoal.coordinate1 = largeGoalCoord;
 		smallGoal.robotLocation = new Robot(new Coordinate(smallGoal.coordinate1.x + 20, smallGoal.coordinate1.y),
-				180.0);
-		largeGoal.robotLocation = new Robot(new Coordinate(largeGoal.coordinate1.x - 20, largeGoal.coordinate1.y), 0.0);
+				0.0);
+		largeGoal.robotLocation = new Robot(new Coordinate(largeGoal.coordinate1.x - 20, largeGoal.coordinate1.y), 180.0);
 
 		goals.add(smallGoal);
 		goals.add(largeGoal);

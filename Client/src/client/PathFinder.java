@@ -16,11 +16,11 @@ public class PathFinder {
 
 	public static final double robotDiameter = 32.0; // The "diameter" of the robot - its thickness.
 	public static final double robotBufferSize = 8.0; // The distance to define a ball near a wall.
-	public static final double robotGrabBuffer = 12; // The buffer distance we want between the robot and the edge
+	public static final double robotGrabBuffer = 10; // The buffer distance we want between the robot and the edge
 
 	public static double crossRadius;
 
-	public static final int speedSlow = 20;
+	public static final int speedSlow = 10;
 	public static final int speedFast = 40;
 	public static final int sleepTime = 8000; // Sleep time in milliseconds.
 
@@ -67,7 +67,7 @@ public class PathFinder {
 		// for the ball.
 		if (closeToCross) {
 			System.out.println("\t\t Ball is close to cross!");
-			auxiliaryForCross = findCoordinateOnLine(new Coordinate(ball.x, ball.y),
+			auxiliaryForCross = findCoordinateOnLineErick(new Coordinate(ball.x, ball.y),
 					new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y),
 					robotDiameter);
 			// Now we must find the best nearest quadrant. If quadrant is closer to cross than to auxiliary, we need to use the opposite quadrant.
@@ -105,15 +105,19 @@ public class PathFinder {
 	// Returns the quadrant on the opposite side of the map.
 	private Coordinate oppositeQuadrant(Coordinate quadrant) {
 		if (quadrant.equals(northWest)) {
+			System.out.println("Find opposite of NW");
 			return southEast;
 		}
 		if (quadrant.equals(northEast)) {
+			System.out.println("Find opposite of NE");
 			return southWest;
 		}
 		if (quadrant.equals(southEast)) {
+			System.out.println("Find opposite of SE");
 			return northWest;
 		}
 		if (quadrant.equals(southWest)) {
+			System.out.println("Find opposite of SW");
 			return northEast;
 		}
 		System.err.println("We didn't find a damn opposite quadrant.");
@@ -307,7 +311,7 @@ public class PathFinder {
 
 	// Finds a new coordinate that is X away from coordinate 2, where coordinate 1
 	// and 2 create a line.
-	public Coordinate SSSfindCoordinateOnLine(Coordinate coordinate1, Coordinate coordinate2, double distance) {
+	public Coordinate findCoordinateOnLineErick(Coordinate coordinate1, Coordinate coordinate2, double distance) {
 		Coordinate auxiliary = new Coordinate(0, 0);
 
 		auxiliary.x = (coordinate1.x + coordinate2.x) / 1.3;
@@ -318,7 +322,7 @@ public class PathFinder {
 		return auxiliary;
 	}
 
-	public Coordinate findCoordinateOnLine(Coordinate coordinate1, Coordinate coordinate2, double distance) {
+	public Coordinate findCoordinateOnLineJakub(Coordinate coordinate1, Coordinate coordinate2, double distance) {
 
 		double m = (coordinate1.y - coordinate2.y) / (coordinate1.x - coordinate2.x);
 

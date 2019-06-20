@@ -4,14 +4,15 @@ import model.Coordinate;
 
 public class Main {
 	
+	
 	public static void main(String[] args) {
 		DecisionMaker decisionMaker = new DecisionMaker();
-		
+				
 		// Normal vision + algorithm
-//		decisionMaker.run();
+		decisionMaker.run();
 		
 		// Normal vision + robot test
-		decisionMaker.runRobotTest();
+//		decisionMaker.runRobotTest();
 		
 		// Test vision + algorithm
 //		decisionMaker.runVisionTest();
