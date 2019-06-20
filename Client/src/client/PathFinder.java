@@ -1,11 +1,10 @@
 package client;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import model.Ball;
 import model.Coordinate;
-import model.Cross;
 import model.Goal;
 import model.MapState;
 import model.PseudoWall;
@@ -50,7 +49,7 @@ public class PathFinder {
 	
 	// We want to return route to a given ball.
 	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
-		System.out.println("----- PathFinder getCalculatedRouteBall");
+		System.out.println("----- PathFinder getCalculatedRouteBall for ball: " + ball);
 		Route route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// This is where the magic happens.
 		// First we see if the ball is close to a cross.
@@ -74,12 +73,13 @@ public class PathFinder {
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
+		 // TODO: Comment back in auxiliary positions
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
-			route.coordinates.add(auxiliaryForCross);
+			// route.coordinates.add(auxiliaryForCross);
 		} else {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
-			getCoordinatesForBallNearWalls(ball, route);
+			// getCoordinatesForBallNearWalls(ball, route);
 		}
 		System.out.println("Calculated Route is: " + route.coordinates.toString());
 		return route;
@@ -191,15 +191,20 @@ public class PathFinder {
 		System.out.println("----- PathFinder getCalculatedRoutesGoals");
 		ArrayList<Route> routes = new ArrayList<Route>();
 		Route route;
+		Coordinate nearestToRobot;
+		Coordinate nearestToGoal;
+		/* 
+		 * We ignore the route to the leftmost goal. We want the smallest goal.
+		 * 
 		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
-		Coordinate nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
+		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		route.coordinates.add(nearestToRobot);
-		Coordinate nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
+		nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
 		route.coordinates.add(mapState.goal1.robotLocation.coordinate);
-
 		routes.add(route);
+		*/
 
 		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
@@ -224,18 +229,15 @@ public class PathFinder {
 		} else {
 			goal = mapState.goal2;
 		}
-		double orientation1 = mapState.robot.orientation;
-		double orientation2 = goal.robotLocation.orientation;
-		mainClient.rotate(-orientation1);
-		mainClient.rotate(orientation2);
-		mainClient.pickUpBalls(false);
+		rotateToOrientation(goal.robotLocation.orientation);
 		// Wait for SLEEPTIME seconds.
 		try {
-			Thread.sleep(sleepTime * 1000); // TODO: Is Thread.sleep the right thing to do?
+			mainClient.pickUpBalls(false);
+			TimeUnit.SECONDS.sleep(8);
+			mainClient.pickUpBalls(true);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		mainClient.pickUpBalls(true);
 	}
 
 	// 'Afstandsformlen' to calculate distance between two coordinates.
@@ -511,7 +513,6 @@ public class PathFinder {
 					+ ", \nSending coordinate " + coordinate.toString() + " to robot");
 //			mainClient.setRobotLocation(mapState.robot);
 			mainClient.sendCoordinate(coordinate, speedFast);
-			System.out.println("DO WE EVER GET HERE?");
 		}
 	}
 
@@ -569,9 +570,11 @@ public class PathFinder {
 		mainClient.sendMotorSpeed(speedFast);*/
 		
 		mainClient.sendCoordinate(new Coordinate(bestBall.x, bestBall.y), speedSlow);
-		System.out.println("\n THIS RIGHT HERE IS THE MOTHERBROTHER BALLIN LOLLIN BALL: " + bestBall);
+		System.out.println("\n We went to coordinate to pick up ball at: " + bestBall);
+		/* Not neccessary.
 		Coordinate nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		mainClient.sendCoordinate(nearestToRobot, speedSlow);
+		*/
 	}
 
 }
