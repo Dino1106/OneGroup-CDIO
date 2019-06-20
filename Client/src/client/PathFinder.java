@@ -53,7 +53,6 @@ public class PathFinder {
 		generateWalls(mapState);
 	}
 
-	// We want to return route to a given ball.
 	public Route getCalculatedRouteBall(MapState mapState, Ball ball) {
 		crossRadius = mapState.cross.radius + 11;
 		System.out.println("----- PathFinder getCalculatedRouteBall for ball: " + ball);
@@ -68,20 +67,6 @@ public class PathFinder {
 		if (closeToCross) {
 			System.out.println("\t\t Ball is close to cross!");
 			nearestToTarget = findNearestQuadrant(new Coordinate(ball.x, ball.y));
-			/*
-			auxiliaryForCross = findCoordinateOnLineErick(new Coordinate(ball.x, ball.y),
-					new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y),
-					robotDiameter);
-			// Now we must find the best nearest quadrant. If quadrant is closer to cross than to auxiliary, we need to use the opposite quadrant.
-			Coordinate initiallyClosest = findNearestQuadrant(auxiliaryForCross);
-			if (calculateDistances(initiallyClosest, mapState.cross.centerCoordinate) < calculateDistances(initiallyClosest, new Coordinate(ball.x, ball.y))) {
-				System.out.println("--We must approach from opposite quadrant.\nInitial: " + initiallyClosest + " cross: " + mapState.cross.centerCoordinate + " ball: " + ball);
-				nearestToTarget = oppositeQuadrant(initiallyClosest);
-			} else {
-				System.out.println("--We can approach from same quadrant.");
-				nearestToTarget = initiallyClosest;
-			}
-			*/
 		} else {
 			System.out.println("\t\t Ball is not close to cross");
 			// Else we find out which quadrant is nearest to the ball.
@@ -96,7 +81,6 @@ public class PathFinder {
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
-//			route.coordinates.add(auxiliaryForCross);
 		} else {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
 			getCoordinatesForBallNearWalls(ball, route);
@@ -325,7 +309,6 @@ public class PathFinder {
 
 		double m = (coordinate1.y - coordinate2.y) / (coordinate1.x - coordinate2.x);
 
-//		double b = coordinate2.y - m * coordinate2.x;
 		double angle = Math.atan(m);
 		
 		Coordinate output = new Coordinate(0, 0);
@@ -469,41 +452,6 @@ public class PathFinder {
 				+ lowerWall.left + lowerWall.right);
 	}
 
-//	// Set the middle of the map and all quadrant points.
-//	private void calculateQuadrants(MapState mapState) {
-//		middleOfMap = new Coordinate(0, 0);
-//		middleOfMap.x = (mapState.cross.coordinate1.x + mapState.cross.coordinate2.x + mapState.cross.coordinate3.x
-//				+ mapState.cross.coordinate4.x) / 4;
-//		middleOfMap.y = (mapState.cross.coordinate1.y + mapState.cross.coordinate2.y + mapState.cross.coordinate3.y
-//				+ mapState.cross.coordinate4.y) / 4;
-//		// Before we can find quadrants, we gotta determine which wall is which.
-//		leftWall = new Wall();
-//		rightWall = new Wall();
-//		// Figure out which wall is left wall.
-//		if (mapState.wallList.get(0).upper.x < mapState.wallList.get(1).upper.x) {
-//			leftWall = mapState.wallList.get(0);
-//			rightWall = mapState.wallList.get(1);
-//		} else {
-//			rightWall = mapState.wallList.get(0);
-//			leftWall = mapState.wallList.get(1);
-//		}
-//		// Let's set the four quadrant points. First northwest point - the middle of the
-//		// northwest quadrant.
-//		northWest = new Coordinate(0, 0);
-//		northWest.x = (leftWall.upper.x + middleOfMap.x) / 2;
-//		northWest.y = (leftWall.upper.y + middleOfMap.y) / 2;
-//		// Then the others.
-//		northEast = new Coordinate(0, 0);
-//		northEast.x = (rightWall.upper.x + middleOfMap.x) / 2;
-//		northEast.y = (rightWall.upper.y + middleOfMap.y) / 2;
-//		southWest = new Coordinate(0, 0);
-//		southWest.x = (leftWall.lower.x + middleOfMap.x) / 2;
-//		southWest.y = (leftWall.lower.y + middleOfMap.y) / 2;
-//		southEast = new Coordinate(0, 0);
-//		southEast.x = (rightWall.lower.x + middleOfMap.x) / 2;
-//		southEast.y = (rightWall.lower.y + middleOfMap.y) / 2;
-//	}
-
 	// We find out which quadrant is closest to the requested ball.
 	private Coordinate findNearestQuadrant(Coordinate coordinate) {
 		System.out.println("----- PathFinder findNearestQuadrant");
@@ -559,9 +507,7 @@ public class PathFinder {
 		for (Coordinate coordinate : route.coordinates) {
 			System.out.println("----- PathFinder driveRoute \nRoute length: " + route.coordinates.size()
 					+ ", \nSending coordinate " + coordinate.toString() + " to robot");
-//			mainClient.setRobotLocation(mapState.robot);
 			mainClient.sendCoordinate(coordinate, speedFast);
-//			robotSleep(1);
 		}
 	}
 

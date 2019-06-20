@@ -1,7 +1,5 @@
 package client;
 
-import model.Coordinate;
-
 public class Main {
 	
 	

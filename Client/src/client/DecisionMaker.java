@@ -47,17 +47,17 @@ public class DecisionMaker {
 		try {
 			mainClient.connect();
 
-			
-//			mainClient.sendTravelDistance(200, 15);
+			// Drive streight
+			mainClient.sendTravelDistance(200, 15);
 
 			// Calibrate rotate
-//			mainClient.rotate(1080);
+			mainClient.rotate(1080);
 
 			// Be able to drive around 40 cm in the field.
 			testAroundInASquare();
 
 			// Be able to pickUp all balls in list.
-//			pickUpWileLoop();
+			pickUpWhileLoop();
 
 		} catch (IOException e) {
 			System.out.println("DecisionMaker error: " + e.getStackTrace());
@@ -106,22 +106,18 @@ public class DecisionMaker {
 				continue;
 			}
 
-			// This will stop the robot if ever there are no more balls on the field. Let's
-			// hope
-			// the judge isn't silly and throws new balls unto the field after it is done.
 			if (onFieldBallCount < 1) {
-				// Get rid of our last balls.
+
 				if (pickedUpBallCount > 0) {
 					pathFinder.playSound("goal");
 					deliverBalls();
 				}
-				// Time to end this little game.
+
 				keepRunning = false;
 				pathFinder.playSound("victory");
 				continue;
 			}
 
-			// Let's go pick up some balls.
 			if (onFieldBallCount > 0 && pickedUpBallCount < ClientConstants.maxBalls) {
 				pathFinder.playSound("ball");
 				pickupBall();
