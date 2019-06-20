@@ -144,6 +144,16 @@ public class Client {
 			System.out.println("Client error: " + e.getStackTrace());
 		}
 	}
+	
+	public void stopAllMotors() {
+		try {
+			String stopMotors = "9 ";
+			dOut.writeUTF(stopMotors);
+			dOut.flush();
+		} catch(IOException e) {
+			System.out.println("Client error: " + e.getStackTrace());
+		}
+	}
  
 	public void disconnect() { 
 		try {

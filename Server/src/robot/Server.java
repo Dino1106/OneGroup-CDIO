@@ -96,6 +96,8 @@ public class Server extends Thread {
 					double heading = Double.parseDouble(splitInputs[3]);
 					robotControls.setRobotLocation(robotLocation, heading);
 					break;
+				case 9:
+					robotControls.stopAllMotors();
 				default:
 					break;
 				}

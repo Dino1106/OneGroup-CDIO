@@ -118,5 +118,11 @@ public class RobotMovement {
 		}
 		
 	}
+	
+	public void stopAllMotors() {
+		navigator.getMoveController().stop();
+		ballPickerLeft.stop();
+		ballPickerRight.stop();
+	}
  
 } 
