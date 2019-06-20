@@ -3,7 +3,7 @@ package constants;
 public class ClientConstants {
 	
 	//Robot
-	public static final double robotHeight = 26;
+	public static final double robotHeight = 25;
 	public static final double robotAxisShift = 1.5/13.5;
 	public static final int maxBalls = 7;
 	
@@ -12,7 +12,7 @@ public class ClientConstants {
 	public static final double approachGoalDistance = 10;
 	
 	//Camera
-	public static final double cameraHeight = 178.0;
+	public static final double cameraHeight = 177.0;
 	public static final int imageHeight = 720;
 	public static final int imageWidth = 1280;
 	public static final int cameraId = 1;

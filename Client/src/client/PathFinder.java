@@ -16,7 +16,7 @@ public class PathFinder {
 
 	public static final double robotDiameter = 32.0; // The "diameter" of the robot - its thickness.
 	public static final double robotBufferSize = 8.0; // The distance to define a ball near a wall.
-	public static final double robotGrabBuffer = 14; // The buffer distance we want between the robot and the edge
+	public static final double robotGrabBuffer = 12; // The buffer distance we want between the robot and the edge
 
 	public static double crossRadius;
 

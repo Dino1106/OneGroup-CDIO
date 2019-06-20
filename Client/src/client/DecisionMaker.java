@@ -40,19 +40,21 @@ public class DecisionMaker {
 	}
 
 	public void runRobotTest() {
-//		visionTranslator = new VisionTranslator(1);
-//		mapState = visionTranslator.getProcessedMap();
+		visionTranslator = new VisionTranslator(1);
+		mapState = visionTranslator.getProcessedMap();
 		mainClient = new Client();
 
 		try {
 			mainClient.connect();
+
 			
+//			mainClient.sendTravelDistance(200, 15);
 
 			// Calibrate rotate
-			mainClient.rotate(1080);
+//			mainClient.rotate(1080);
 
 			// Be able to drive around 40 cm in the field.
-//			testAroundInASquare();
+			testAroundInASquare();
 
 			// Be able to pickUp all balls in list.
 //			pickUpWileLoop();
