@@ -48,6 +48,15 @@ public class Server extends Thread {
 
 	}
 	
+	public void carTravel(double centimeters, int travelSpeed) {
+		try {
+			boolean response = robotControls.travel(centimeters, travelSpeed);
+			dOut.writeBoolean(response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void run() {
 		System.out.println("CLIENT CONNECTED");
 		try {
@@ -68,7 +77,7 @@ public class Server extends Thread {
 				case 3:
 					double centimeters = Double.parseDouble(splitInputs[1]);
 					int travelSpeed = Integer.parseInt(splitInputs[2]);
-					robotControls.travel(centimeters, travelSpeed);
+					carTravel(centimeters, travelSpeed);
 					break;
 				case 4:
 					boolean pickUp = Boolean.parseBoolean(splitInputs[1]);

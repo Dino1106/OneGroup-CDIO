@@ -53,10 +53,18 @@ public class RobotMovement {
 		}
 	}
 	
-	public void travel(double centimeters, int speed) {
+	public boolean travel(double centimeters, int speed) {
 		System.out.println("Driving " + centimeters +" centimeters with " + speed + " speed");
 		navigator.getMoveController().setLinearSpeed(speed);
 		navigator.getMoveController().travel(centimeters);
+		
+		if(navigator.waitForStop()) {
+			System.out.println("I have stopped travelling");
+			return true;
+		} else {
+			System.out.println("I am still travelling");
+			return false;
+		}
 	}
 	
 	public void rotate(double degrees) {
