@@ -229,7 +229,7 @@ public class PathFinder {
 		} else {
 			goal = mapState.goal2;
 		}
-		rotateToOrientation(goal.robotLocation.orientation);
+		double rotation = getOrientationForRotation(mapState.robot.orientation, goal.robotLocation.orientation);
 		// Wait for SLEEPTIME seconds.
 		try {
 			mainClient.pickUpBalls(false);
@@ -518,63 +518,49 @@ public class PathFinder {
 
 	public void swallowAndReverse(MapState mapState, Ball bestBall) {
 		System.out.println("----- PathFinder swallowAndReverse");
-		double robotOrientation = mapState.robot.orientation;
-		double robotX = mapState.robot.coordinate.x;
-		double robotY = mapState.robot.coordinate.y;
-		double zeroPointX = robotX + 50;
-		double zeroPointY = robotY;
-
-/*		System.out.println("Robobitch at: " + robotX + ", " + robotY);
-		System.out.println("Best ball at: " + bestBall.x + ", " + bestBall.y);
-
-		double a = Point2D.distance(bestBall.x, bestBall.y, zeroPointX, zeroPointY);
-		double b = zeroPointX - bestBall.x;
-		double c = Point2D.distance(robotX, robotY, bestBall.x, bestBall.y);
-
-		double cosA = (b*b + c*c - a*a) / (2*b*c);
-		double radA = Math.acos(cosA);
-		double targetDegrees = Math.toDegrees(radA);
+		System.out.println("\n We want to pick up ball at: " + bestBall);
 		
-		double targetOrientation;
+		Coordinate target = new Coordinate(bestBall.x, bestBall.y);
 		
-		if(robotY > bestBall.y){
-			targetOrientation = 360 - targetDegrees;
-		}
-		else targetOrientation = targetDegrees;
-
-		System.out.println("[PathFinder] Orientation for swallow:\trobot ori: " + robotOrientation + " target ori: "
-				+ targetOrientation);
-
+		double turn = getDegreesBetweenPoints(mapState.robot.coordinate, target);
+		double orientation = getOrientationForRotation(mapState.robot.orientation, turn);
 		
-		double counterClockWise = robotOrientation - targetOrientation;
-		double clockWise = (360 - robotOrientation) + targetOrientation;
+		mainClient.rotate(orientation);
 		
-		System.out.println("CounterClockwise: " + counterClockWise);
-		System.out.println("Clockwise: " + clockWise);
-
-		if (clockWise < counterClockWise) {
-			System.out.println("Turn ClockWise");
-			mainClient.rotate(clockWise);
-		} else {
-			System.out.println("Turn CounterClockWise");
-			// Negative because of Ev3's rotation
-			mainClient.rotate(-counterClockWise);
-		}
-
-		double distance = calculateDistances(mapState.robot.coordinate, new Coordinate(bestBall.x, bestBall.y));
-		distance = distance - robotDiameter / 4;
-		System.out.println("Go distance: " + distance);
+		double distance = calculateDistances(mapState.robot.coordinate, target);
+		distance -= robotDiameter;
 
 		mainClient.sendTravelDistance(distance, speedSlow);
 		mainClient.sendTravelDistance(-distance, speedSlow);
-		mainClient.sendMotorSpeed(speedFast);*/
+	}
+
+	// Gets relative degrees between two points, assuming that the vector (1,0) is equal to 0 degrees.
+	private double getDegreesBetweenPoints(Coordinate coordinate1, Coordinate coordinate2) {
 		
-		mainClient.sendCoordinate(new Coordinate(bestBall.x, bestBall.y), speedSlow);
-		System.out.println("\n We went to coordinate to pick up ball at: " + bestBall);
-		/* Not neccessary.
-		Coordinate nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
-		mainClient.sendCoordinate(nearestToRobot, speedSlow);
-		*/
+		Coordinate vector1 = new Coordinate(1, 0);
+		Coordinate vector2 = new Coordinate(coordinate2.x - coordinate1.x, coordinate2.y - coordinate1.y);
+		
+		double upper = (vector1.x * vector2.x) + (vector1.y * vector2.y);
+		double lower = Math.sqrt(Math.pow(vector1.x, 2) + Math.pow(vector1.y, 2)) * Math.sqrt(Math.pow(vector2.x, 2) + Math.pow(vector2.y, 2));
+		double cosA = upper/lower;
+		double radians = Math.acos(cosA);
+		double degrees = Math.toDegrees(radians);
+		System.out.println("CosA: " + cosA + " radians " + radians + " degrees " + degrees);
+		if (vector2.y < 0) {
+			return -degrees;
+		} else {
+			return degrees;	
+		}
+	}
+	
+	private double getOrientationForRotation(double robotOrientation, double targetOrientation) {
+		double clockwise = targetOrientation - robotOrientation;
+		double counterClockwise = (targetOrientation + 360) - robotOrientation;
+		if (Math.abs(clockwise) < Math.abs(counterClockwise)) {
+			return clockwise;
+		} else {
+			return counterClockwise;
+		}
 	}
 
 }
