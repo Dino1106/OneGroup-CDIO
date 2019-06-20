@@ -16,10 +16,10 @@ public class PathFinder {
 
 	public static final double robotDiameter = 32.0; // The "diameter" of the robot - its thickness.
 	public static final double robotBufferSize = 8.0; // The distance to define a ball near a wall.
-	public static final double robotGrabBuffer = 12.5; // The buffer distance we want between the robot and the edge
+	public static final double robotGrabBuffer = 14; // The buffer distance we want between the robot and the edge
 
 	public static double crossRadius;
-	
+
 	public static final int speedSlow = 20;
 	public static final int speedFast = 40;
 	public static final int sleepTime = 8000; // Sleep time in milliseconds.
@@ -69,8 +69,16 @@ public class PathFinder {
 			System.out.println("\t\t Ball is close to cross!");
 			auxiliaryForCross = findCoordinateOnLine(new Coordinate(ball.x, ball.y),
 					new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y),
-					crossRadius + robotDiameter);
-			nearestToTarget = findNearestQuadrant(auxiliaryForCross);
+					robotDiameter);
+			// Now we must find the best nearest quadrant. If quadrant is closer to cross than to auxiliary, we need to use the opposite quadrant.
+			Coordinate initiallyClosest = findNearestQuadrant(auxiliaryForCross);
+			if (calculateDistances(initiallyClosest, mapState.cross.centerCoordinate) < calculateDistances(initiallyClosest, new Coordinate(ball.x, ball.y))) {
+				System.out.println("--We must approach from opposite quadrant.\nInitial: " + initiallyClosest + " cross: " + mapState.cross.centerCoordinate + " ball: " + ball);
+				nearestToTarget = oppositeQuadrant(initiallyClosest);
+			} else {
+				System.out.println("--We can approach from same quadrant.");
+				nearestToTarget = initiallyClosest;
+			}
 		} else {
 			System.out.println("\t\t Ball is not close to cross");
 			// Else we find out which quadrant is nearest to the ball.
@@ -85,7 +93,7 @@ public class PathFinder {
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
-			 route.coordinates.add(auxiliaryForCross);
+			route.coordinates.add(auxiliaryForCross);
 		} else {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
 			getCoordinatesForBallNearWalls(ball, route);
@@ -94,10 +102,28 @@ public class PathFinder {
 		return route;
 	}
 
+	// Returns the quadrant on the opposite side of the map.
+	private Coordinate oppositeQuadrant(Coordinate quadrant) {
+		if (quadrant.equals(northWest)) {
+			return southEast;
+		}
+		if (quadrant.equals(northEast)) {
+			return southWest;
+		}
+		if (quadrant.equals(southEast)) {
+			return northWest;
+		}
+		if (quadrant.equals(southWest)) {
+			return northEast;
+		}
+		System.err.println("We didn't find a damn opposite quadrant.");
+		return null;
+	}
+
 	private boolean isBallCloseToCross(Ball ball, MapState mapState) {
 		double distanceBetween = calculateDistances(new Coordinate(ball.x, ball.y),
 				new Coordinate(mapState.cross.centerCoordinate.x, mapState.cross.centerCoordinate.y));
-		if (distanceBetween < mapState.cross.radius) {
+		if (distanceBetween < crossRadius) {
 			return true;
 		} else {
 			return false;
@@ -116,45 +142,41 @@ public class PathFinder {
 			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			/*
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
-			newCoordinate.y = upperWall.left.y - robotDiameter - robotBufferSize;
-			isInsideCrossPad(newCoordinate);
-			route.coordinates.add(newCoordinate);
-			*/
+			 * Coordinate newCoordinate = new Coordinate(0, 0); newCoordinate.x =
+			 * leftWall.upper.x + robotDiameter + robotBufferSize; newCoordinate.y =
+			 * upperWall.left.y - robotDiameter - robotBufferSize;
+			 * isInsideCrossPad(newCoordinate); route.coordinates.add(newCoordinate);
+			 */
 		}
 		if (isBallCloseToCorner(ball, leftWall, lowerWall)) {
 			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			/*
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = leftWall.upper.x + robotDiameter + robotBufferSize;
-			newCoordinate.y = lowerWall.left.y + robotDiameter + robotBufferSize;
-			isInsideCrossPad(newCoordinate);
-			route.coordinates.add(newCoordinate);
-			*/
+			 * Coordinate newCoordinate = new Coordinate(0, 0); newCoordinate.x =
+			 * leftWall.upper.x + robotDiameter + robotBufferSize; newCoordinate.y =
+			 * lowerWall.left.y + robotDiameter + robotBufferSize;
+			 * isInsideCrossPad(newCoordinate); route.coordinates.add(newCoordinate);
+			 */
 		}
 		if (isBallCloseToCorner(ball, rightWall, upperWall)) {
 			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			/*
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
-			newCoordinate.y = upperWall.right.y - robotDiameter - robotBufferSize;
-			isInsideCrossPad(newCoordinate);
-			route.coordinates.add(newCoordinate);
-			*/
+			 * Coordinate newCoordinate = new Coordinate(0, 0); newCoordinate.x =
+			 * rightWall.upper.x - robotDiameter - robotBufferSize; newCoordinate.y =
+			 * upperWall.right.y - robotDiameter - robotBufferSize;
+			 * isInsideCrossPad(newCoordinate); route.coordinates.add(newCoordinate);
+			 */
 		}
 		if (isBallCloseToCorner(ball, rightWall, lowerWall)) {
 			System.out.println("\t\t Ball is close to a corner!");
 			ballCloseToCorner = true;
 			/*
-			Coordinate newCoordinate = new Coordinate(0, 0);
-			newCoordinate.x = rightWall.upper.x - robotDiameter - robotBufferSize;
-			newCoordinate.y = lowerWall.right.y + robotDiameter + robotBufferSize;
-			isInsideCrossPad(newCoordinate);
-			route.coordinates.add(newCoordinate);
-			*/
+			 * Coordinate newCoordinate = new Coordinate(0, 0); newCoordinate.x =
+			 * rightWall.upper.x - robotDiameter - robotBufferSize; newCoordinate.y =
+			 * lowerWall.right.y + robotDiameter + robotBufferSize;
+			 * isInsideCrossPad(newCoordinate); route.coordinates.add(newCoordinate);
+			 */
 		}
 
 		if (!ballCloseToCorner) {
@@ -285,16 +307,36 @@ public class PathFinder {
 
 	// Finds a new coordinate that is X away from coordinate 2, where coordinate 1
 	// and 2 create a line.
-	public Coordinate findCoordinateOnLine(Coordinate coordinate1, Coordinate coordinate2, double distance) {
+	public Coordinate SSSfindCoordinateOnLine(Coordinate coordinate1, Coordinate coordinate2, double distance) {
 		Coordinate auxiliary = new Coordinate(0, 0);
-		double distanceBetween = calculateDistances(coordinate1, coordinate2);
-		double factor = distanceBetween / (distanceBetween + distance);
-		auxiliary.x = (coordinate1.x + coordinate2.x) / factor;
-		auxiliary.y = (coordinate1.y + coordinate2.y) / factor;
-		System.out.println("[Pathfinder]: FindCoordinateOnLine;\nDistance Between: " + distanceBetween + "\nDistance: "
-				+ distance + "\nCoordinate1, 2 and auxiliary: " + coordinate1 + coordinate2 + auxiliary);
-		return auxiliary;
 
+		auxiliary.x = (coordinate1.x + coordinate2.x) / 1.3;
+		auxiliary.y = (coordinate1.y + coordinate2.y) / 1.3;
+
+		System.out.println("[Pathfinder]: FindCoordinateOnLine;\n Distance + " + distance
+				+ "\nCoordinate1, 2 and auxiliary: " + coordinate1 + coordinate2 + auxiliary);
+		return auxiliary;
+	}
+
+	public Coordinate findCoordinateOnLine(Coordinate coordinate1, Coordinate coordinate2, double distance) {
+
+		double m = (coordinate1.y - coordinate2.y) / (coordinate1.x - coordinate2.x);
+
+//		double b = coordinate2.y - m * coordinate2.x;
+		double angle = Math.atan(m);
+		
+		Coordinate output = new Coordinate(0, 0);
+		output.x = coordinate2.x + distance * Math.cos(angle);
+		output.y = coordinate2.y + distance * Math.sin(angle);
+		
+		System.out.println("[Pathfinder]: FindCoordinateOnLine:--------");
+		System.out.println("Angle: " + angle);
+		System.out.println("M: " + m);
+		System.out.println("Distance: " + distance);
+		System.out.println("Coord1 and coord2: " + coordinate1 + " "+ coordinate2);
+		System.out.println("Output: " + output);
+		System.out.println("----------------");
+		return output;
 	}
 
 	// Calculates the distance from a coordinate to a given wall. Please notice this

@@ -249,7 +249,7 @@ public class DecisionMaker {
 				bestRoute = route;
 			}
 		}
-		System.out.println("---DecisionMaker: We've decided to use following route to goal: " + bestRoute);
+		System.out.println("---DecisionMaker: We've decided to use following route to goal: " + bestRoute.toString());
 		return bestRoute;
 	}
 
