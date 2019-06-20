@@ -95,7 +95,7 @@ public class DecisionMaker {
 				continue;
 			}
 			
-			if (pathFinder.calculateDistances(mapState.robot.coordinate, mapState.cross.centerCoordinate) < pathFinder.robotDiameter) {
+			if (pathFinder.calculateDistances(mapState.robot.coordinate, mapState.cross.centerCoordinate) < 4) {
 				emergencyBack();
 				continue;
 			}
@@ -139,7 +139,7 @@ public class DecisionMaker {
 		updateMap();
 	}
 
-	private void pickUpWileLoop() {
+	private void pickUpWhileLoop() {
 		int ballsCount = 10;
 		while (ballsCount > 0) {
 			mapState = visionTranslator.getProcessedMap();
@@ -227,7 +227,6 @@ public class DecisionMaker {
 		Ball bestBall = mapState.ballList.get(0);
 		double bestRisk = pathFinder.calculateDistances(new Coordinate(bestBall.x, bestBall.y),
 				mapState.robot.coordinate);
-		// TODO: Risk calculation here should be more advanced than simply distance.
 		for (Ball ball : mapState.ballList) {
 			double ballRisk = pathFinder.calculateDistances(new Coordinate(ball.x, ball.y), mapState.robot.coordinate);
 			if (ballRisk < bestRisk) {

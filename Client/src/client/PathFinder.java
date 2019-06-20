@@ -96,7 +96,6 @@ public class PathFinder {
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
-			// TODO: Reimplement this if it is ever needed again.
 //			route.coordinates.add(auxiliaryForCross);
 		} else {
 			// Now we need to get an auxiliary coordinate for balls near corners or walls.
@@ -228,19 +227,15 @@ public class PathFinder {
 		Route route;
 		Coordinate nearestToRobot;
 		Coordinate nearestToGoal;
-		/*
-		 * We ignore the route to the leftmost goal. We want the smallest goal.
-		 * 
-		 * route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>()); //
-		 * Now we find way to the goal's assigned "robotlocation" place. nearestToRobot
-		 * = findNearestQuadrant(mapState.robot.coordinate);
-		 * route.coordinates.add(nearestToRobot); nearestToGoal =
-		 * findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
-		 * route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot,
-		 * nearestToGoal));
-		 * route.coordinates.add(mapState.goal1.robotLocation.coordinate);
-		 * routes.add(route);
-		 */
+		 
+		 route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>()); //
+		 nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
+		 route.coordinates.add(nearestToRobot);
+		 nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
+		 route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
+		 route.coordinates.add(mapState.goal1.robotLocation.coordinate);
+		 routes.add(route);
+		 
 
 		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 		// Now we find way to the goal's assigned "robotlocation" place.
@@ -589,6 +584,13 @@ public class PathFinder {
 		double turn = getDegreesBetweenPoints(mapState.robot.coordinate, target);
 		double orientation = getOrientationForRotation(mapState.robot.orientation, turn);
 
+		// Hard-coded adjustment.
+		if (orientation > 0) {
+			orientation += 10;
+		} else {
+			orientation -= 10;
+		}
+		
 		mainClient.rotate(orientation);
 
 		double distance = calculateDistances(mapState.robot.coordinate, target);
