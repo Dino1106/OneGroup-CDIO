@@ -87,7 +87,10 @@ public class DecisionMaker {
 			updateMap();
 			System.out.println("----DecisionMaker\n\tOnFieldBallCount: " + onFieldBallCount + "\n\tPickedUpBallCount: "
 					+ pickedUpBallCount);
-//			if (m) // TODO: Implement out of bounds.
+			if (mapState.robot.coordinate.x == 0.0 && mapState.robot.coordinate.y == 0.0) {
+				emergencyBack();
+				continue;
+			}
 			
 			if (pickedUpBallCount >= ClientConstants.maxBalls) {
 				pathFinder.playSound("goal");
@@ -120,6 +123,11 @@ public class DecisionMaker {
 		long endTime = System.nanoTime();
 		long timeElapsed = endTime - startTime;
 		System.out.println("The robot program ran for: " + timeElapsed * Math.pow(10, -9));
+	}
+
+	private void emergencyBack() {
+		pathFinder.emergencyBack();
+		updateMap();
 	}
 
 	private void pickUpWileLoop() {

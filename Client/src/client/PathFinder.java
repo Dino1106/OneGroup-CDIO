@@ -190,7 +190,6 @@ public class PathFinder {
 	}
 
 	// We want to return routes to both goals.
-	// TODO: Maybe we want to go to the "best" goal, always?
 	public ArrayList<Route> getCalculatedRoutesGoals(MapState mapState) {
 		System.out.println("----- PathFinder getCalculatedRoutesGoals");
 		ArrayList<Route> routes = new ArrayList<Route>();
@@ -431,7 +430,6 @@ public class PathFinder {
 //		middleOfMap.y = (mapState.cross.coordinate1.y + mapState.cross.coordinate2.y + mapState.cross.coordinate3.y
 //				+ mapState.cross.coordinate4.y) / 4;
 //		// Before we can find quadrants, we gotta determine which wall is which.
-//		// TODO: If walls change, we gotta fix this part.
 //		leftWall = new Wall();
 //		rightWall = new Wall();
 //		// Figure out which wall is left wall.
@@ -496,10 +494,13 @@ public class PathFinder {
 			mainClient.sendSound(2);
 			break;
 		case "ball":
-			mainClient.sendSound(1); // TODO: Fix sounds.
+			mainClient.sendSound(1);
 			break;
 		case "goal":
 			mainClient.sendSound(3);
+			break;
+		case "emergency":
+			mainClient.sendSound(4);
 			break;
 		default:
 			break;
@@ -574,6 +575,11 @@ public class PathFinder {
 		} else {
 			return counterClockwise;
 		}
+	}
+
+	public void emergencyBack() {
+		mainClient.sendTravelDistance(-robotDiameter, speedFast);
+		playSound("emergency");
 	}
 
 }

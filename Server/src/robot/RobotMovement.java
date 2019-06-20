@@ -110,7 +110,10 @@ public class RobotMovement {
 			Sound.playSample(sound);
 			break;
 		case 3:
-			Sound.playTone(800, 100);
+			Sound.playTone(800, 400);
+			break;
+		case 4:
+			Sound.playTone(2000, 400);
 			break;
 		default:
 			System.out.println("No sound detected.");
