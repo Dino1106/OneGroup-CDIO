@@ -40,18 +40,19 @@ public class DecisionMaker {
 	}
 
 	public void runRobotTest() {
-		visionTranslator = new VisionTranslator(1);
-		mapState = visionTranslator.getProcessedMap();
+//		visionTranslator = new VisionTranslator(1);
+//		mapState = visionTranslator.getProcessedMap();
 		mainClient = new Client();
 
 		try {
 			mainClient.connect();
+			
 
 			// Calibrate rotate
-//			mainClient.rotate(1080);
+			mainClient.rotate(1080);
 
 			// Be able to drive around 40 cm in the field.
-			testAroundInASquare();
+//			testAroundInASquare();
 
 			// Be able to pickUp all balls in list.
 //			pickUpWileLoop();
@@ -79,15 +80,19 @@ public class DecisionMaker {
 	}
 
 	public void mainLoop() {
+		long startTime = System.nanoTime();
 		mainClient.pickUpBalls(true);
 		boolean keepRunning = true;
 		while (keepRunning) {
 			updateMap();
 			System.out.println("----DecisionMaker\n\tOnFieldBallCount: " + onFieldBallCount + "\n\tPickedUpBallCount: "
 					+ pickedUpBallCount);
+//			if (m) // TODO: Implement out of bounds.
+			
 			if (pickedUpBallCount >= ClientConstants.maxBalls) {
 				pathFinder.playSound("goal");
 				deliverBalls();
+				continue;
 			}
 
 			// This will stop the robot if ever there are no more balls on the field. Let's
@@ -102,14 +107,19 @@ public class DecisionMaker {
 				// Time to end this little game.
 				keepRunning = false;
 				pathFinder.playSound("victory");
+				continue;
 			}
 
 			// Let's go pick up some balls.
 			if (onFieldBallCount > 0 && pickedUpBallCount < ClientConstants.maxBalls) {
 				pathFinder.playSound("ball");
 				pickupBall();
+				continue;
 			}
 		}
+		long endTime = System.nanoTime();
+		long timeElapsed = endTime - startTime;
+		System.out.println("The robot program ran for: " + timeElapsed * Math.pow(10, -9));
 	}
 
 	private void pickUpWileLoop() {

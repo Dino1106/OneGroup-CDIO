@@ -103,18 +103,18 @@ public class RobotMovement {
 		switch (soundToPlay) {
 		case 1:
 			sound = new File("pickUpSound.wav");
+			Sound.playSample(sound);
 			break;
 		case 2:
 			sound = new File("victorySound.wav");
+			Sound.playSample(sound);
+			break;
+		case 3:
+			Sound.playTone(800, 100);
 			break;
 		default:
+			System.out.println("No sound detected.");
 			break;
-		}
-		
-		if(sound != null) {
-			Sound.playSample(sound);
-		} else {
-			System.out.println("No sound detected..");
 		}
 		
 	}
