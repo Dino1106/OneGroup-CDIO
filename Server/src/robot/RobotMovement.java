@@ -116,7 +116,7 @@ public class RobotMovement {
 			Sound.playTone(2000, 400);
 			break;
 		case 5:
-			Sound.playTone(400, 400);
+			sound = new File("ohno.wav");
 			break;
 		default:
 			System.out.println("No sound detected.");
