@@ -635,6 +635,9 @@ public class PathFinder {
 		case "emergency":
 			mainClient.sendSound(4);
 			break;
+		case "think":
+			mainClient.sendSound(5);
+			break;
 		default:
 			break;
 		}
@@ -646,6 +649,7 @@ public class PathFinder {
 			System.out.println("----- PathFinder driveRoute \nRoute length: " + route.coordinates.size()
 					+ ", \nSending coordinate " + coordinate.toString() + " to robot");
 			mainClient.sendCoordinate(coordinate, speedFast);
+			playSound("think");
 		}
 	}
 
@@ -681,8 +685,11 @@ public class PathFinder {
 		double distance = calculateDistances(mapState.robot.coordinate, target);
 		distance -= robotGrabBuffer;
 
+		playSound("think");
 		mainClient.sendTravelDistance(distance, speedSlow);
+		playSound("think");
 		mainClient.sendTravelDistance(-distance, speedSlow);
+		playSound("think");
 	}
 
 	// Gets relative degrees between two points, assuming that the vector (1,0) is
