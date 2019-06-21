@@ -222,8 +222,8 @@ public class VisionTranslator {
 			double skew = (height*ClientConstants.cameraHeight)/abs_afs;
 			double angleA = atan(afs.y/afs.x);
 
-			objCoor.x = cos(angleA)*skew;
-			objCoor.y = sin(angleA)*skew;
+			objCoor.x = objCoor.x + cos(angleA)*skew;
+			objCoor.y = objCoor.y + sin(angleA)*skew;
 
 	}
 	
