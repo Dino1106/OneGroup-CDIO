@@ -78,7 +78,7 @@ public class PathFinder {
 		route.coordinates.add(nearestToRobot);
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
-		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
+		route.coordinates.addAll(getRouteBetweenQuadrantsCrosscheck(nearestToRobot, nearestToTarget));
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
 		} else {
