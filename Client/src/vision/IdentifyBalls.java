@@ -62,7 +62,7 @@ public class IdentifyBalls {
 
 	private void autoCircle(int paramMinDistance, int paramCannyThreshold, int paramCenterThreshold, int paramMinRad, int paramMaxRad) {
 
-		int amount_circles = 10;
+		int amount_circles = 5;
 
 		int sec1, sec2 = paramCannyThreshold, sec3 = paramCenterThreshold, sec4 = paramMinRad, sec5 = paramMaxRad;
 		outerloop:

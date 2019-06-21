@@ -10,5 +10,5 @@ public class ServerConstants {
 	
 	/* if undershoot --> increase value
 	 * if overshoot --> decrease value */
-	public static final double trackWidth = 17.95;
+	public static final double trackWidth = 17.6;
 }
