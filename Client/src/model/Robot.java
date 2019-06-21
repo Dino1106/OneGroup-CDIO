@@ -4,7 +4,6 @@ public class Robot {
 	
 	public Coordinate coordinate;
 	public double orientation;
-	public double height = 25;
 	
 	public Robot() {
 		// Empty constructor

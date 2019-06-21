@@ -1,6 +1,7 @@
 package vision;
 
 import java.awt.geom.Point2D;
+import java.lang.invoke.ConstantCallSite;
 import java.util.ArrayList;
 
 import constants.ClientConstants;
@@ -12,6 +13,8 @@ import model.MapState;
 import model.Robot;
 import model.VisionSnapShot;
 import model.Wall;
+
+import static java.lang.Math.*;
 
 public class VisionTranslator {
 
@@ -93,6 +96,11 @@ public class VisionTranslator {
 
 			walls.add(w);
 			walls.add(w2);
+
+			perspectiveTransform(walls.get(0).lower, 7.5);
+			perspectiveTransform(walls.get(0).upper, 7.5);
+			perspectiveTransform(walls.get(1).lower, 7.5);
+			perspectiveTransform(walls.get(1).upper, 7.5);
 		}
 
 		return walls;
@@ -105,6 +113,7 @@ public class VisionTranslator {
 
 		Coordinate coord = new Coordinate(x, y);
 		changeToRobotFormat(coord);
+		perspectiveTransform(coord, 3);
 
 		// TODO: Radius is maybe not 10 always
 		return new Cross(coord, 10);
@@ -152,9 +161,9 @@ public class VisionTranslator {
 			Coordinate zeroPoint = new Coordinate(((recievedArray[1][0]) / visionScale) + 50,
 					(recievedArray[1][1] / visionScale));
 
-			perspectiveTransform(smallCircleCoordinate, roboloc.height);
-			perspectiveTransform(largeCircleCoordinate, roboloc.height);
-			perspectiveTransform(zeroPoint, roboloc.height);
+			perspectiveTransform(smallCircleCoordinate, ClientConstants.robotHeight);
+			perspectiveTransform(largeCircleCoordinate, ClientConstants.robotHeight);
+			perspectiveTransform(zeroPoint, ClientConstants.robotHeight);
 
 			changeToRobotFormat(smallCircleCoordinate);
 			changeToRobotFormat(largeCircleCoordinate);
@@ -200,33 +209,25 @@ public class VisionTranslator {
 		coord.y = walls.get(0).upper.y - coord.y;
 	}
 
-	private void perspectiveTransform(Coordinate coord, double height) {
+	private void perspectiveTransform(Coordinate objCoor, double height) {
 		// Find height differences and the proportion
-		double heightProportion = (ClientConstants.cameraHeight - height) / ClientConstants.cameraHeight;
 
-		// Find the scewed distance caused of height differences
-		coord.x = (1 - heightProportion) * cameraX + heightProportion * coord.x;
-		coord.y = (1 - heightProportion) * cameraY + heightProportion * coord.y;
+		Coordinate centerCoor = new Coordinate(walls.get(1).lower.x/2,walls.get(0).upper.y/2);
+					Coordinate afs = new Coordinate(0,0);
+
+			 afs.x = objCoor.x - centerCoor.x;
+			 afs.y = objCoor.y - centerCoor.y;
+
+			double abs_afs = Math.sqrt((afs.x*afs.x) + (afs.y*afs.y));
+			double skew = (height*ClientConstants.cameraHeight)/abs_afs;
+			double angleA = atan(afs.y/afs.x);
+
+			objCoor.x = cos(angleA)*skew;
+			objCoor.y = sin(angleA)*skew;
+
 	}
 	
-	/*
-	private void perspectiveTransformAlternative(Coordinate coord, double height)
-	{
-	 double afs.x = coord.x - .x;
-	 double afs.y = coord.y - middle.y;
 
-	double abs_afs = sqt((afs.x*afs.x) - (afs.y*afs*y));
-
-	double angle = atan(ClientConstants.cameraHeight-abs_afs);
-
-	double skew = height/tan(angle); 
-
-	double angleA = atan(afs.y/afs.x);
-
-	coord.x = cos(angleA)*skew;
-	coord.y = sin(angleA)*skew;
-	}
-	*/
 
 	private ArrayList<Coordinate> calculateQuadrants() {
 		ArrayList<Coordinate> quadrants = new ArrayList<Coordinate>();
