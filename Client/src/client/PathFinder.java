@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import constants.ClientConstants;
 import model.Ball;
 import model.Coordinate;
+import model.Cross;
 import model.Goal;
 import model.MapState;
 import model.PseudoWall;
@@ -66,7 +67,7 @@ public class PathFinder {
 		// for the ball.
 		if (closeToCross) {
 			System.out.println("\t\t Ball is close to cross!");
-			nearestToTarget = findNearestQuadrant(new Coordinate(ball.x, ball.y));
+			nearestToTarget = findQuadrantForCross(ball, mapState.cross);
 		} else {
 			System.out.println("\t\t Ball is not close to cross");
 			// Else we find out which quadrant is nearest to the ball.
@@ -87,6 +88,23 @@ public class PathFinder {
 		}
 		System.out.println("Calculated Route is: " + route.coordinates.toString());
 		return route;
+	}
+
+	private Coordinate findQuadrantForCross(Ball ball, Cross cross) {
+		// We have four cases, that will tell us from whence to approach the ball.
+		if (ball.x < cross.centerCoordinate.x) {
+			if (ball.y < cross.centerCoordinate.y) {
+				return southWest;
+			} else {
+				return northWest;
+			}
+		} else {
+			if (ball.y < cross.centerCoordinate.y) {
+				return southEast;
+			} else {
+				return northEast;
+			}
+		}
 	}
 
 	// Returns the quadrant on the opposite side of the map.
