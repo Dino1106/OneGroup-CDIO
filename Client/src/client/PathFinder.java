@@ -78,7 +78,7 @@ public class PathFinder {
 		route.coordinates.add(nearestToRobot);
 		// Now we calculate a route between these two coordinates. A method has been
 		// created, dedicated to finding a path between quadrants.
-		route.coordinates.addAll(getRouteBetweenQuadrantsCrosscheck(nearestToRobot, nearestToTarget));
+		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToTarget));
 		if (closeToCross) {
 			// Now we need to get an auxiliary coordinate for balls near cross.
 		} else {
@@ -216,7 +216,7 @@ public class PathFinder {
 		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		route.coordinates.add(nearestToRobot);
 		nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
-		route.coordinates.addAll(getRouteBetweenQuadrantsCrosscheck(nearestToRobot, nearestToGoal));
+		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
 		route.coordinates.add(mapState.goal1.robotLocation.coordinate);
 		routes.add(route);
 

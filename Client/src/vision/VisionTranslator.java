@@ -207,8 +207,26 @@ public class VisionTranslator {
 		// Find the scewed distance caused of height differences
 		coord.x = (1 - heightProportion) * cameraX + heightProportion * coord.x;
 		coord.y = (1 - heightProportion) * cameraY + heightProportion * coord.y;
-
 	}
+	
+	/*
+	private void perspectiveTransformAlternative(Coordinate coord, double height)
+	{
+	 double afs.x = coord.x - .x;
+	 double afs.y = coord.y - middle.y;
+
+	double abs_afs = sqt((afs.x*afs.x) - (afs.y*afs*y));
+
+	double angle = atan(ClientConstants.cameraHeight-abs_afs);
+
+	double skew = height/tan(angle); 
+
+	double angleA = atan(afs.y/afs.x);
+
+	coord.x = cos(angleA)*skew;
+	coord.y = sin(angleA)*skew;
+	}
+	*/
 
 	private ArrayList<Coordinate> calculateQuadrants() {
 		ArrayList<Coordinate> quadrants = new ArrayList<Coordinate>();
