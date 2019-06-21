@@ -216,7 +216,7 @@ public class PathFinder {
 		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		route.coordinates.add(nearestToRobot);
 		nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
-		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
+		route.coordinates.addAll(getRouteBetweenQuadrantsCrosscheck(nearestToRobot, nearestToGoal));
 		route.coordinates.add(mapState.goal1.robotLocation.coordinate);
 		routes.add(route);
 
