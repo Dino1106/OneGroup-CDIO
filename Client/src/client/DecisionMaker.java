@@ -40,7 +40,7 @@ public class DecisionMaker {
 	}
 
 	public void runRobotTest() {
-		visionTranslator = new VisionTranslator(1);
+		visionTranslator = new VisionTranslator(0);
 		mapState = visionTranslator.getProcessedMap();
 		mainClient = new Client();
 
@@ -48,16 +48,16 @@ public class DecisionMaker {
 			mainClient.connect();
 
 			// Drive streight
-			mainClient.sendTravelDistance(200, 15);
+//			mainClient.sendTravelDistance(200, 15);
 
 			// Calibrate rotate
-			mainClient.rotate(1080);
+//			mainClient.rotate(1080);
 
 			// Be able to drive around 40 cm in the field.
-			testAroundInASquare();
+//			testAroundInASquare();
 
 			// Be able to pickUp all balls in list.
-			pickUpWhileLoop();
+//			pickUpWhileLoop();
 
 		} catch (IOException e) {
 			System.out.println("DecisionMaker error: " + e.getStackTrace());
