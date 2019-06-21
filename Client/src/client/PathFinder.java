@@ -220,14 +220,14 @@ public class PathFinder {
 		route.coordinates.add(mapState.goal1.robotLocation.coordinate);
 		routes.add(route);
 
-//		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
-//		// Now we find way to the goal's assigned "robotlocation" place.
-//		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
-//		route.coordinates.add(nearestToRobot);
-//		nearestToGoal = findNearestQuadrant(mapState.goal2.robotLocation.coordinate);
-//		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
-//		route.coordinates.add(mapState.goal2.robotLocation.coordinate);
-//		routes.add(route);
+		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
+		// Now we find way to the goal's assigned "robotlocation" place.
+		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
+		route.coordinates.add(nearestToRobot);
+		nearestToGoal = findNearestQuadrant(mapState.goal2.robotLocation.coordinate);
+		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
+		route.coordinates.add(mapState.goal2.robotLocation.coordinate);
+		routes.add(route);
 
 		return routes;
 	}
