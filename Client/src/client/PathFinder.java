@@ -211,7 +211,7 @@ public class PathFinder {
 		Route route;
 		Coordinate nearestToRobot;
 		Coordinate nearestToGoal;
-		 
+
 		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>()); //
 		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
 		route.coordinates.add(nearestToRobot);
@@ -219,7 +219,6 @@ public class PathFinder {
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
 		route.coordinates.add(mapState.goal1.robotLocation.coordinate);
 		routes.add(route);
-		 
 
 //		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
 //		// Now we find way to the goal's assigned "robotlocation" place.
@@ -229,7 +228,7 @@ public class PathFinder {
 //		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
 //		route.coordinates.add(mapState.goal2.robotLocation.coordinate);
 //		routes.add(route);
-		
+
 		return routes;
 	}
 
@@ -245,7 +244,8 @@ public class PathFinder {
 			goal = mapState.goal2;
 		}
 		double rotation = getOrientationForRotation(mapState.robot.orientation, goal.robotLocation.orientation);
-		System.out.println("---PathFinder --- RobotOrient: " + mapState.robot.orientation + " goal orientation: " + goal.robotLocation.orientation);
+		System.out.println("---PathFinder --- RobotOrient: " + mapState.robot.orientation + " goal orientation: "
+				+ goal.robotLocation.orientation);
 		System.out.println("---PathFinder --- DeliverBalls -- Orientation: " + rotation);
 		mainClient.rotate(rotation);
 		// Wait for SLEEPTIME seconds.
@@ -263,9 +263,10 @@ public class PathFinder {
 
 	// Finds the distance between a coordinate to a line between two coordinates.
 	public double calculateDistancesLine(Coordinate coordinate, Coordinate line1, Coordinate line2) {
-		double upper = Math.abs((line2.y-line1.y)*coordinate.x - (line2.x-line1.x)*coordinate.y + line2.x*line1.y - line2.y*line1.x);
-		double lower = Math.sqrt((line2.y-line1.y)*(line2.y-line1.y)+(line2.x-line1.x)*(line2.x-line1.x));
-		double total = upper/lower;
+		double upper = Math.abs((line2.y - line1.y) * coordinate.x - (line2.x - line1.x) * coordinate.y
+				+ line2.x * line1.y - line2.y * line1.x);
+		double lower = Math.sqrt((line2.y - line1.y) * (line2.y - line1.y) + (line2.x - line1.x) * (line2.x - line1.x));
+		double total = upper / lower;
 		return total;
 	}
 
@@ -307,16 +308,16 @@ public class PathFinder {
 		double m = (coordinate1.y - coordinate2.y) / (coordinate1.x - coordinate2.x);
 
 		double angle = Math.atan(m);
-		
+
 		Coordinate output = new Coordinate(0, 0);
 		output.x = coordinate2.x + distance * Math.cos(angle);
 		output.y = coordinate2.y + distance * Math.sin(angle);
-		
+
 		System.out.println("[Pathfinder]: FindCoordinateOnLine:--------");
 		System.out.println("Angle: " + angle);
 		System.out.println("M: " + m);
 		System.out.println("Distance: " + distance);
-		System.out.println("Coord1 and coord2: " + coordinate1 + " "+ coordinate2);
+		System.out.println("Coord1 and coord2: " + coordinate1 + " " + coordinate2);
 		System.out.println("Output: " + output);
 		System.out.println("----------------");
 		return output;
@@ -434,6 +435,146 @@ public class PathFinder {
 		return output;
 	}
 
+	private ArrayList<Coordinate> getRouteBetweenQuadrantsCrosscheck(Coordinate fromCoordinate,
+			Coordinate toCoordinate) {
+		System.out.println("----- PathFinder getRouteBetweenQuadrants");
+		ArrayList<Coordinate> output = new ArrayList<Coordinate>();
+		// For northWest
+		if (fromCoordinate.equals(northWest)) {
+			if (toCoordinate.equals(northWest)) {
+				// Do nothing.
+			}
+			if (toCoordinate.equals(northEast)) {
+				if (!doesLineHitCross(northWest, northEast, mapState)) {
+					output.add(northEast);
+				} else {
+					output.add(southWest);
+					output.add(southEast);
+					output.add(northEast);
+				}
+			}
+			if (toCoordinate.equals(southEast)) {
+				if (!doesLineHitCross(northWest, southWest, mapState) && !doesLineHitCross(southWest, southEast, mapState)) {
+					output.add(southWest);
+					output.add(southEast);
+				} else {
+					output.add(northEast);
+					output.add(southEast);
+				}
+			}
+			if (toCoordinate.equals(southWest)) {
+				if (!doesLineHitCross(northWest, southWest, mapState)) {
+					output.add(southWest);
+				} else {
+					output.add(northEast);
+					output.add(southEast);
+					output.add(southWest);
+				}
+			}
+		}
+		// For northEast
+		if (fromCoordinate.equals(northEast)) {
+			if (toCoordinate.equals(northEast)) {
+				// Do nothing.
+			}
+			if (toCoordinate.equals(northWest)) {
+				if (!doesLineHitCross(northEast, northWest, mapState)) {
+					output.add(northWest);
+				} else {
+					output.add(southEast);
+					output.add(southWest);
+					output.add(northWest);
+				}
+			}
+			if (toCoordinate.equals(southEast)) {
+				if (!doesLineHitCross(northEast, southEast, mapState)) {
+					output.add(southEast);
+				} else {
+					output.add(northWest);
+					output.add(southWest);
+					output.add(southEast);
+				}
+			}
+			if (toCoordinate.equals(southWest)) {
+				if (!doesLineHitCross(northEast, southEast, mapState) && !doesLineHitCross(southEast, southWest, mapState)) {
+					output.add(southEast);
+					output.add(southWest);
+				} else {
+					output.add(northWest);
+					output.add(southWest);
+				}
+			}
+		}
+		// For SouthEast
+		if (fromCoordinate.equals(southEast)) {
+			if (toCoordinate.equals(southEast)) {
+				// Do nothing.
+			}
+			if (toCoordinate.equals(southWest)) {
+				if (!doesLineHitCross(southEast, southWest, mapState)) {
+					output.add(southWest);
+				} else {
+					output.add(northEast);
+					output.add(northWest);
+					output.add(southWest);
+				}
+			}
+			if (toCoordinate.equals(northEast)) {
+				if (!doesLineHitCross(southEast, northEast, mapState)) {
+					output.add(northEast);
+				} else {
+					output.add(southWest);
+					output.add(northWest);
+					output.add(northEast);
+				}
+			}
+			if (toCoordinate.equals(northWest)) {
+				if (!doesLineHitCross(southEast, northEast, mapState) && !doesLineHitCross(northEast, northWest, mapState)) {
+					output.add(northEast);
+					output.add(northWest);
+				} else {
+					output.add(southWest);
+					output.add(northWest);
+				}
+			}
+		}
+		// For southWest
+		if (fromCoordinate.equals(southWest)) {
+			if (toCoordinate.equals(southWest)) {
+				// Do nothing.
+			}
+			if (toCoordinate.equals(southEast)) {
+				if (!doesLineHitCross(southWest, southEast, mapState)) {
+					output.add(southEast);
+				} else {
+					output.add(northWest);
+					output.add(northEast);
+					output.add(southEast);
+				}
+			}
+			if (toCoordinate.equals(northWest)) {
+				if (!doesLineHitCross(southWest, northWest, mapState)) {
+					output.add(northWest);
+				} else {
+					output.add(southEast);
+					output.add(northEast);
+					output.add(northWest);
+				}
+			}
+			if (toCoordinate.equals(northEast)) {
+				if (!doesLineHitCross(southWest, northWest, mapState) && !doesLineHitCross(northWest, northEast, mapState)) {
+					output.add(northWest);
+					output.add(northEast);
+				} else {
+					output.add(southEast);
+					output.add(northEast);
+				}
+			}
+		}
+
+		return output;
+	}
+
 	// Generates pseudowalls.
 	private void generateWalls(MapState mapState) {
 		System.out.println("----- PathFinder generateWalls");
@@ -534,7 +675,7 @@ public class PathFinder {
 		} else {
 			orientation -= 10;
 		}
-		
+
 		mainClient.rotate(orientation);
 
 		double distance = calculateDistances(mapState.robot.coordinate, target);
@@ -574,12 +715,15 @@ public class PathFinder {
 			return counterClockwise;
 		}
 	}
-	
+
 	public boolean doesLineHitCross(Coordinate line1, Coordinate line2, MapState mapState) {
+		System.out.println("---- PathFinder: We checked if line hit cross.");
 		double distance = calculateDistancesLine(mapState.cross.centerCoordinate, line1, line2);
 		if (distance < mapState.cross.radius) {
+			System.out.println("It DID.");
 			return true;
 		} else {
+			System.out.println("It did NOT.");
 			return false;
 		}
 
