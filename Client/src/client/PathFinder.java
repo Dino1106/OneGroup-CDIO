@@ -511,7 +511,7 @@ public class PathFinder {
 		}
 	}
 
-	private void robotSleep(int i) {
+	public void robotSleep(int i) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(i);
 		} catch (InterruptedException e) {
@@ -578,8 +578,8 @@ public class PathFinder {
 	}
 
 	public void emergencyBack() {
-		mainClient.sendTravelDistance(-robotDiameter, speedFast);
 		playSound("emergency");
+		mainClient.sendTravelDistance(-robotDiameter, speedFast);
 	}
 
 	public void stopMotors() {

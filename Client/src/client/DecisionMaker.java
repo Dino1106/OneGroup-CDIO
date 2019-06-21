@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import constants.ClientConstants;
 import model.Ball;
@@ -95,7 +96,7 @@ public class DecisionMaker {
 				continue;
 			}
 			
-			if (pathFinder.calculateDistances(mapState.robot.coordinate, mapState.cross.centerCoordinate) < 4) {
+			if (pathFinder.calculateDistances(mapState.robot.coordinate, mapState.cross.centerCoordinate) < 6) {
 				emergencyBack();
 				continue;
 			}
@@ -112,10 +113,14 @@ public class DecisionMaker {
 					pathFinder.playSound("goal");
 					deliverBalls();
 				}
-
-				keepRunning = false;
-				pathFinder.playSound("victory");
-				continue;
+				pathFinder.robotSleep(3000);
+				updateMap();
+				if (onFieldBallCount < 1) {
+					keepRunning = false;
+					pathFinder.playSound("victory");
+				} else {
+					continue;
+				}
 			}
 
 			if (onFieldBallCount > 0 && pickedUpBallCount < ClientConstants.maxBalls) {
