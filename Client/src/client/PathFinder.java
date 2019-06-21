@@ -261,17 +261,12 @@ public class PathFinder {
 		return Math.sqrt(Math.pow(coordinate1.x - coordinate2.x, 2) + Math.pow(coordinate1.y - coordinate2.y, 2));
 	}
 
-	// Unused.
 	// Finds the distance between a coordinate to a line between two coordinates.
-	public int calculateDistancesLine(Coordinate coordinate, Coordinate line1, Coordinate line2) {
-		// First we gotta find line1 and line2.
-		System.out.println("Line 1 and 2 x: " + line1.x + " " + line2.x);
-		double a = (line2.y - line1.y) / (line2.x - line1.x);
-		double b = line1.y - (a * line1.x);
-		double upper = Math.abs(a * line1.x + b - line1.y);
-		double lower = Math.sqrt(Math.pow(a, 2) + 1);
-		double dist = upper / lower;
-		return (int) dist; // There's a minor loss here in conversion.
+	public double calculateDistancesLine(Coordinate coordinate, Coordinate line1, Coordinate line2) {
+		double upper = Math.abs((line2.y-line1.y)*coordinate.x - (line2.x-line1.x)*coordinate.y + line2.x*line1.y - line2.y*line1.x);
+		double lower = Math.sqrt((line2.y-line1.y)*(line2.y-line1.y)+(line2.x-line1.x)*(line2.x-line1.x));
+		double total = upper/lower;
+		return total;
 	}
 
 	public void isInsideCrossPad(Coordinate coordinate) {
@@ -581,10 +576,12 @@ public class PathFinder {
 	}
 	
 	public boolean doesLineHitCross(Coordinate line1, Coordinate line2, MapState mapState) {
-		double a = (line2.y - line1.y) / (line2.x - line1.x);
-		double b = line1.y - (a * line1.x);
-		return true;
-		// TODO: Work on this.
+		double distance = calculateDistancesLine(mapState.cross.centerCoordinate, line1, line2);
+		if (distance < mapState.cross.radius) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void emergencyBack() {

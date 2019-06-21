@@ -127,8 +127,8 @@ public class VisionTranslator {
 
 		smallGoal.coordinate1 = smallGoalCoord;
 		largeGoal.coordinate1 = largeGoalCoord;
-		smallGoal.robotLocation = new Robot(new Coordinate(smallGoal.coordinate1.x + 20, smallGoal.coordinate1.y), 0.0);
-		largeGoal.robotLocation = new Robot(new Coordinate(largeGoal.coordinate1.x - 20, largeGoal.coordinate1.y),
+		smallGoal.robotLocation = new Robot(new Coordinate(smallGoal.coordinate1.x + 30, smallGoal.coordinate1.y), 0.0);
+		largeGoal.robotLocation = new Robot(new Coordinate(largeGoal.coordinate1.x - 30, largeGoal.coordinate1.y),
 				180.0);
 
 		goals.add(smallGoal);
