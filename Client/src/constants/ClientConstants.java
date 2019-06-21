@@ -5,14 +5,14 @@ public class ClientConstants {
 	//Robot
 	public static final double robotHeight = 25.5;
 	public static final double robotAxisShift = 1.5/13.5;
-	public static final int maxBalls = 7;
+	public static final int maxBalls = 3;
 	
 	//Goal
 	public static final double goalBuffer = 28;
 	public static final double approachGoalDistance = 10;
 	
 	//Camera
-	public static final double cameraHeight = 174.0;
+	public static final double cameraHeight = 177.5;
 	public static final int imageHeight = 720;
 	public static final int imageWidth = 1280;
 	public static final int cameraId = 0;

@@ -41,8 +41,8 @@ public class DecisionMaker {
 	}
 
 	public void runRobotTest() {
-		visionTranslator = new VisionTranslator(0);
-		mapState = visionTranslator.getProcessedMap();
+//		visionTranslator = new VisionTranslator(0);
+//		mapState = visionTranslator.getProcessedMap();
 		mainClient = new Client();
 
 		try {
@@ -52,7 +52,7 @@ public class DecisionMaker {
 //			mainClient.sendTravelDistance(200, 15);
 
 			// Calibrate rotate
-//			mainClient.rotate(1080);
+			mainClient.rotate(1080);
 
 			// Be able to drive around 40 cm in the field.
 //			testAroundInASquare();

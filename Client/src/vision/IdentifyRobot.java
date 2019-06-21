@@ -9,25 +9,29 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
 
 public class IdentifyRobot {
-	
-	private int coords[][] = new int [2][2];
+
+	private int coords[][] = null;
 
 	public IdentifyRobot(Mat picture, IdentifyCoordinates identify)	{
 		coords = identify.getCirleCoordinates(picture);
 	}
-	
+
 	int get_coords(int x_y,int position)
 	{
 		return coords[x_y][position];
 	}
-	
+
 	public int[][] getArray(){
 		return coords;
 	}
-	
+
 	public void draw(Mat picture, Scalar BoxColor)
 	{
-		line(picture,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
-		line(picture,new Point(coords[1][0],coords[1][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
+		try {
+			line(picture,new Point(coords[0][0],coords[0][1]),new Point(coords[1][0],coords[1][1]),BoxColor);
+			line(picture,new Point(coords[1][0],coords[1][1]),new Point(coords[0][0],coords[0][1]),BoxColor);
+		} catch (Exception e) {
+			System.out.println("Draw error: " + e.getStackTrace().toString());
+		}
 	}
 }

@@ -160,36 +160,40 @@ public class IdentifyCoordinates {
 
 		Vec3fVector circles = new Vec3fVector();
 		findCircles(picture, circles);
-		
+
 
 		// Draw circles
 		for(int i=0; i<circles.size(); i++) {
 			circle(picture, new Point((int) circles.get(i).get(0), (int) circles.get(i).get(1)), (int) circles.get(i).get(2), Scalar.GREEN);
 		}
-		
-		if (!circles.empty()) {
-			// Determine small/large circle based on radius
-			if((int) circles.get(0).get(2) <= (int) circles.get(1).get(2)) {
-				// Small circle
-				coords[0][0] = (int) circles.get(0).get(0);
-				coords[0][1] = (int) circles.get(0).get(1);
 
-				// Large circle
-				coords[1][0] = (int) circles.get(1).get(0);
-				coords[1][1] = (int) circles.get(1).get(1);
-			
-			} else {
-				// Small circle
-				coords[0][0] = (int) circles.get(1).get(0);
-				coords[0][1] = (int) circles.get(1).get(1);
+		try {
+			if (!circles.empty()) {
+				// Determine small/large circle based on radius
+				if((int) circles.get(0).get(2) <= (int) circles.get(1).get(2)) {
+					// Small circle
+					coords[0][0] = (int) circles.get(0).get(0);
+					coords[0][1] = (int) circles.get(0).get(1);
 
-				// Large circle
-				coords[1][0] = (int) circles.get(0).get(0);
-				coords[1][1] = (int) circles.get(0).get(1);
+					// Large circle
+					coords[1][0] = (int) circles.get(1).get(0);
+					coords[1][1] = (int) circles.get(1).get(1);
 
-			}
+				} else {
+					// Small circle
+					coords[0][0] = (int) circles.get(1).get(0);
+					coords[0][1] = (int) circles.get(1).get(1);
+
+					// Large circle
+					coords[1][0] = (int) circles.get(0).get(0);
+					coords[1][1] = (int) circles.get(0).get(1);
+
+				}
+			} }
+		catch(Exception e) {
+			coords = null;
 		}
-		
+
 		return coords;
 
 	}
@@ -276,7 +280,7 @@ public class IdentifyCoordinates {
 		int h_min = 0, h_max = 255;
 		int s_min = 0, s_max = 255;
 		int v_min = 0, v_max = 255;
-		
+
 		int b_min = 0, 	b_max = 255;
 		int g_min = 0, 	g_max = 255;
 		int r_min = 0,	r_max = 255;
@@ -306,10 +310,10 @@ public class IdentifyCoordinates {
 
 		} else if(color.contentEquals("purple")) {
 			// Range of red color of cross
-			
-			
+
+
 			//Purple paper is: 100/100/100
-			
+
 			h_min = 260/2;
 			h_max = 340/2;
 			s_min = 255/100 * 20;
