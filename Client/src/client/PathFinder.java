@@ -212,13 +212,13 @@ public class PathFinder {
 		Coordinate nearestToRobot;
 		Coordinate nearestToGoal;
 		 
-		 route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>()); //
-		 nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
-		 route.coordinates.add(nearestToRobot);
-		 nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
-		 route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
-		 route.coordinates.add(mapState.goal1.robotLocation.coordinate);
-		 routes.add(route);
+		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>()); //
+		nearestToRobot = findNearestQuadrant(mapState.robot.coordinate);
+		route.coordinates.add(nearestToRobot);
+		nearestToGoal = findNearestQuadrant(mapState.goal1.robotLocation.coordinate);
+		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
+		route.coordinates.add(mapState.goal1.robotLocation.coordinate);
+		routes.add(route);
 		 
 
 		route = new Route(mapState.robot.coordinate, new ArrayList<Coordinate>());
@@ -228,8 +228,8 @@ public class PathFinder {
 		nearestToGoal = findNearestQuadrant(mapState.goal2.robotLocation.coordinate);
 		route.coordinates.addAll(getRouteBetweenQuadrants(nearestToRobot, nearestToGoal));
 		route.coordinates.add(mapState.goal2.robotLocation.coordinate);
-
 		routes.add(route);
+		
 		return routes;
 	}
 
@@ -245,6 +245,8 @@ public class PathFinder {
 			goal = mapState.goal2;
 		}
 		double rotation = getOrientationForRotation(mapState.robot.orientation, goal.robotLocation.orientation);
+		System.out.println("---PathFinder --- RobotOrient: " + mapState.robot.orientation + " goal orientation: " + goal.robotLocation.orientation);
+		System.out.println("---PathFinder --- DeliverBalls -- Orientation: " + rotation);
 		mainClient.rotate(rotation);
 		// Wait for SLEEPTIME seconds.
 		mainClient.pickUpBalls(false);
@@ -530,6 +532,7 @@ public class PathFinder {
 		double turn = getDegreesBetweenPoints(mapState.robot.coordinate, target);
 		double orientation = getOrientationForRotation(mapState.robot.orientation, turn);
 
+		// TODO: Look at hardcode.
 		// Hard-coded adjustment.
 		if (orientation > 0) {
 			orientation += 10;
@@ -575,6 +578,13 @@ public class PathFinder {
 		} else {
 			return counterClockwise;
 		}
+	}
+	
+	public boolean doesLineHitCross(Coordinate line1, Coordinate line2, MapState mapState) {
+		double a = (line2.y - line1.y) / (line2.x - line1.x);
+		double b = line1.y - (a * line1.x);
+		return true;
+		// TODO: Work on this.
 	}
 
 	public void emergencyBack() {
